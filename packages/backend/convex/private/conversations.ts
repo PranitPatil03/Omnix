@@ -2,7 +2,11 @@ import { mutation, query } from "../_generated/server";
 import { ConvexError, v } from "convex/values";
 import { supportAgent } from "../system/ai/agents/supportAgent";
 import { MessageDoc } from "@convex-dev/agent";
-import { paginationOptsValidator, PaginationResult } from "convex/server";
+import {
+  paginationOptsValidator,
+  type PaginationResult,
+  type Cursor,
+} from "convex/server";
 import { Doc } from "../_generated/dataModel";
 
 export const updateStatus = mutation({
@@ -131,13 +135,18 @@ export const getMany = query({
       });
     }
 
-    const orgId = identity.orgId as string;
+    const orgId = identity.orgId as string | undefined;
 
+    // If the user has no active organization, return an empty result
+    // instead of throwing, so the UI can render without crashing.
     if (!orgId) {
-      throw new ConvexError({
-        code: "UNAUTHORIZED",
-        message: "Organization not found",
-      });
+      const emptyResult: PaginationResult<Doc<"conversations">> = {
+        page: [],
+        isDone: true,
+        continueCursor: null as unknown as Cursor,
+      };
+
+      return emptyResult;
     }
 
     let conversations: PaginationResult<Doc<"conversations">>;

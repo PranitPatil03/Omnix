@@ -15,13 +15,11 @@ export const remove = mutation({
       });
     }
 
-    const orgId = identity.orgId as string;
+    const orgId = identity.orgId as string | undefined;
 
+    // If there is no active organization, there's nothing to remove.
     if (!orgId) {
-      throw new ConvexError({
-        code: "UNAUTHORIZED",
-        message: "Organization not found",
-      });
+      return;
     }
 
     const existingPlugin = await ctx.db
@@ -56,16 +54,14 @@ export const getOne = query({
       });
     }
 
-    const orgId = identity.orgId as string;
+    const orgId = identity.orgId as string | undefined;
 
+    // If there is no active organization, treat as "no plugin configured"
     if (!orgId) {
-      throw new ConvexError({
-        code: "UNAUTHORIZED",
-        message: "Organization not found",
-      });
+      return null;
     }
 
-    return await ctx.db
+    return ctx.db
       .query("plugins")
       .withIndex("by_organization_id_and_service", (q) =>
         q.eq("organizationId", orgId).eq("service", args.service)
