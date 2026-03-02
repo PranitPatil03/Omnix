@@ -24,14 +24,15 @@ export const WidgetLoadingScreen = ({ organizationId }: { organizationId: string
 
   const contactSessionId = useAtomValue(contactSessionIdAtomFamily(organizationId || ""));
 
-  // Step 1: Validate organization
-  const validateOrganization = useAction(api.public.organizations.validate);
+  // Step 1: Validate organization (reactive query)
+  const orgValidation = useQuery(
+    api.public.organizations.validate,
+    step === "org" && organizationId ? { organizationId } : "skip"
+  );
   useEffect(() => {
     if (step !== "org") {
       return;
     }
-
-    setLoadingMessage("Finding organization ID...");
 
     if (!organizationId) {
       setErrorMessage("Organization ID is required");
@@ -41,28 +42,26 @@ export const WidgetLoadingScreen = ({ organizationId }: { organizationId: string
 
     setLoadingMessage("Verifying organization...");
 
-    validateOrganization({ organizationId })
-      .then((result) => {
-        if (result.valid) {
-          setOrganizationId(organizationId);
-          setStep("session");
-        } else {
-          setErrorMessage(result.reason || "Invalid configuration");
-          setScreen("error");
-        }
-      })
-      .catch(() => {
-        setErrorMessage("Unable to verify organization");
-        setScreen("error");
-      })
+    if (orgValidation === undefined) {
+      // Still loading
+      return;
+    }
+
+    if (orgValidation.valid) {
+      setOrganizationId(organizationId);
+      setStep("session");
+    } else {
+      setErrorMessage(orgValidation.reason || "Invalid configuration");
+      setScreen("error");
+    }
   }, [
     step,
     organizationId,
+    orgValidation,
     setErrorMessage,
     setScreen,
     setOrganizationId,
     setStep,
-    validateOrganization,
     setLoadingMessage
   ]);
 
@@ -95,7 +94,7 @@ export const WidgetLoadingScreen = ({ organizationId }: { organizationId: string
   }, [step, contactSessionId, validateContactSession, setLoadingMessage]);
 
   // Step 3: Load Widget Settings
-  const widgetSettings = useQuery(api.public.widgetSettings.getByOrganizationId, 
+  const widgetSettings = useQuery(api.public.widgetSettings.getByOrganizationId,
     organizationId ? {
       organizationId,
     } : "skip",
@@ -175,7 +174,7 @@ export const WidgetLoadingScreen = ({ organizationId }: { organizationId: string
       <div className="flex flex-1 flex-col items-center justify-center gap-y-4 p-4 text-muted-foreground">
         <LoaderIcon className="animate-spin" />
         <p className="text-sm">
-         {loadingMessage || "Loading..."}
+          {loadingMessage || "Loading..."}
         </p>
       </div>
     </>

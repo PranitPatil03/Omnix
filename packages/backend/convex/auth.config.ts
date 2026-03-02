@@ -1,11 +1,10 @@
 export default {
   providers: [
     {
-      // Replace with your own Clerk Issuer URL from your "convex" JWT template
-      // or with `process.env.CLERK_JWT_ISSUER_DOMAIN`
-      // and configure CLERK_JWT_ISSUER_DOMAIN on the Convex Dashboard
-      // See https://docs.convex.dev/auth/clerk#configuring-dev-and-prod-instances
-      domain: process.env.CLERK_JWT_ISSUER_DOMAIN,
+      // better-auth serves JWKS at /api/auth/.well-known/jwks.json
+      // so domain must include /api/auth path
+      // Set BETTER_AUTH_URL to your app base URL (e.g. http://localhost:3000)
+      domain: process.env.BETTER_AUTH_URL + "/api/auth",
       applicationID: "convex",
     },
   ]

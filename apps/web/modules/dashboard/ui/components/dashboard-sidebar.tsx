@@ -1,6 +1,5 @@
 "use client";
 
-import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
 import {
   CreditCardIcon,
   InboxIcon,
@@ -8,10 +7,14 @@ import {
   LibraryBigIcon,
   Mic,
   PaletteIcon,
+  BuildingIcon,
+  ChevronsUpDownIcon,
+  LogOutIcon,
+  Loader2Icon,
+  UserIcon,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Sidebar,
   SidebarContent,
@@ -26,6 +29,21 @@ import {
   SidebarRail,
 } from "@workspace/ui/components/sidebar";
 import { cn } from "@workspace/ui/lib/utils";
+import {
+  useSession,
+  useActiveOrganization,
+  useListOrganizations,
+  organization,
+  signOut,
+} from "@/lib/auth-client";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@workspace/ui/components/dropdown-menu";
+import { Avatar, AvatarFallback } from "@workspace/ui/components/avatar";
 
 const customerSupportItems = [
   {
@@ -68,6 +86,10 @@ const accountItems = [
 
 export const DashboardSidebar = () => {
   const pathname = usePathname();
+  const router = useRouter();
+  const { data: session } = useSession();
+  const { data: activeOrg } = useActiveOrganization();
+  const { data: orgs } = useListOrganizations();
 
   const isActive = (url: string) => {
     if (url === "/") {
@@ -77,27 +99,54 @@ export const DashboardSidebar = () => {
     return pathname.startsWith(url);
   };
 
+  const handleSwitchOrg = async (orgId: string) => {
+    await organization.setActive({ organizationId: orgId });
+    document.cookie = `active_organization_id=${orgId};path=/;max-age=${60 * 60 * 24 * 365}`;
+    router.refresh();
+  };
+
+  const handleSignOut = async () => {
+    document.cookie = "active_organization_id=;path=/;max-age=0";
+    await signOut();
+    router.push("/sign-in");
+    router.refresh();
+  };
+
   return (
     <Sidebar className="group" collapsible="icon">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild size="lg">
-              <OrganizationSwitcher 
-                hidePersonal 
-                skipInvitationScreen
-                appearance={{
-                  elements: {
-                    rootBox: "w-full! h-8!",
-                    avatarBox: "size-4! rounded-sm!",
-                    organizationSwitcherTrigger: "w-full! justify-start! group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2!",
-                    organizationPreview: "group-data-[collapsible=icon]:justify-center! gap-2!",
-                    organizationPreviewTextContainer: "group-data-[collapsible=icon]:hidden! text-xs! font-medium! text-sidebar-foreground!",
-                    organizationSwitcherTriggerIcon: "group-data-[collapsible=icon]:hidden! ml-auto! text-sidebar-foreground!"
-                  }
-                }}
-              />
-            </SidebarMenuButton>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuButton size="lg" className="w-full">
+                  <div className="flex size-4 items-center justify-center rounded-sm bg-primary/10">
+                    <BuildingIcon className="size-3 text-primary" />
+                  </div>
+                  <span className="truncate text-xs font-medium group-data-[collapsible=icon]:hidden">
+                    {activeOrg?.name ?? "Select Org"}
+                  </span>
+                  <ChevronsUpDownIcon className="ml-auto size-3 group-data-[collapsible=icon]:hidden" />
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                {orgs?.map((org) => (
+                  <DropdownMenuItem
+                    key={org.id}
+                    onClick={() => handleSwitchOrg(org.id)}
+                    className={cn(activeOrg?.id === org.id && "bg-accent")}
+                  >
+                    <BuildingIcon className="mr-2 size-4" />
+                    <span className="truncate">{org.name}</span>
+                  </DropdownMenuItem>
+                ))}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => router.push("/org-selection")}>
+                  <BuildingIcon className="mr-2 size-4" />
+                  Manage Organizations
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
@@ -184,18 +233,31 @@ export const DashboardSidebar = () => {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <UserButton
-              showName
-              appearance={{
-                elements: {
-                  rootBox: "w-full! h-8!",
-                  userButtonTrigger: "w-full! p-2! hover:bg-sidebar-accent! hover:text-sidebar-accent-foreground! group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2!",
-                  userButtonBox: "w-full! flex-row-reverse! justify-end! gap-2! group-data-[collapsible=icon]:justify-center! text-sidebar-foreground!",
-                  userButtonOuterIdentifier: "pl-0! group-data-[collapsible=icon]:hidden!",
-                  avatarBox: "size-4!"
-                }
-              }}
-            />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuButton className="w-full p-2 group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:p-2">
+                  <Avatar className="size-4">
+                    <AvatarFallback className="text-[10px]">
+                      {session?.user?.name?.charAt(0)?.toUpperCase() ?? <UserIcon className="size-3" />}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="truncate text-xs group-data-[collapsible=icon]:hidden">
+                    {session?.user?.name ?? session?.user?.email ?? "User"}
+                  </span>
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                <div className="px-2 py-1.5">
+                  <p className="text-sm font-medium">{session?.user?.name}</p>
+                  <p className="text-xs text-muted-foreground">{session?.user?.email}</p>
+                </div>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleSignOut}>
+                  <LogOutIcon className="mr-2 size-4" />
+                  Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>

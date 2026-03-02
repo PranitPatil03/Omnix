@@ -1,12 +1,12 @@
-import { Protect } from "@clerk/nextjs";
+"use client";
 
 import { PremiumFeatureOverlay } from "@/modules/billing/ui/components/premium-feature-overlay";
 import { CustomizationView } from "@/modules/customization/ui/views/customization-view";
+import { SubscriptionGuard } from "@/modules/billing/ui/components/subscription-guard";
 
 const Page = () => {
   return (
-    <Protect
-      condition={(has) => has({ plan: "pro" })}
+    <SubscriptionGuard
       fallback={
         <PremiumFeatureOverlay>
           <CustomizationView />
@@ -14,8 +14,8 @@ const Page = () => {
       }
     >
       <CustomizationView />
-    </Protect>
+    </SubscriptionGuard>
   )
 };
- 
+
 export default Page;

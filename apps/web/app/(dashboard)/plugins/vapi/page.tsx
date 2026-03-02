@@ -1,11 +1,12 @@
+"use client";
+
 import { PremiumFeatureOverlay } from "@/modules/billing/ui/components/premium-feature-overlay";
 import { VapiView } from "@/modules/plugins/ui/views/vapi-view";
-import { Protect } from "@clerk/nextjs";
+import { SubscriptionGuard } from "@/modules/billing/ui/components/subscription-guard";
 
 const Page = () => {
   return (
-    <Protect
-      condition={(has) => has({ plan: "pro" })}
+    <SubscriptionGuard
       fallback={
         <PremiumFeatureOverlay>
           <VapiView />
@@ -13,8 +14,8 @@ const Page = () => {
       }
     >
       <VapiView />
-    </Protect>
+    </SubscriptionGuard>
   );
 };
- 
+
 export default Page;

@@ -10,7 +10,7 @@ export default withSentryConfig(nextConfig, {
 // https://www.npmjs.com/package/@sentry/webpack-plugin#options
 
 org: "enra-doo-o7",
-project: "echo-tutorial",
+project: "omnix",
 
 // Only print logs for uploading source maps in CI
 silent: !process.env.CI,

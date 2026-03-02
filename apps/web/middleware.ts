@@ -1,42 +1,50 @@
-import { NextResponse } from 'next/server';
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import { NextResponse, type NextRequest } from "next/server";
 
-const isPublicRoute = createRouteMatcher([
-  "/",
-  "/sign-in(.*)",
-  "/sign-up(.*)",
-]);
+const publicRoutes = ["/", "/sign-in", "/sign-up", "/api/auth"];
+const orgFreeRoutes = ["/sign-in", "/sign-up", "/org-selection"];
 
-const isOrgFreeRoute = createRouteMatcher([
-  "/sign-in(.*)",
-  "/sign-up(.*)",
-  "/org-selection(.*)"
-]);
+function isPublic(pathname: string) {
+  return publicRoutes.some((route) => pathname === route || pathname.startsWith(route + "/"));
+}
 
-export default clerkMiddleware(async (auth, req) => {
-  const { userId, orgId } = await auth();
+function isOrgFree(pathname: string) {
+  return orgFreeRoutes.some((route) => pathname === route || pathname.startsWith(route + "/"));
+}
 
-  if (!isPublicRoute(req)) {
-    await auth.protect();
+export default async function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+
+  // Allow public routes through
+  if (isPublic(pathname)) {
+    return NextResponse.next();
   }
 
-  if (userId && !orgId && !isOrgFreeRoute(req)) {
+  // Check for session cookie (better-auth uses "better-auth.session_token")
+  const sessionToken =
+    req.cookies.get("better-auth.session_token")?.value;
+
+  if (!sessionToken) {
+    return NextResponse.redirect(new URL("/sign-in", req.url));
+  }
+
+  // Check for active organization cookie  
+  const activeOrgId = req.cookies.get("active_organization_id")?.value;
+
+  if (!activeOrgId && !isOrgFree(pathname)) {
     const searchParams = new URLSearchParams({ redirectUrl: req.url });
-
-    const orgSelection = new URL(
-      `/org-selection?${searchParams.toString()}`,
-      req.url,
+    return NextResponse.redirect(
+      new URL(`/org-selection?${searchParams.toString()}`, req.url)
     );
-
-    return NextResponse.redirect(orgSelection);
   }
-});
+
+  return NextResponse.next();
+}
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Skip Next.js internals and all static files
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
     // Always run for API routes
-    '/(api|trpc)(.*)',
+    "/(api|trpc)(.*)",
   ],
-}
+};

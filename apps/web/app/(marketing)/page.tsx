@@ -19,7 +19,7 @@ export default function LandingPage() {
         <div className="container flex h-16 items-center justify-between mx-auto px-4 md:px-8">
           <div className="flex items-center gap-2">
             <BotIcon className="size-6 text-primary" />
-            <span className="text-xl font-bold">Echo</span>
+            <span className="text-xl font-bold">Omnix</span>
           </div>
           <nav className="hidden md:flex items-center gap-6 text-sm">
             <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">
@@ -56,8 +56,8 @@ export default function LandingPage() {
           </span>
         </h1>
         <p className="max-w-2xl text-lg text-muted-foreground md:text-xl">
-          Deploy an intelligent AI chatbot that resolves customer queries instantly, 
-          escalates when needed, and learns from your knowledge base — all embeddable 
+          Deploy an intelligent AI chatbot that resolves customer queries instantly,
+          escalates when needed, and learns from your knowledge base — all embeddable
           in a single script tag.
         </p>
         <div className="flex flex-col sm:flex-row gap-4">
@@ -80,7 +80,7 @@ export default function LandingPage() {
               Everything You Need
             </h2>
             <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-              A complete AI support platform that handles conversations, 
+              A complete AI support platform that handles conversations,
               knowledge management, and customer communication.
             </p>
           </div>
@@ -251,7 +251,7 @@ export default function LandingPage() {
             Ready to Transform Your Support?
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Join teams using Echo to deliver instant, intelligent customer support 24/7.
+            Join teams using Omnix to deliver instant, intelligent customer support 24/7.
           </p>
           <Button size="lg" className="mt-8" asChild>
             <Link href="/sign-up">
@@ -266,7 +266,7 @@ export default function LandingPage() {
         <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-4 px-4 md:px-8 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <BotIcon className="size-4" />
-            <span>Echo &copy; {new Date().getFullYear()}</span>
+            <span>Omnix &copy; {new Date().getFullYear()}</span>
           </div>
           <nav className="flex gap-6">
             <a href="#features" className="hover:text-foreground transition-colors">Features</a>

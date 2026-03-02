@@ -12,13 +12,13 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.27.1",
     "@convex-dev/agent": "^0.1.16",
     "@hookform/resolvers": "^5.2.0",
     "@sentry/nextjs": "^9.42.1",
     "@workspace/backend": "workspace:*",
     "@workspace/math": "workspace:*",
     "@workspace/ui": "workspace:*",
+    "better-auth": "^1.2.0",
     "bowser": "^2.12.0",
     "convex": "^1.25.4",
     "countries-and-timezones": "^3.8.0",
@@ -27,10 +27,12 @@
     "lucide-react": "^0.475.0",
     "next": "^15.2.3",
     "next-themes": "^0.4.4",
+    "pg": "^8.13.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.61.1",
     "sonner": "^2.0.6",
+    "stripe": "^17.0.0",
     "zod": "3.25.67"
   },
   "devDependencies": {

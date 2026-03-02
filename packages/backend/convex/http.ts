@@ -1,78 +1,81 @@
-import { Webhook } from "svix";
-import { createClerkClient } from "@clerk/backend";
-import type { WebhookEvent } from "@clerk/backend";
+import Stripe from "stripe";
 import { httpRouter } from "convex/server";
 import { httpAction } from "./_generated/server";
 import { internal } from "./_generated/api";
 
-const clerkClient = createClerkClient({
-  secretKey: process.env.CLERK_SECRET_KEY || "",
-});
-
 const http = httpRouter();
 
+// Stripe webhook endpoint for subscription management
 http.route({
-  path: "/clerk-webhook",
+  path: "/stripe-webhook",
   method: "POST",
   handler: httpAction(async (ctx, request) => {
-    const event = await validateRequest(request);
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
+      apiVersion: "2025-02-24.acacia" as Stripe.LatestApiVersion,
+    });
 
-    if (!event) {
-      return new Response("Error occurred", { status: 400 });
+    const signature = request.headers.get("stripe-signature");
+    if (!signature) {
+      return new Response("Missing stripe-signature header", { status: 400 });
+    }
+
+    const body = await request.text();
+
+    let event: Stripe.Event;
+    try {
+      event = stripe.webhooks.constructEvent(
+        body,
+        signature,
+        process.env.STRIPE_WEBHOOK_SECRET || ""
+      );
+    } catch (err: any) {
+      console.error("Stripe webhook signature verification failed:", err.message);
+      return new Response("Webhook signature verification failed", { status: 400 });
     }
 
     switch (event.type) {
-      case "subscription.updated": {
-        const subscription = event.data as {
-          status: string;
-          payer?: {
-            organization_id: string;
-          }
-        };
+      case "checkout.session.completed": {
+        const session = event.data.object as Stripe.Checkout.Session;
+        const organizationId = session.metadata?.organizationId;
 
-        const organizationId = subscription.payer?.organization_id;
-
-        if (!organizationId) {
-          return new Response("Missing Organization ID", { status: 400 });
+        if (organizationId) {
+          await ctx.runMutation(internal.system.subscriptions.upsert, {
+            organizationId,
+            status: "active",
+          });
         }
+        break;
+      }
+      case "customer.subscription.updated": {
+        const subscription = event.data.object as Stripe.Subscription;
+        const organizationId = subscription.metadata?.organizationId;
 
-        const newMaxAllowedMemberships = subscription.status === "active" ? 5 : 1;
+        if (organizationId) {
+          await ctx.runMutation(internal.system.subscriptions.upsert, {
+            organizationId,
+            status: subscription.status === "active" ? "active" : "inactive",
+          });
+        }
+        break;
+      }
+      case "customer.subscription.deleted": {
+        const subscription = event.data.object as Stripe.Subscription;
+        const organizationId = subscription.metadata?.organizationId;
 
-        await clerkClient.organizations.updateOrganization(organizationId, {
-          maxAllowedMemberships: newMaxAllowedMemberships,
-        });
-
-        await ctx.runMutation(internal.system.subscriptions.upsert, {
-          organizationId,
-          status: subscription.status,
-        });
-
+        if (organizationId) {
+          await ctx.runMutation(internal.system.subscriptions.upsert, {
+            organizationId,
+            status: "canceled",
+          });
+        }
         break;
       }
       default:
-        console.log("Ignored Clerk webhook event", event.type);
+        console.log("Ignored Stripe webhook event:", event.type);
     }
 
     return new Response(null, { status: 200 });
   }),
 });
-
-async function validateRequest(req: Request): Promise<WebhookEvent | null> {
-  const payloadString = await req.text();
-  const svixHeaders = {
-    "svix-id": req.headers.get("svix-id") || "",
-    "svix-timestamp": req.headers.get("svix-timestamp") || "",
-    "svix-signature": req.headers.get("svix-signature") || "",
-  };
-
-  const wh = new Webhook(process.env.CLERK_WEBHOOK_SECRET || "");
-
-  try {
-    return wh.verify(payloadString, svixHeaders) as unknown as WebhookEvent;
-  } catch (error) {
-    console.error(`Error verifying webhook event`, error);
-    return null;
-  }
-};
 
 export default http;
