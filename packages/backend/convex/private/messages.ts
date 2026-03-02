@@ -137,19 +137,13 @@ export const getMany = query({
     const identity = await ctx.auth.getUserIdentity();
 
     if (identity === null) {
-      throw new ConvexError({
-        code: "UNAUTHORIZED",
-        message: "Identity not found",
-      });
+      return { page: [], isDone: true, continueCursor: "" };
     }
 
     const orgId = identity.orgId as string;
 
     if (!orgId) {
-      throw new ConvexError({
-        code: "UNAUTHORIZED",
-        message: "Organization not found",
-      });
+      return { page: [], isDone: true, continueCursor: "" };
     }
 
     const conversation = await ctx.db
@@ -158,17 +152,11 @@ export const getMany = query({
       .unique();
 
     if (!conversation) {
-      throw new ConvexError({
-        code: "NOT_FOUND",
-        message: "Conversation not found",
-      });
+      return { page: [], isDone: true, continueCursor: "" };
     }
 
     if (conversation.organizationId !== orgId) {
-      throw new ConvexError({
-        code: "UNAUTHORIZED",
-        message: "Invalid Organization ID",
-      });
+      return { page: [], isDone: true, continueCursor: "" };
     }
 
     const paginated = await supportAgent.listMessages(ctx, {

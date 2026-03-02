@@ -9,35 +9,23 @@ export const getOneByConversationId = query({
     const identity = await ctx.auth.getUserIdentity();
 
     if (identity === null) {
-      throw new ConvexError({
-        code: "UNAUTHORIZED",
-        message: "Unauthorized",
-      });
+      return null;
     }
 
     const orgId = identity.orgId as string;
 
     if (!orgId) {
-      throw new ConvexError({
-        code: "UNAUTHORIZED",
-        message: "Organization not found",
-      });
+      return null;
     }
 
     const conversation = await ctx.db.get(args.conversationId);
 
     if (!conversation) {
-      throw new ConvexError({
-        code: "NOT_FOUND",
-        message: "Conversation not found",
-      });
+      return null;
     }
 
     if (conversation.organizationId !== orgId) {
-      throw new ConvexError({
-        code: "UNAUTHORIZED",
-        message: "Invalid organization id",
-      });
+      return null;
     }
 
     const contactSession = await ctx.db.get(conversation.contactSessionId);

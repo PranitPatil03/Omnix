@@ -62,19 +62,16 @@ export const getOne = query({
     const identity = await ctx.auth.getUserIdentity();
             
     if (identity === null) {
-      throw new ConvexError({
-        code: "UNAUTHORIZED",
-        message: "Identity not found",
-      });
+      // Return null instead of throwing - let client handle loading state
+      return null;
     }
 
     const orgId = identity.orgId as string;
 
     if (!orgId) {
-      throw new ConvexError({
-        code: "UNAUTHORIZED",
-        message: "Organization not found",
-      });
+      // User is logged in but not part of an organization
+      // Return null instead of throwing - client can redirect to org selection
+      return null;
     }
 
     const widgetSettings = await ctx.db
