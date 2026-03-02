@@ -137,7 +137,7 @@ export const getMany = query({
     if (args.status) {
       conversations = await ctx.db
         .query("conversations")
-        .withIndex("by_status_and_organization_id", (q) => 
+        .withIndex("by_status_and_organization_id", (q) =>
           q
             .eq(
               "status",
