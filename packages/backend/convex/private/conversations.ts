@@ -125,13 +125,11 @@ export const getMany = query({
     // If the user has no active organization, return an empty result
     // instead of throwing, so the UI can render without crashing.
     if (!orgId) {
-      const emptyResult: PaginationResult<Doc<"conversations">> = {
-        page: [],
+      return {
+        page: [] as Array<Doc<"conversations"> & { lastMessage: MessageDoc | null; contactSession: Doc<"contactSessions"> }>,
         isDone: true,
         continueCursor: null as unknown as Cursor,
       };
-
-      return emptyResult;
     }
 
     let conversations: PaginationResult<Doc<"conversations">>;
