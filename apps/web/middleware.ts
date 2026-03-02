@@ -19,9 +19,11 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // Check for session cookie (better-auth uses "better-auth.session_token")
+  // Check for session cookie
+  // On HTTPS (production) better-auth prefixes with __Secure-
   const sessionToken =
-    req.cookies.get("better-auth.session_token")?.value;
+    req.cookies.get("better-auth.session_token")?.value ||
+    req.cookies.get("__Secure-better-auth.session_token")?.value;
 
   if (!sessionToken) {
     return NextResponse.redirect(new URL("/sign-in", req.url));
