@@ -1,13 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 // Routes that don't require authentication at all
-const publicRoutes = ["/", "/api/auth"];
+const publicRoutes = ["/", "/api/auth", "/org-selection"];
 
 // Auth pages — only accessible when NOT logged in
 const authRoutes = ["/sign-in", "/sign-up"];
-
-// Routes that require a session but NOT an active organization
-const orgFreeRoutes = ["/org-selection"];
 
 function matchesAny(pathname: string, routes: string[]) {
   return routes.some(
@@ -26,7 +23,7 @@ function getSessionToken(req: NextRequest): string | undefined {
 export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // 1. Always allow truly public routes (landing page, API auth endpoints)
+  // 1. Always allow public routes through (landing, auth API, org-selection)
   if (matchesAny(pathname, publicRoutes)) {
     return NextResponse.next();
   }
@@ -36,12 +33,8 @@ export default async function middleware(req: NextRequest) {
   // 2. Auth pages (/sign-in, /sign-up): redirect AWAY if already logged in
   if (matchesAny(pathname, authRoutes)) {
     if (sessionToken) {
-      // Already authenticated → send to org-selection (or conversations if org set)
-      const activeOrgId = req.cookies.get("active_organization_id")?.value;
-      const dest = activeOrgId ? "/conversations" : "/org-selection";
-      return NextResponse.redirect(new URL(dest, req.url));
+      return NextResponse.redirect(new URL("/org-selection", req.url));
     }
-    // Not logged in → show the auth page
     return NextResponse.next();
   }
 
@@ -50,19 +43,11 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/sign-in", req.url));
   }
 
-  // 4. Org-free routes (like /org-selection) — session required, org not required
-  if (matchesAny(pathname, orgFreeRoutes)) {
-    return NextResponse.next();
-  }
-
-  // 5. All other routes require an active organization
+  // 4. All dashboard routes require an active organization
   const activeOrgId = req.cookies.get("active_organization_id")?.value;
 
   if (!activeOrgId) {
-    const searchParams = new URLSearchParams({ redirectUrl: req.url });
-    return NextResponse.redirect(
-      new URL(`/org-selection?${searchParams.toString()}`, req.url)
-    );
+    return NextResponse.redirect(new URL("/org-selection", req.url));
   }
 
   return NextResponse.next();

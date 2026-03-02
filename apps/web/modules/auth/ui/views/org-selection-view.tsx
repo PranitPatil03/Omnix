@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { organization, useListOrganizations, useSession } from "@/lib/auth-client";
 import { Button } from "@workspace/ui/components/button";
 import { Input } from "@workspace/ui/components/input";
@@ -17,14 +17,31 @@ import { BuildingIcon, Loader2Icon, PlusIcon } from "lucide-react";
 
 export const OrgSelectionView = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const redirectUrl = searchParams.get("redirectUrl");
-  const { data: session } = useSession();
+  const { data: session, isPending: sessionLoading } = useSession();
   const { data: orgs, isPending: orgsLoading } = useListOrganizations();
   const [creating, setCreating] = useState(false);
   const [newOrgName, setNewOrgName] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectingId, setSelectingId] = useState<string | null>(null);
+
+  // Redirect to sign-in if no session (client-side guard)
+  useEffect(() => {
+    if (!sessionLoading && !session) {
+      router.replace("/sign-in");
+    }
+  }, [session, sessionLoading, router]);
+
+  // Auto-open create form when user has no orgs (new user)
+  useEffect(() => {
+    if (!orgsLoading && orgs && orgs.length === 0) {
+      setCreating(true);
+    }
+  }, [orgs, orgsLoading]);
+
+  const navigateToConversations = () => {
+    router.push("/conversations");
+    router.refresh();
+  };
 
   const handleCreateOrg = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,8 +58,7 @@ export const OrgSelectionView = () => {
         await organization.setActive({ organizationId: result.data.id });
         // Set cookie for middleware
         document.cookie = `active_organization_id=${result.data.id};path=/;max-age=${60 * 60 * 24 * 365}`;
-        router.push(redirectUrl || "/conversations");
-        router.refresh();
+        navigateToConversations();
       }
     } catch {
       // error handling
@@ -57,8 +73,7 @@ export const OrgSelectionView = () => {
       await organization.setActive({ organizationId: orgId });
       // Set cookie for middleware
       document.cookie = `active_organization_id=${orgId};path=/;max-age=${60 * 60 * 24 * 365}`;
-      router.push(redirectUrl || "/conversations");
-      router.refresh();
+      navigateToConversations();
     } catch {
       // error handling
     } finally {
@@ -66,7 +81,7 @@ export const OrgSelectionView = () => {
     }
   };
 
-  if (orgsLoading) {
+  if (sessionLoading || orgsLoading) {
     return (
       <div className="flex items-center justify-center">
         <Loader2Icon className="size-6 animate-spin text-muted-foreground" />
@@ -74,17 +89,26 @@ export const OrgSelectionView = () => {
     );
   }
 
+  // Don't render if no session (redirect happening)
+  if (!session) return null;
+
+  const hasOrgs = orgs && orgs.length > 0;
+
   return (
     <Card className="w-full max-w-md">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Select Organization</CardTitle>
+        <CardTitle className="text-2xl">
+          {hasOrgs ? "Select Organization" : "Create Your Organization"}
+        </CardTitle>
         <CardDescription>
-          Choose an organization or create a new one
+          {hasOrgs
+            ? "Choose an organization or create a new one"
+            : "Create your first organization to get started"}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Existing organizations */}
-        {orgs && orgs.length > 0 && (
+        {hasOrgs && (
           <div className="space-y-2">
             {orgs.map((org) => (
               <button
