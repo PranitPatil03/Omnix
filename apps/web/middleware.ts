@@ -1,38 +1,64 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-const publicRoutes = ["/", "/sign-in", "/sign-up", "/api/auth"];
-const orgFreeRoutes = ["/sign-in", "/sign-up", "/org-selection"];
+// Routes that don't require authentication at all
+const publicRoutes = ["/", "/api/auth"];
 
-function isPublic(pathname: string) {
-  return publicRoutes.some((route) => pathname === route || pathname.startsWith(route + "/"));
+// Auth pages — only accessible when NOT logged in
+const authRoutes = ["/sign-in", "/sign-up"];
+
+// Routes that require a session but NOT an active organization
+const orgFreeRoutes = ["/org-selection"];
+
+function matchesAny(pathname: string, routes: string[]) {
+  return routes.some(
+    (route) => pathname === route || pathname.startsWith(route + "/")
+  );
 }
 
-function isOrgFree(pathname: string) {
-  return orgFreeRoutes.some((route) => pathname === route || pathname.startsWith(route + "/"));
+function getSessionToken(req: NextRequest): string | undefined {
+  // On HTTPS (production) better-auth prefixes cookies with __Secure-
+  return (
+    req.cookies.get("better-auth.session_token")?.value ||
+    req.cookies.get("__Secure-better-auth.session_token")?.value
+  );
 }
 
 export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Allow public routes through
-  if (isPublic(pathname)) {
+  // 1. Always allow truly public routes (landing page, API auth endpoints)
+  if (matchesAny(pathname, publicRoutes)) {
     return NextResponse.next();
   }
 
-  // Check for session cookie
-  // On HTTPS (production) better-auth prefixes with __Secure-
-  const sessionToken =
-    req.cookies.get("better-auth.session_token")?.value ||
-    req.cookies.get("__Secure-better-auth.session_token")?.value;
+  const sessionToken = getSessionToken(req);
 
+  // 2. Auth pages (/sign-in, /sign-up): redirect AWAY if already logged in
+  if (matchesAny(pathname, authRoutes)) {
+    if (sessionToken) {
+      // Already authenticated → send to org-selection (or conversations if org set)
+      const activeOrgId = req.cookies.get("active_organization_id")?.value;
+      const dest = activeOrgId ? "/conversations" : "/org-selection";
+      return NextResponse.redirect(new URL(dest, req.url));
+    }
+    // Not logged in → show the auth page
+    return NextResponse.next();
+  }
+
+  // 3. Everything below requires a session
   if (!sessionToken) {
     return NextResponse.redirect(new URL("/sign-in", req.url));
   }
 
-  // Check for active organization cookie  
+  // 4. Org-free routes (like /org-selection) — session required, org not required
+  if (matchesAny(pathname, orgFreeRoutes)) {
+    return NextResponse.next();
+  }
+
+  // 5. All other routes require an active organization
   const activeOrgId = req.cookies.get("active_organization_id")?.value;
 
-  if (!activeOrgId && !isOrgFree(pathname)) {
+  if (!activeOrgId) {
     const searchParams = new URLSearchParams({ redirectUrl: req.url });
     return NextResponse.redirect(
       new URL(`/org-selection?${searchParams.toString()}`, req.url)
