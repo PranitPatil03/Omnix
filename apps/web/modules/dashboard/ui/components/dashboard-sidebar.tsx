@@ -12,6 +12,7 @@ import {
   LogOutIcon,
   Loader2Icon,
   UserIcon,
+  SettingsIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -77,6 +78,11 @@ const configurationItems = [
 ];
 
 const accountItems = [
+  {
+    title: "Settings",
+    url: "/settings",
+    icon: SettingsIcon,
+  },
   {
     title: "Plans & Billing",
     url: "/billing",
