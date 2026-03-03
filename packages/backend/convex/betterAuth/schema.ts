@@ -1,5 +1,5 @@
 // Auto-generated schema for better-auth Convex component
-// Tables: user, session, account, verification, organization, member, invitation
+// Tables: user, session, account, verification, organization, member, invitation, jwks
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
@@ -79,4 +79,10 @@ export default defineSchema({
   })
     .index("organizationId", ["organizationId"])
     .index("email", ["email"]),
+
+  jwks: defineTable({
+    publicKey: v.string(),
+    privateKey: v.string(),
+    createdAt: v.number(),
+  }),
 });
