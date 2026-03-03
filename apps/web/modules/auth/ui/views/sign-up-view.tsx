@@ -40,7 +40,7 @@ export const SignUpView = () => {
       if (result.error) {
         setError(result.error.message ?? "Sign up failed");
       } else {
-        router.push("/org-selection");
+        router.push("/conversations");
         router.refresh();
       }
     } catch {
@@ -120,7 +120,7 @@ export const SignUpView = () => {
                 setLoading(true);
                 await signIn.social({
                   provider: "github",
-                  callbackURL: "/org-selection",
+                  callbackURL: "/conversations",
                   errorCallbackURL: "/sign-up",
                 });
               }}
@@ -136,7 +136,7 @@ export const SignUpView = () => {
                 setLoading(true);
                 await signIn.social({
                   provider: "google",
-                  callbackURL: "/org-selection",
+                  callbackURL: "/conversations",
                   errorCallbackURL: "/sign-up",
                 });
               }}

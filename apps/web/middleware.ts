@@ -1,9 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-// Routes that don't require authentication at all
-const publicRoutes = ["/", "/api/auth", "/org-selection"];
+// Routes accessible without authentication
+const publicRoutes = ["/", "/api/auth"];
 
-// Auth pages — only accessible when NOT logged in
+// Auth pages — only for unauthenticated users
 const authRoutes = ["/sign-in", "/sign-up"];
 
 function matchesAny(pathname: string, routes: string[]) {
@@ -13,7 +13,6 @@ function matchesAny(pathname: string, routes: string[]) {
 }
 
 function getSessionToken(req: NextRequest): string | undefined {
-  // On HTTPS (production) better-auth prefixes cookies with __Secure-
   return (
     req.cookies.get("better-auth.session_token")?.value ||
     req.cookies.get("__Secure-better-auth.session_token")?.value
@@ -23,31 +22,24 @@ function getSessionToken(req: NextRequest): string | undefined {
 export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // 1. Always allow public routes through (landing, auth API, org-selection)
+  // 1. Public routes — always allow
   if (matchesAny(pathname, publicRoutes)) {
     return NextResponse.next();
   }
 
   const sessionToken = getSessionToken(req);
 
-  // 2. Auth pages (/sign-in, /sign-up): redirect AWAY if already logged in
+  // 2. Auth pages — redirect away if already logged in
   if (matchesAny(pathname, authRoutes)) {
     if (sessionToken) {
-      return NextResponse.redirect(new URL("/org-selection", req.url));
+      return NextResponse.redirect(new URL("/conversations", req.url));
     }
     return NextResponse.next();
   }
 
-  // 3. Everything below requires a session
+  // 3. All other routes require auth
   if (!sessionToken) {
     return NextResponse.redirect(new URL("/sign-in", req.url));
-  }
-
-  // 4. All dashboard routes require an active organization
-  const activeOrgId = req.cookies.get("active_organization_id")?.value;
-
-  if (!activeOrgId) {
-    return NextResponse.redirect(new URL("/org-selection", req.url));
   }
 
   return NextResponse.next();
