@@ -7,21 +7,15 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"],
       "env": [
-        "BETTER_AUTH_SECRET",
-        "BETTER_AUTH_URL",
-        "NEXT_PUBLIC_BETTER_AUTH_URL",
-        "DATABASE_URL",
+        "NEXT_PUBLIC_CONVEX_URL",
+        "NEXT_PUBLIC_CONVEX_SITE_URL",
+        "NEXT_PUBLIC_SITE_URL",
         "STRIPE_SECRET_KEY",
         "STRIPE_WEBHOOK_SECRET",
         "STRIPE_PRO_PRICE_ID",
         "STRIPE_PRO_PRODUCT_ID",
         "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY",
-        "NEXT_PUBLIC_CONVEX_URL",
-        "SENTRY_AUTH_TOKEN",
-        "GITHUB_CLIENT_ID",
-        "GITHUB_CLIENT_SECRET",
-        "GOOGLE_CLIENT_ID",
-        "GOOGLE_CLIENT_SECRET"
+        "SENTRY_AUTH_TOKEN"
       ]
     },
     "lint": {

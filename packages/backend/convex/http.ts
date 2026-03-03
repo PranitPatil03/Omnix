@@ -2,8 +2,12 @@ import Stripe from "stripe";
 import { httpRouter } from "convex/server";
 import { httpAction } from "./_generated/server";
 import { internal } from "./_generated/api";
+import { authComponent, createAuth } from "./betterAuth/auth";
 
 const http = httpRouter();
+
+// Register better-auth routes (handles /api/auth/* on the Convex site)
+authComponent.registerRoutes(http, createAuth);
 
 // Stripe webhook endpoint for subscription management
 http.route({

@@ -1,5 +1,5 @@
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getToken } from "@/lib/auth-server";
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
@@ -9,16 +9,20 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST() {
   try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
-
-    if (!session) {
+    const token = await getToken();
+    if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get active organization from session
-    const organizationId = (session.session as any).activeOrganizationId;
+    // Decode JWT payload for user info
+    const payload = JSON.parse(
+      Buffer.from(token.split(".")[1]!, "base64url").toString()
+    );
+    const email: string | undefined = payload.email;
+
+    // Get active organization from cookie (set by OrganizationGuard)
+    const cookieStore = await cookies();
+    const organizationId = cookieStore.get("active_organization_id")?.value;
     if (!organizationId) {
       return NextResponse.json({ error: "No active organization" }, { status: 400 });
     }
@@ -52,16 +56,16 @@ export async function POST() {
       ],
       metadata: {
         organizationId, // Passed to webhook for mapping
-        userId: session.user.id,
+        userId: payload.sub,
       },
       subscription_data: {
         metadata: {
           organizationId,
         },
       },
-      customer_email: session.user.email,
-      success_url: `${process.env.BETTER_AUTH_URL || "http://localhost:3000"}/billing?success=true`,
-      cancel_url: `${process.env.BETTER_AUTH_URL || "http://localhost:3000"}/billing?canceled=true`,
+      customer_email: email,
+      success_url: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/billing?success=true`,
+      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/billing?canceled=true`,
     });
 
     return NextResponse.json({ url: checkoutSession.url });

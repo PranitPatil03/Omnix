@@ -1,5 +1,4 @@
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getToken } from "@/lib/auth-server";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
@@ -9,17 +8,24 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST() {
   try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
-
-    if (!session) {
+    const token = await getToken();
+    if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Decode JWT payload for user email
+    const payload = JSON.parse(
+      Buffer.from(token.split(".")[1]!, "base64url").toString()
+    );
+    const email: string | undefined = payload.email;
+
+    if (!email) {
+      return NextResponse.json({ error: "No email in token" }, { status: 400 });
     }
 
     // Find customer by email
     const customers = await stripe.customers.list({
-      email: session.user.email,
+      email,
       limit: 1,
     });
 
@@ -31,7 +37,7 @@ export async function POST() {
 
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: customer.id,
-      return_url: `${process.env.BETTER_AUTH_URL || "http://localhost:3000"}/billing`,
+      return_url: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/billing`,
     });
 
     return NextResponse.json({ url: portalSession.url });
