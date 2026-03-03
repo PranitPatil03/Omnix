@@ -1,8 +1,7 @@
 import { v } from "convex/values";
 import { query } from "../_generated/server";
 
-// Validate organization exists by checking if any data exists for it
-// This replaces the previous Clerk API validation.
+// Validate organization exists by checking if any data exists for it.
 // The widget calls this to verify the org ID is valid before loading.
 export const validate = query({
   args: {
