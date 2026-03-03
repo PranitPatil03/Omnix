@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { useQuery } from "convex/react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "@workspace/backend/_generated/api";
 import { Button } from "@workspace/ui/components/button";
 import { CheckIcon, LoaderIcon } from "lucide-react";
@@ -42,8 +43,53 @@ const plans = [
 
 export const PricingTable = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [verifyMessage, setVerifyMessage] = useState("");
   const subscription = useQuery(api.private.subscriptions.getStatus);
+  const syncStatus = useMutation(api.private.subscriptions.syncStatus);
   const isActive = subscription?.status === "active";
+  const searchParams = useSearchParams();
+
+  // After Stripe checkout redirects back with ?success=true,
+  // verify the payment with Stripe and sync to Convex
+  useEffect(() => {
+    const success = searchParams.get("success");
+    if (success !== "true") return;
+    if (isActive) return; // Already synced
+
+    let cancelled = false;
+
+    const verify = async () => {
+      try {
+        setVerifyMessage("Verifying your payment...");
+        const res = await fetch("/api/stripe/verify", { method: "POST" });
+        const data = await res.json();
+
+        if (cancelled) return;
+
+        if (data.verified && data.status) {
+          await syncStatus({ status: data.status });
+          setVerifyMessage("Payment confirmed! Your plan has been upgraded.");
+          // Clean up the URL
+          window.history.replaceState({}, "", "/billing");
+        } else {
+          setVerifyMessage(
+            "Payment is being processed. It may take a moment to reflect."
+          );
+        }
+      } catch {
+        if (!cancelled) {
+          setVerifyMessage(
+            "Could not verify payment right now. Please refresh in a moment."
+          );
+        }
+      }
+    };
+
+    verify();
+    return () => {
+      cancelled = true;
+    };
+  }, [searchParams, isActive, syncStatus]);
 
   const handleUpgrade = async () => {
     setIsLoading(true);
@@ -81,6 +127,11 @@ export const PricingTable = () => {
 
   return (
     <div className="flex flex-col items-center justify-center gap-y-4">
+      {verifyMessage && (
+        <div className="w-full max-w-3xl rounded-lg border bg-background p-4 text-sm text-center">
+          {verifyMessage}
+        </div>
+      )}
       <div className="grid gap-6 md:grid-cols-2 max-w-3xl w-full">
         {plans.map((plan) => (
           <div

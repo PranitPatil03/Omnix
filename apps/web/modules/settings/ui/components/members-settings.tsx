@@ -105,12 +105,15 @@ export const MembersSettings = () => {
   const [invitationsData, setInvitationsData] = useState<any[]>([]);
   const [invitationsLoading, setInvitationsLoading] = useState(true);
 
+  // Stable org ID to avoid infinite re-renders from object reference changes
+  const orgId = activeOrg?.id;
+
   const fetchMembers = useCallback(async () => {
-    if (!activeOrg) return;
+    if (!orgId) return;
     setMembersLoading(true);
     try {
       const res = await organization.getFullOrganization({
-        query: { organizationId: activeOrg.id },
+        query: { organizationId: orgId },
       });
       setMembersData(res.data);
     } catch {
@@ -118,14 +121,14 @@ export const MembersSettings = () => {
     } finally {
       setMembersLoading(false);
     }
-  }, [activeOrg]);
+  }, [orgId]);
 
   const fetchInvitations = useCallback(async () => {
-    if (!activeOrg) return;
+    if (!orgId) return;
     setInvitationsLoading(true);
     try {
       const res = await organization.listInvitations({
-        query: { organizationId: activeOrg.id },
+        query: { organizationId: orgId },
       });
       setInvitationsData((res.data as any) ?? []);
     } catch {
@@ -133,7 +136,7 @@ export const MembersSettings = () => {
     } finally {
       setInvitationsLoading(false);
     }
-  }, [activeOrg]);
+  }, [orgId]);
 
   useEffect(() => {
     fetchMembers();
