@@ -56,7 +56,7 @@ importers:
         version: 0.1.16(ai@4.3.19(react@19.0.0)(zod@3.25.67))(convex-helpers@0.1.100(@standard-schema/spec@1.1.0)(convex@1.25.4(@clerk/clerk-react@5.37.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0))(hono@4.11.4)(react@19.0.0)(typescript@5.7.3)(zod@3.25.67))(convex@1.25.4(@clerk/clerk-react@5.37.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0))(react@19.0.0)
       '@convex-dev/better-auth':
         specifier: ^0.10.13
-        version: 0.10.13(b26459d7b829f455d648fb9b9a9667ca)
+        version: 0.10.13(c28e3094fb6d6110cc9fe969fe74d860)
       '@hookform/resolvers':
         specifier: ^5.2.0
         version: 5.2.0(react-hook-form@7.61.1(react@19.0.0))
@@ -212,6 +212,9 @@ importers:
 
   packages/backend:
     dependencies:
+      '@ai-sdk/groq':
+        specifier: ^3.0.27
+        version: 3.0.27(zod@3.25.67)
       '@ai-sdk/openai':
         specifier: ^1.3.23
         version: 1.3.23(zod@3.25.67)
@@ -226,10 +229,10 @@ importers:
         version: 0.0.17(@convex-dev/agent@0.1.16(ai@4.3.19(react@19.1.1)(zod@3.25.67))(convex-helpers@0.1.100(@standard-schema/spec@1.1.0)(convex@1.25.4(@clerk/clerk-react@5.37.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1))(hono@4.11.4)(react@19.1.1)(typescript@5.9.3)(zod@3.25.67))(convex@1.25.4(@clerk/clerk-react@5.37.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1))(react@19.1.1))(@types/node@20.17.19)(@types/react-dom@19.0.4(@types/react@19.0.10))(@types/react@19.0.10)(convex-helpers@0.1.100(@standard-schema/spec@1.1.0)(convex@1.25.4(@clerk/clerk-react@5.37.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1))(hono@4.11.4)(react@19.1.1)(typescript@5.9.3)(zod@3.25.67))(convex@1.25.4(@clerk/clerk-react@5.37.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1))(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.43.1)(ts-node@10.9.2(@swc/core@1.13.3)(@types/node@20.17.19)(typescript@5.9.3))(yaml@2.8.0)(zod@3.25.67)
       '@convex-dev/better-auth':
         specifier: ^0.10.13
-        version: 0.10.13(0971673d38782684130960d0ce0cbb15)
+        version: 0.10.13(c5e5d08d6e5f0472afbb59dee654909d)
       '@convex-dev/rag':
         specifier: ^0.3.3
-        version: 0.3.3(@ai-sdk/provider@1.1.3)(@convex-dev/workpool@0.2.17(convex-helpers@0.1.100(@standard-schema/spec@1.1.0)(convex@1.25.4(@clerk/clerk-react@5.37.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1))(hono@4.11.4)(react@19.1.1)(typescript@5.9.3)(zod@3.25.67))(convex@1.25.4(@clerk/clerk-react@5.37.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)))(ai@4.3.19(react@19.1.1)(zod@3.25.67))(convex-helpers@0.1.100(@standard-schema/spec@1.1.0)(convex@1.25.4(@clerk/clerk-react@5.37.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1))(hono@4.11.4)(react@19.1.1)(typescript@5.9.3)(zod@3.25.67))(convex@1.25.4(@clerk/clerk-react@5.37.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1))
+        version: 0.3.3(@ai-sdk/provider@3.0.8)(@convex-dev/workpool@0.2.17(convex-helpers@0.1.100(@standard-schema/spec@1.1.0)(convex@1.25.4(@clerk/clerk-react@5.37.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1))(hono@4.11.4)(react@19.1.1)(typescript@5.9.3)(zod@3.25.67))(convex@1.25.4(@clerk/clerk-react@5.37.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)))(ai@4.3.19(react@19.1.1)(zod@3.25.67))(convex-helpers@0.1.100(@standard-schema/spec@1.1.0)(convex@1.25.4(@clerk/clerk-react@5.37.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1))(hono@4.11.4)(react@19.1.1)(typescript@5.9.3)(zod@3.25.67))(convex@1.25.4(@clerk/clerk-react@5.37.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1))
       '@vapi-ai/server-sdk':
         specifier: ^0.10.0
         version: 0.10.0
@@ -507,6 +510,12 @@ importers:
 
 packages:
 
+  '@ai-sdk/groq@3.0.27':
+    resolution: {integrity: sha512-IZLwdA7s70BZQMG5JUFgaXMw61UvLR9sBSf7+vhc4YjMMj0UpRK+3ERaVxQah/wrjVhoqEYRUA4JgcBIrafxRg==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
+
   '@ai-sdk/openai@1.3.23':
     resolution: {integrity: sha512-86U7rFp8yacUAOE/Jz8WbGcwMCqWvjK33wk5DXkfnAOEn3mx2r7tNSJdjukQFZbAK97VMXGPPHxF+aEARDXRXQ==}
     engines: {node: '>=18'}
@@ -519,8 +528,18 @@ packages:
     peerDependencies:
       zod: ^3.23.8
 
+  '@ai-sdk/provider-utils@4.0.17':
+    resolution: {integrity: sha512-oyCeFINTYK0B8ZGUBiQc05G5vytPlKSmTTtm19xfJuUgoi8zkvvRcoPQci4mSnyfpPn2XSFFDfsALG8uGcapfg==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
+
   '@ai-sdk/provider@1.1.3':
     resolution: {integrity: sha512-qZMxYJ0qqX/RfnuIaab+zp8UAeJn/ygXXAffR5I4N0n1IrvA6qBsjc8hXLmBiMV2zoXlifkacF7sEFnYnjBcqg==}
+    engines: {node: '>=18'}
+
+  '@ai-sdk/provider@3.0.8':
+    resolution: {integrity: sha512-oGMAgGoQdBXbZqNG0Ze56CHjDZ1IDYOwGYxYjO5KLSlz5HiNQ9udIXsPZ61VWaHGZ5XW/jyjmr6t2xz2jGVwbQ==}
     engines: {node: '>=18'}
 
   '@ai-sdk/react@1.2.12':
@@ -813,6 +832,7 @@ packages:
   '@clerk/types@4.71.0':
     resolution: {integrity: sha512-QsZEIzx9AFTXAjcGc+aQ+k0TjzXTqi2EpScl36w187xhO3+CWXuk/tZai8IdVclp091+KmQKd8ayxuKnhg3QYQ==}
     engines: {node: '>=18.17.0'}
+    deprecated: 'This package is no longer supported. Please import types from @clerk/shared/types instead. See the upgrade guide for more info: https://clerk.com/docs/guides/development/upgrading/upgrade-guides/core-3'
 
   '@convex-dev/agent-playground@0.0.17':
     resolution: {integrity: sha512-vtzKdn4iv9Petg9JYpZ5qNvL2UZbXgTXy0EPEAbJyYjSRJVdf23gve78BtekNQcNWaZqANnSwxtP4pDBwAHqMg==}
@@ -4528,6 +4548,10 @@ packages:
     resolution: {integrity: sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==}
     engines: {node: '>=0.8.x'}
 
+  eventsource-parser@3.0.6:
+    resolution: {integrity: sha512-Vo1ab+QXPzZ4tCa8SwIHJFaSzy4R6SHf7BY79rFBDf0idraZWAkYrDjDj8uWaSm3S2TK+hJ7/t1CEmZ7jXw+pg==}
+    engines: {node: '>=18.0.0'}
+
   execa@5.1.1:
     resolution: {integrity: sha512-8uSpZZocAZRBAPIEINJj3Lo9HyGitllczc27Eh5YYojjMFMn8yHMDMaUHE2Jqfq05D/wucwI4JGURyXt1vchyg==}
     engines: {node: '>=10'}
@@ -7044,6 +7068,12 @@ packages:
 
 snapshots:
 
+  '@ai-sdk/groq@3.0.27(zod@3.25.67)':
+    dependencies:
+      '@ai-sdk/provider': 3.0.8
+      '@ai-sdk/provider-utils': 4.0.17(zod@3.25.67)
+      zod: 3.25.67
+
   '@ai-sdk/openai@1.3.23(zod@3.25.67)':
     dependencies:
       '@ai-sdk/provider': 1.1.3
@@ -7057,7 +7087,18 @@ snapshots:
       secure-json-parse: 2.7.0
       zod: 3.25.67
 
+  '@ai-sdk/provider-utils@4.0.17(zod@3.25.67)':
+    dependencies:
+      '@ai-sdk/provider': 3.0.8
+      '@standard-schema/spec': 1.1.0
+      eventsource-parser: 3.0.6
+      zod: 3.25.67
+
   '@ai-sdk/provider@1.1.3':
+    dependencies:
+      json-schema: 0.4.0
+
+  '@ai-sdk/provider@3.0.8':
     dependencies:
       json-schema: 0.4.0
 
@@ -7577,27 +7618,27 @@ snapshots:
       nanostores: 1.1.1
       zod: 4.3.6
 
-  '@better-auth/passkey@1.4.9(c636feddba63c469d570485539654eb2)':
-    dependencies:
-      '@better-auth/core': 1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.6))(jose@6.1.3)(kysely@0.28.11)(nanostores@1.1.1)
-      '@better-auth/utils': 0.3.0
-      '@better-fetch/fetch': 1.1.21
-      '@simplewebauthn/browser': 13.2.2
-      '@simplewebauthn/server': 13.2.3
-      better-auth: 1.4.9(@prisma/client@7.4.2(prisma@7.4.2(@types/react@19.0.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3))(typescript@5.7.3))(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@prisma/client@7.4.2(prisma@7.4.2(@types/react@19.0.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3))(typescript@5.7.3))(@types/pg@8.18.0)(kysely@0.28.11)(mysql2@3.15.3)(pg@8.19.0)(postgres@3.4.7)(prisma@7.4.2(@types/react@19.0.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3)))(mongodb@7.1.0)(mysql2@3.15.3)(next@15.5.12(@babel/core@7.28.0)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(pg@8.19.0)(prisma@7.4.2(@types/react@19.0.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      better-call: 1.1.7(zod@3.25.67)
-      nanostores: 1.1.1
-      zod: 4.3.6
-
-  '@better-auth/passkey@1.4.9(ccf881e828975478a64522581579de86)':
+  '@better-auth/passkey@1.4.9(0ad072e45ef3f2e3d8b35e6c19519c15)':
     dependencies:
       '@better-auth/core': 1.5.1(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@3.25.67))(jose@6.1.3)(kysely@0.28.11)(nanostores@1.1.1)
       '@better-auth/utils': 0.3.1
       '@better-fetch/fetch': 1.1.21
       '@simplewebauthn/browser': 13.2.2
       '@simplewebauthn/server': 13.2.3
-      better-auth: 1.4.9(@prisma/client@7.4.2(prisma@7.4.2(@types/react@19.0.10)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.3))(typescript@5.9.3))(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@prisma/client@7.4.2(prisma@7.4.2(@types/react@19.0.10)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.3))(typescript@5.9.3))(@types/pg@8.18.0)(kysely@0.28.11)(mysql2@3.15.3)(pg@8.19.0)(postgres@3.4.7)(prisma@7.4.2(@types/react@19.0.10)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.3)))(mongodb@7.1.0)(mysql2@3.15.3)(next@15.5.12(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(pg@8.19.0)(prisma@7.4.2(@types/react@19.0.10)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.3))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      better-auth: 1.4.9(@prisma/client@7.4.2(prisma@7.4.2(@types/react@19.0.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3))(typescript@5.7.3))(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@prisma/client@7.4.2(prisma@7.4.2(@types/react@19.0.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3))(typescript@5.7.3))(@types/pg@8.18.0)(kysely@0.28.11)(mysql2@3.15.3)(pg@8.19.0)(postgres@3.4.7)(prisma@7.4.2(@types/react@19.0.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3)))(mongodb@7.1.0)(mysql2@3.15.3)(next@15.5.12(@babel/core@7.28.0)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(pg@8.19.0)(prisma@7.4.2(@types/react@19.0.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       better-call: 1.3.2(zod@3.25.67)
+      nanostores: 1.1.1
+      zod: 4.3.6
+
+  '@better-auth/passkey@1.4.9(14d69461f3bccb5d3e05772de0b1c9a9)':
+    dependencies:
+      '@better-auth/core': 1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.6))(jose@6.1.3)(kysely@0.28.11)(nanostores@1.1.1)
+      '@better-auth/utils': 0.3.0
+      '@better-fetch/fetch': 1.1.21
+      '@simplewebauthn/browser': 13.2.2
+      '@simplewebauthn/server': 13.2.3
+      better-auth: 1.4.9(@prisma/client@7.4.2(prisma@7.4.2(@types/react@19.0.10)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.3))(typescript@5.9.3))(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@prisma/client@7.4.2(prisma@7.4.2(@types/react@19.0.10)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.3))(typescript@5.9.3))(@types/pg@8.18.0)(kysely@0.28.11)(mysql2@3.15.3)(pg@8.19.0)(postgres@3.4.7)(prisma@7.4.2(@types/react@19.0.10)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.3)))(mongodb@7.1.0)(mysql2@3.15.3)(next@15.5.12(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(pg@8.19.0)(prisma@7.4.2(@types/react@19.0.10)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.3))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      better-call: 1.1.7(zod@3.25.67)
       nanostores: 1.1.1
       zod: 4.3.6
 
@@ -7774,32 +7815,9 @@ snapshots:
     optionalDependencies:
       react: 19.1.1
 
-  '@convex-dev/better-auth@0.10.13(0971673d38782684130960d0ce0cbb15)':
+  '@convex-dev/better-auth@0.10.13(c28e3094fb6d6110cc9fe969fe74d860)':
     dependencies:
-      '@better-auth/passkey': 1.4.9(ccf881e828975478a64522581579de86)
-      '@better-fetch/fetch': 1.1.21
-      better-auth: 1.4.9(@prisma/client@7.4.2(prisma@7.4.2(@types/react@19.0.10)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.3))(typescript@5.9.3))(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@prisma/client@7.4.2(prisma@7.4.2(@types/react@19.0.10)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.3))(typescript@5.9.3))(@types/pg@8.18.0)(kysely@0.28.11)(mysql2@3.15.3)(pg@8.19.0)(postgres@3.4.7)(prisma@7.4.2(@types/react@19.0.10)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.3)))(mongodb@7.1.0)(mysql2@3.15.3)(next@15.5.12(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(pg@8.19.0)(prisma@7.4.2(@types/react@19.0.10)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.3))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      common-tags: 1.8.2
-      convex: 1.25.4(@clerk/clerk-react@5.37.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)
-      convex-helpers: 0.1.100(@standard-schema/spec@1.1.0)(convex@1.25.4(@clerk/clerk-react@5.37.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1))(hono@4.11.4)(react@19.1.1)(typescript@5.9.3)(zod@4.3.6)
-      jose: 6.1.3
-      react: 19.1.1
-      remeda: 2.33.4
-      semver: 7.7.4
-      type-fest: 4.41.0
-      zod: 4.3.6
-    transitivePeerDependencies:
-      - '@better-auth/core'
-      - '@better-auth/utils'
-      - '@standard-schema/spec'
-      - better-call
-      - hono
-      - nanostores
-      - typescript
-
-  '@convex-dev/better-auth@0.10.13(b26459d7b829f455d648fb9b9a9667ca)':
-    dependencies:
-      '@better-auth/passkey': 1.4.9(c636feddba63c469d570485539654eb2)
+      '@better-auth/passkey': 1.4.9(0ad072e45ef3f2e3d8b35e6c19519c15)
       '@better-fetch/fetch': 1.1.21
       better-auth: 1.4.9(@prisma/client@7.4.2(prisma@7.4.2(@types/react@19.0.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3))(typescript@5.7.3))(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@prisma/client@7.4.2(prisma@7.4.2(@types/react@19.0.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3))(typescript@5.7.3))(@types/pg@8.18.0)(kysely@0.28.11)(mysql2@3.15.3)(pg@8.19.0)(postgres@3.4.7)(prisma@7.4.2(@types/react@19.0.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3)))(mongodb@7.1.0)(mysql2@3.15.3)(next@15.5.12(@babel/core@7.28.0)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(pg@8.19.0)(prisma@7.4.2(@types/react@19.0.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       common-tags: 1.8.2
@@ -7820,9 +7838,32 @@ snapshots:
       - nanostores
       - typescript
 
-  '@convex-dev/rag@0.3.3(@ai-sdk/provider@1.1.3)(@convex-dev/workpool@0.2.17(convex-helpers@0.1.100(@standard-schema/spec@1.1.0)(convex@1.25.4(@clerk/clerk-react@5.37.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1))(hono@4.11.4)(react@19.1.1)(typescript@5.9.3)(zod@3.25.67))(convex@1.25.4(@clerk/clerk-react@5.37.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)))(ai@4.3.19(react@19.1.1)(zod@3.25.67))(convex-helpers@0.1.100(@standard-schema/spec@1.1.0)(convex@1.25.4(@clerk/clerk-react@5.37.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1))(hono@4.11.4)(react@19.1.1)(typescript@5.9.3)(zod@3.25.67))(convex@1.25.4(@clerk/clerk-react@5.37.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1))':
+  '@convex-dev/better-auth@0.10.13(c5e5d08d6e5f0472afbb59dee654909d)':
     dependencies:
-      '@ai-sdk/provider': 1.1.3
+      '@better-auth/passkey': 1.4.9(14d69461f3bccb5d3e05772de0b1c9a9)
+      '@better-fetch/fetch': 1.1.21
+      better-auth: 1.4.9(@prisma/client@7.4.2(prisma@7.4.2(@types/react@19.0.10)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.3))(typescript@5.9.3))(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@prisma/client@7.4.2(prisma@7.4.2(@types/react@19.0.10)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.3))(typescript@5.9.3))(@types/pg@8.18.0)(kysely@0.28.11)(mysql2@3.15.3)(pg@8.19.0)(postgres@3.4.7)(prisma@7.4.2(@types/react@19.0.10)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.3)))(mongodb@7.1.0)(mysql2@3.15.3)(next@15.5.12(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(pg@8.19.0)(prisma@7.4.2(@types/react@19.0.10)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.3))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      common-tags: 1.8.2
+      convex: 1.25.4(@clerk/clerk-react@5.37.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)
+      convex-helpers: 0.1.100(@standard-schema/spec@1.1.0)(convex@1.25.4(@clerk/clerk-react@5.37.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1))(hono@4.11.4)(react@19.1.1)(typescript@5.9.3)(zod@4.3.6)
+      jose: 6.1.3
+      react: 19.1.1
+      remeda: 2.33.4
+      semver: 7.7.4
+      type-fest: 4.41.0
+      zod: 4.3.6
+    transitivePeerDependencies:
+      - '@better-auth/core'
+      - '@better-auth/utils'
+      - '@standard-schema/spec'
+      - better-call
+      - hono
+      - nanostores
+      - typescript
+
+  '@convex-dev/rag@0.3.3(@ai-sdk/provider@3.0.8)(@convex-dev/workpool@0.2.17(convex-helpers@0.1.100(@standard-schema/spec@1.1.0)(convex@1.25.4(@clerk/clerk-react@5.37.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1))(hono@4.11.4)(react@19.1.1)(typescript@5.9.3)(zod@3.25.67))(convex@1.25.4(@clerk/clerk-react@5.37.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)))(ai@4.3.19(react@19.1.1)(zod@3.25.67))(convex-helpers@0.1.100(@standard-schema/spec@1.1.0)(convex@1.25.4(@clerk/clerk-react@5.37.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1))(hono@4.11.4)(react@19.1.1)(typescript@5.9.3)(zod@3.25.67))(convex@1.25.4(@clerk/clerk-react@5.37.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1))':
+    dependencies:
+      '@ai-sdk/provider': 3.0.8
       '@convex-dev/workpool': 0.2.17(convex-helpers@0.1.100(@standard-schema/spec@1.1.0)(convex@1.25.4(@clerk/clerk-react@5.37.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1))(hono@4.11.4)(react@19.1.1)(typescript@5.9.3)(zod@3.25.67))(convex@1.25.4(@clerk/clerk-react@5.37.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1))
       ai: 4.3.19(react@19.1.1)(zod@3.25.67)
       convex: 1.25.4(@clerk/clerk-react@5.37.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)
@@ -11573,7 +11614,7 @@ snapshots:
       '@better-fetch/fetch': 1.1.21
       '@noble/ciphers': 2.1.1
       '@noble/hashes': 2.0.1
-      better-call: 1.1.7(zod@3.25.67)
+      better-call: 1.1.7(zod@4.3.6)
       defu: 6.1.4
       jose: 6.1.3
       kysely: 0.28.11
@@ -11623,7 +11664,7 @@ snapshots:
       '@better-fetch/fetch': 1.1.21
       '@noble/ciphers': 2.1.1
       '@noble/hashes': 2.0.1
-      better-call: 1.1.7(zod@4.3.6)
+      better-call: 1.1.7(zod@3.25.67)
       defu: 6.1.4
       jose: 6.1.3
       kysely: 0.28.11
@@ -12541,6 +12582,8 @@ snapshots:
   eventemitter3@4.0.7: {}
 
   events@3.3.0: {}
+
+  eventsource-parser@3.0.6: {}
 
   execa@5.1.1:
     dependencies:

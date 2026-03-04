@@ -63,7 +63,7 @@ export const create = action({
     );
 
     const shouldTriggerAgent =
-      conversation.status === "unresolved" && subscription?.status === "active"
+      conversation.status === "unresolved"
 
     if (shouldTriggerAgent) {
       await supportAgent.generateText(
