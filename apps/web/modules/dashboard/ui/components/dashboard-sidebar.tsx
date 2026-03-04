@@ -13,6 +13,7 @@ import {
   Loader2Icon,
   UserIcon,
   SettingsIcon,
+  BriefcaseBusinessIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -60,6 +61,11 @@ const customerSupportItems = [
 ];
 
 const configurationItems = [
+  {
+    title: "Business Info",
+    url: "/business-info",
+    icon: BriefcaseBusinessIcon,
+  },
   {
     title: "Widget Customization",
     url: "/customization",

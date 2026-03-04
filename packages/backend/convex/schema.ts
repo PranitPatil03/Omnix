@@ -20,7 +20,7 @@ export default defineSchema({
       phoneNumber: v.optional(v.string()),
     }),
   })
-  .index("by_organization_id", ["organizationId"]),
+    .index("by_organization_id", ["organizationId"]),
   plugins: defineTable({
     organizationId: v.string(),
     service: v.union(v.literal("vapi")),
@@ -62,8 +62,22 @@ export default defineSchema({
       currentUrl: v.optional(v.string()),
     }))
   })
-  .index("by_organization_id", ["organizationId"])
-  .index("by_expires_at", ["expiresAt"]),
+    .index("by_organization_id", ["organizationId"])
+    .index("by_expires_at", ["expiresAt"]),
+  businessInfo: defineTable({
+    organizationId: v.string(),
+    companyName: v.optional(v.string()),
+    website: v.optional(v.string()),
+    industry: v.optional(v.string()),
+    description: v.optional(v.string()),
+    productsAndServices: v.optional(v.string()),
+    supportEmail: v.optional(v.string()),
+    supportPhone: v.optional(v.string()),
+    businessHours: v.optional(v.string()),
+    returnPolicy: v.optional(v.string()),
+    additionalContext: v.optional(v.string()),
+  })
+    .index("by_organization_id", ["organizationId"]),
   users: defineTable({
     name: v.string(),
   }),

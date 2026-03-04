@@ -7,6 +7,8 @@ import { escalateConversation } from "../system/ai/tools/escalateConversation";
 import { resolveConversation } from "../system/ai/tools/resolveConversation";
 import { saveMessage } from "@convex-dev/agent";
 import { search } from "../system/ai/tools/search";
+import { SUPPORT_AGENT_PROMPT } from "../system/ai/constants";
+import { buildBusinessContext } from "../system/ai/utils";
 
 export const create = action({
   args: {
@@ -66,11 +68,23 @@ export const create = action({
       conversation.status === "unresolved"
 
     if (shouldTriggerAgent) {
+      // Fetch business info to provide context to the AI agent
+      const businessInfo = await ctx.runQuery(
+        internal.system.businessInfo.getByOrganizationId,
+        { organizationId: conversation.organizationId },
+      );
+
+      const businessContext = buildBusinessContext(businessInfo);
+      const systemPrompt = businessContext
+        ? `${SUPPORT_AGENT_PROMPT}\n\n${businessContext}`
+        : SUPPORT_AGENT_PROMPT;
+
       await supportAgent.generateText(
         ctx,
         { threadId: args.threadId },
         {
           prompt: args.prompt,
+          system: systemPrompt,
           tools: {
             escalateConversationTool: escalateConversation,
             resolveConversationTool: resolveConversation,

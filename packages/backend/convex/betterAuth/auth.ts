@@ -19,7 +19,7 @@ export const authComponent = createClient<DataModel, typeof schema>(
 );
 
 // Better Auth Options
-export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
+export const createAuthOptions = (ctx: GenericCtx<DataModel>): BetterAuthOptions => {
   return {
     appName: "Omnix",
     baseURL: process.env.SITE_URL,
@@ -53,7 +53,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
         },
       }),
     ],
-  } satisfies BetterAuthOptions;
+  } satisfies BetterAuthOptions as BetterAuthOptions;
 };
 
 // For `auth` CLI
