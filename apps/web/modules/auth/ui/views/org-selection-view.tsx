@@ -38,11 +38,6 @@ export const OrgSelectionView = () => {
     }
   }, [orgs, orgsLoading]);
 
-  const navigateToConversations = () => {
-    router.push("/conversations");
-    router.refresh();
-  };
-
   const handleCreateOrg = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newOrgName.trim()) return;
@@ -56,9 +51,9 @@ export const OrgSelectionView = () => {
 
       if (result.data) {
         await organization.setActive({ organizationId: result.data.id });
-        // Set cookie for middleware
         document.cookie = `active_organization_id=${result.data.id};path=/;max-age=${60 * 60 * 24 * 365}`;
-        navigateToConversations();
+        // New org → send to onboarding to fill in business info
+        window.location.href = "/onboarding";
       }
     } catch {
       // error handling
@@ -71,9 +66,9 @@ export const OrgSelectionView = () => {
     setSelectingId(orgId);
     try {
       await organization.setActive({ organizationId: orgId });
-      // Set cookie for middleware
       document.cookie = `active_organization_id=${orgId};path=/;max-age=${60 * 60 * 24 * 365}`;
-      navigateToConversations();
+      // Full page reload ensures all Convex queries re-subscribe under the new org
+      window.location.href = "/conversations";
     } catch {
       // error handling
     } finally {

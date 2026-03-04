@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import {
   useSession,
   useActiveOrganization,
@@ -15,44 +16,20 @@ export const OrganizationGuard = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const router = useRouter();
   const { data: session } = useSession();
   const { data: activeOrg, isPending: orgPending } = useActiveOrganization();
   const { data: orgs, isPending: listPending } = useListOrganizations();
-  const creatingRef = useRef(false);
+  const settingActiveRef = useRef(false);
 
+  // No orgs at all → send to onboarding to create one
   useEffect(() => {
-    // If we have a session, no active org, orgs list loaded, and no orgs exist → auto-create
-    if (
-      session &&
-      !activeOrg &&
-      !listPending &&
-      orgs &&
-      orgs.length === 0 &&
-      !creatingRef.current
-    ) {
-      creatingRef.current = true;
-      const userName = session.user.name || session.user.email?.split("@")[0] || "My";
-      const orgName = `${userName}'s Organization`;
-      const slug = orgName
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-|-$/g, "");
-
-      organization
-        .create({ name: orgName, slug })
-        .then(async (res) => {
-          if (res.data) {
-            await organization.setActive({ organizationId: res.data.id });
-            document.cookie = `active_organization_id=${res.data.id};path=/;max-age=${60 * 60 * 24 * 365}`;
-          }
-        })
-        .finally(() => {
-          creatingRef.current = false;
-        });
+    if (session && !listPending && orgs && orgs.length === 0) {
+      router.replace("/onboarding");
     }
-  }, [session, activeOrg, listPending, orgs]);
+  }, [session, listPending, orgs, router]);
 
-  // If orgs exist but none is active, pick the first one
+  // Orgs exist but none active → silently activate the first
   useEffect(() => {
     if (
       session &&
@@ -60,18 +37,32 @@ export const OrganizationGuard = ({
       !listPending &&
       orgs &&
       orgs.length > 0 &&
-      !creatingRef.current
+      !settingActiveRef.current
     ) {
+      settingActiveRef.current = true;
       const firstOrg = orgs[0]!;
       organization
         .setActive({ organizationId: firstOrg.id })
         .then(() => {
           document.cookie = `active_organization_id=${firstOrg.id};path=/;max-age=${60 * 60 * 24 * 365}`;
+        })
+        .finally(() => {
+          settingActiveRef.current = false;
         });
     }
   }, [session, activeOrg, listPending, orgs]);
 
-  if (orgPending || listPending || !activeOrg) {
+  // Show spinner while we're resolving the org state
+  if (orgPending || listPending || (session && orgs && orgs.length > 0 && !activeOrg)) {
+    return (
+      <AuthLayout>
+        <Loader2Icon className="size-6 animate-spin text-muted-foreground" />
+      </AuthLayout>
+    );
+  }
+
+  // If no orgs, useEffect above will redirect — render nothing here
+  if (!orgs || orgs.length === 0) {
     return (
       <AuthLayout>
         <Loader2Icon className="size-6 animate-spin text-muted-foreground" />

@@ -14,6 +14,7 @@ import {
   UserIcon,
   SettingsIcon,
   BriefcaseBusinessIcon,
+  PlusIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -114,7 +115,8 @@ export const DashboardSidebar = () => {
   const handleSwitchOrg = async (orgId: string) => {
     await organization.setActive({ organizationId: orgId });
     document.cookie = `active_organization_id=${orgId};path=/;max-age=${60 * 60 * 24 * 365}`;
-    router.refresh();
+    // Full reload ensures all Convex queries re-subscribe under the new org context
+    window.location.reload();
   };
 
   const handleSignOut = async () => {
@@ -153,6 +155,10 @@ export const DashboardSidebar = () => {
                   </DropdownMenuItem>
                 ))}
                 <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => router.push("/onboarding")}>
+                  <PlusIcon className="mr-2 size-4" />
+                  New Organization
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => router.push("/org-selection")}>
                   <BuildingIcon className="mr-2 size-4" />
                   Manage Organizations

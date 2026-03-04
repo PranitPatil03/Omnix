@@ -11,6 +11,11 @@ interface SubscriptionGuardProps {
 export const SubscriptionGuard = ({ children, fallback }: SubscriptionGuardProps) => {
   const subscription = useQuery(api.private.subscriptions.getStatus);
 
+  // Still loading — don't flash the premium overlay for paying users
+  if (subscription === undefined) {
+    return null;
+  }
+
   const isActive = subscription?.status === "active";
 
   if (!isActive && fallback) {
