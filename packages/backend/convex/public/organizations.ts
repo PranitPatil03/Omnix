@@ -1,14 +1,27 @@
 import { v } from "convex/values";
 import { query } from "../_generated/server";
+import { components } from "../_generated/api";
 
-// Validate organization exists by checking if any data exists for it.
+// Validate organization exists by checking Better Auth's organization table,
+// then falling back to checking if any data exists for the org in our tables.
 // The widget calls this to verify the org ID is valid before loading.
 export const validate = query({
   args: {
     organizationId: v.string(),
   },
   handler: async (ctx, args) => {
-    // Check if org has widget settings (created when org sets up)
+    // First, check if the organization exists in Better Auth
+    // Better Auth uses "id" which the Convex adapter maps to "_id"
+    const org = await ctx.runQuery(components.betterAuth.adapter.findOne, {
+      model: "organization",
+      where: [{ field: "id", operator: "eq", value: args.organizationId }],
+    });
+
+    if (org) {
+      return { valid: true };
+    }
+
+    // Fallback: Check if org has widget settings (created when org sets up)
     const widgetSettings = await ctx.db
       .query("widgetSettings")
       .withIndex("by_organization_id", (q) =>
