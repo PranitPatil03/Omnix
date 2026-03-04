@@ -129,7 +129,9 @@ export const OnboardingView = () => {
       if (result.data) {
         await organization.setActive({ organizationId: result.data.id });
         document.cookie = `active_organization_id=${result.data.id};path=/;max-age=${60 * 60 * 24 * 365}`;
-        setStep(1);
+        // Full page reload so the Convex auth token picks up the new orgId
+        // before step 2 submits any mutations that require identity.orgId.
+        window.location.href = "/onboarding";
       }
     } finally {
       setOrgCreating(false);
@@ -176,7 +178,7 @@ export const OnboardingView = () => {
   }
 
   return (
-    <div className="w-full max-w-lg px-4">
+    <div className={cn("w-full px-4", step === 0 ? "max-w-lg" : "max-w-2xl")}>
       {/* Header */}
       <div className="mb-2 flex items-center justify-center gap-2">
         <SparklesIcon className="size-6 text-primary" />
