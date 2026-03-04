@@ -7,7 +7,7 @@ import { api } from "@workspace/backend/_generated/api";
 import { Id } from "@workspace/backend/_generated/dataModel";
 import { Button } from "@workspace/ui/components/button";
 import { useAction, useMutation, useQuery } from "convex/react";
-import { MoreHorizontalIcon, Wand2Icon } from "lucide-react";
+import { CheckIcon, CopyIcon, MoreHorizontalIcon, Wand2Icon } from "lucide-react";
 import {
   AIConversation,
   AIConversationContent,
@@ -75,6 +75,7 @@ export const ConversationIdView = ({
   });
 
   const [isEnhancing, setIsEnhancing] = useState(false);
+  const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
   const enhanceResponse = useAction(api.private.messages.enhanceResponse);
   const handleEnhanceResponse = async () => {
     setIsEnhancing(true);
@@ -91,6 +92,16 @@ export const ConversationIdView = ({
       setIsEnhancing(false);
     }
   }
+
+  // Pre-fill operator input with the latest AI reply so they can edit/send it
+  const handleUseAIReply = (content: string) => {
+    form.setValue("message", content, { shouldValidate: true, shouldDirty: true });
+    setCopiedMessageId(content);
+    // Focus the textarea
+    setTimeout(() => {
+      document.querySelector<HTMLTextAreaElement>("[data-ai-input-textarea]")?.focus();
+    }, 0);
+  };
 
   const createMessage = useMutation(api.private.messages.create);
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -169,7 +180,7 @@ export const ConversationIdView = ({
           />
           {toUIMessages(messages.results ?? [])?.map((message) => (
             <AIMessage
-            // In reverse, because we are watching from "assistant" prespective
+              // In reverse, because we are watching from "assistant" prespective
               from={message.role === "user" ? "assistant" : "user"}
               key={message.id}
             >
@@ -184,12 +195,29 @@ export const ConversationIdView = ({
                   size={32}
                 />
               )}
+              {/* For AI messages (role=assistant), show a "Use this reply" button */}
+              {message.role === "assistant" && conversation?.status === "escalated" && (
+                <div className="mt-1 flex justify-start">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-6 gap-1.5 px-2 text-xs text-muted-foreground hover:text-foreground"
+                    onClick={() => handleUseAIReply(message.content as string)}
+                  >
+                    {copiedMessageId === message.content ? (
+                      <><CheckIcon className="size-3" /> Loaded</>
+                    ) : (
+                      <><CopyIcon className="size-3" /> Use this reply</>
+                    )}
+                  </Button>
+                </div>
+              )}
             </AIMessage>
           ))}
         </AIConversationContent>
         <AIConversationScrollButton />
       </AIConversation>
-      
+
       <div className="p-2">
         <Form {...form}>
           <AIInput onSubmit={form.handleSubmit(onSubmit)}>
@@ -199,6 +227,7 @@ export const ConversationIdView = ({
               name="message"
               render={({ field }) => (
                 <AIInputTextarea
+                  data-ai-input-textarea
                   disabled={
                     conversation?.status === "resolved" ||
                     form.formState.isSubmitting ||
@@ -225,8 +254,8 @@ export const ConversationIdView = ({
                 <AIInputButton
                   onClick={handleEnhanceResponse}
                   disabled={
-                    conversation?.status === "resolved" || 
-                    isEnhancing || 
+                    conversation?.status === "resolved" ||
+                    isEnhancing ||
                     !form.formState.isValid
                   }
                 >

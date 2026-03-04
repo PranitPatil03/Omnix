@@ -33,7 +33,7 @@ import {
   AIMessageContent,
 } from "@workspace/ui/components/ai/message";
 import { AIResponse } from "@workspace/ui/components/ai/response";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 const formSchema = z.object({
   message: z.string().min(1, "Message is required"),
@@ -71,9 +71,9 @@ export const WidgetChatScreen = () => {
     api.public.conversations.getOne,
     conversationId && contactSessionId
       ? {
-          conversationId,
-          contactSessionId,
-        } 
+        conversationId,
+        contactSessionId,
+      }
       : "skip"
   );
 
@@ -81,9 +81,9 @@ export const WidgetChatScreen = () => {
     api.public.messages.getMany,
     conversation?.threadId && contactSessionId
       ? {
-          threadId: conversation.threadId,
-          contactSessionId,
-        }
+        threadId: conversation.threadId,
+        contactSessionId,
+      }
       : "skip",
     { initialNumItems: 10 },
   );
@@ -101,19 +101,30 @@ export const WidgetChatScreen = () => {
     },
   });
 
+  const [isAgentTyping, setIsAgentTyping] = useState(false);
+
   const createMessage = useAction(api.public.messages.create);
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!conversation || !contactSessionId) {
       return;
     }
 
+    const messageText = values.message;
     form.reset();
 
-    await createMessage({
-      threadId: conversation.threadId,
-      prompt: values.message,
-      contactSessionId,
-    });
+    if (conversation.status === "unresolved") {
+      setIsAgentTyping(true);
+    }
+
+    try {
+      await createMessage({
+        threadId: conversation.threadId,
+        prompt: messageText,
+        contactSessionId,
+      });
+    } finally {
+      setIsAgentTyping(false);
+    }
   };
 
   return (
@@ -163,6 +174,33 @@ export const WidgetChatScreen = () => {
               </AIMessage>
             )
           })}
+
+          {/* Typing indicator — shown while AI is generating a response */}
+          {isAgentTyping && (
+            <AIMessage from="assistant">
+              <AIMessageContent>
+                <div className="flex items-center gap-1 px-1 py-0.5">
+                  <span
+                    className="size-2 rounded-full bg-current opacity-60 animate-bounce"
+                    style={{ animationDelay: "0ms" }}
+                  />
+                  <span
+                    className="size-2 rounded-full bg-current opacity-60 animate-bounce"
+                    style={{ animationDelay: "150ms" }}
+                  />
+                  <span
+                    className="size-2 rounded-full bg-current opacity-60 animate-bounce"
+                    style={{ animationDelay: "300ms" }}
+                  />
+                </div>
+              </AIMessageContent>
+              <DicebearAvatar
+                imageUrl="/logo.svg"
+                seed="assistant"
+                size={32}
+              />
+            </AIMessage>
+          )}
         </AIConversationContent>
       </AIConversation>
       {toUIMessages(messages.results ?? [])?.length === 1 && (
@@ -190,42 +228,42 @@ export const WidgetChatScreen = () => {
         </AISuggestions>
       )}
       <Form {...form}>
-          <AIInput
-            className="rounded-none border-x-0 border-b-0"
-            onSubmit={form.handleSubmit(onSubmit)}
-          >
-            <FormField
-              control={form.control}
-              disabled={conversation?.status === "resolved"}
-              name="message"
-              render={({ field }) => (
-                <AIInputTextarea
-                  disabled={conversation?.status === "resolved"}
-                  onChange={field.onChange}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault();
-                      form.handleSubmit(onSubmit)();
-                    }
-                  }}
-                  placeholder={
-                    conversation?.status === "resolved"
-                      ? "This conversation has been resolved."
-                      : "Type your message..."
+        <AIInput
+          className="rounded-none border-x-0 border-b-0"
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
+          <FormField
+            control={form.control}
+            disabled={conversation?.status === "resolved"}
+            name="message"
+            render={({ field }) => (
+              <AIInputTextarea
+                disabled={conversation?.status === "resolved"}
+                onChange={field.onChange}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    form.handleSubmit(onSubmit)();
                   }
-                  value={field.value}
-                />
-              )}
-            />
-            <AIInputToolbar>
-              <AIInputTools />
-              <AIInputSubmit
-                disabled={conversation?.status === "resolved" || !form.formState.isValid}
-                status="ready"
-                type="submit"
+                }}
+                placeholder={
+                  conversation?.status === "resolved"
+                    ? "This conversation has been resolved."
+                    : "Type your message..."
+                }
+                value={field.value}
               />
-            </AIInputToolbar>
-          </AIInput>
+            )}
+          />
+          <AIInputToolbar>
+            <AIInputTools />
+            <AIInputSubmit
+              disabled={conversation?.status === "resolved" || !form.formState.isValid}
+              status="ready"
+              type="submit"
+            />
+          </AIInputToolbar>
+        </AIInput>
       </Form>
     </>
   );

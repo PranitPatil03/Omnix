@@ -79,19 +79,38 @@ export const create = action({
         ? `${SUPPORT_AGENT_PROMPT}\n\n${businessContext}`
         : SUPPORT_AGENT_PROMPT;
 
-      await supportAgent.generateText(
-        ctx,
-        { threadId: args.threadId },
-        {
+      try {
+        await supportAgent.generateText(
+          ctx,
+          { threadId: args.threadId },
+          {
+            prompt: args.prompt,
+            system: systemPrompt,
+            tools: {
+              escalateConversationTool: escalateConversation,
+              resolveConversationTool: resolveConversation,
+              searchTool: search,
+            }
+          },
+        );
+      } catch (error) {
+        console.error("[SupportAgent] generateText failed:", error);
+
+        // Save the user's message so it isn't lost, then add a graceful fallback reply.
+        await saveMessage(ctx, components.agent, {
+          threadId: args.threadId,
           prompt: args.prompt,
-          system: systemPrompt,
-          tools: {
-            escalateConversationTool: escalateConversation,
-            resolveConversationTool: resolveConversation,
-            searchTool: search,
-          }
-        },
-      )
+        });
+
+        await saveMessage(ctx, components.agent, {
+          threadId: args.threadId,
+          message: {
+            role: "assistant",
+            content:
+              "I'm having a little trouble connecting right now. Please try again in a moment, or I can connect you with a human agent — just say the word!",
+          },
+        });
+      }
     } else {
       await saveMessage(ctx, components.agent, {
         threadId: args.threadId,
