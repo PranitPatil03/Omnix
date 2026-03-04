@@ -90,26 +90,27 @@ export const create = action({
               escalateConversationTool: escalateConversation,
               resolveConversationTool: resolveConversation,
               searchTool: search,
-            }
+            },
           },
         );
       } catch (error) {
         console.error("[SupportAgent] generateText failed:", error);
-
-        // Save the user's message so it isn't lost, then add a graceful fallback reply.
-        await saveMessage(ctx, components.agent, {
-          threadId: args.threadId,
-          prompt: args.prompt,
-        });
-
-        await saveMessage(ctx, components.agent, {
-          threadId: args.threadId,
-          message: {
-            role: "assistant",
-            content:
-              "I'm having a little trouble connecting right now. Please try again in a moment, or I can connect you with a human agent — just say the word!",
-          },
-        });
+        // NOTE: generateText saves the user message internally BEFORE calling the AI.
+        // Do NOT call saveMessage with the user prompt here — it would create a duplicate.
+        // Just save a graceful fallback assistant reply using the agent's own method.
+        try {
+          await supportAgent.saveMessage(ctx, {
+            threadId: args.threadId,
+            message: {
+              role: "assistant",
+              content:
+                "I'm having trouble connecting right now. Please try again in a moment, or type \"human\" and I'll connect you with a real person.",
+            },
+          });
+        } catch (fallbackError) {
+          // Swallow — don't let this propagate as a Server Error
+          console.error("[SupportAgent] Failed to save fallback message:", fallbackError);
+        }
       }
     } else {
       await saveMessage(ctx, components.agent, {

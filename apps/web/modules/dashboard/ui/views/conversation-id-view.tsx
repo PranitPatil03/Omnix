@@ -195,8 +195,8 @@ export const ConversationIdView = ({
                   size={32}
                 />
               )}
-              {/* For AI messages (role=assistant), show a "Use this reply" button */}
-              {message.role === "assistant" && conversation?.status === "escalated" && (
+              {/* For AI messages: show "Use this reply" so operator can edit & send it */}
+              {message.role === "assistant" && conversation?.status !== "resolved" && (
                 <div className="mt-1 flex justify-start">
                   <Button
                     size="sm"

@@ -175,22 +175,22 @@ export const WidgetChatScreen = () => {
             )
           })}
 
-          {/* Typing indicator — shown while AI is generating a response */}
-          {isAgentTyping && (
+          {/* Typing indicator — shown while AI is generating, only after messages have loaded */}
+          {isAgentTyping && messages.status !== "LoadingFirstPage" && (
             <AIMessage from="assistant">
               <AIMessageContent>
-                <div className="flex items-center gap-1 px-1 py-0.5">
+                <div className="flex items-center gap-1.5 px-1 py-1">
                   <span
-                    className="size-2 rounded-full bg-current opacity-60 animate-bounce"
+                    className="size-2 rounded-full bg-current opacity-70 animate-bounce"
                     style={{ animationDelay: "0ms" }}
                   />
                   <span
-                    className="size-2 rounded-full bg-current opacity-60 animate-bounce"
-                    style={{ animationDelay: "150ms" }}
+                    className="size-2 rounded-full bg-current opacity-70 animate-bounce"
+                    style={{ animationDelay: "160ms" }}
                   />
                   <span
-                    className="size-2 rounded-full bg-current opacity-60 animate-bounce"
-                    style={{ animationDelay: "300ms" }}
+                    className="size-2 rounded-full bg-current opacity-70 animate-bounce"
+                    style={{ animationDelay: "320ms" }}
                   />
                 </div>
               </AIMessageContent>
@@ -238,12 +238,12 @@ export const WidgetChatScreen = () => {
             name="message"
             render={({ field }) => (
               <AIInputTextarea
-                disabled={conversation?.status === "resolved"}
+                disabled={conversation?.status === "resolved" || isAgentTyping}
                 onChange={field.onChange}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
-                    form.handleSubmit(onSubmit)();
+                    if (!isAgentTyping) form.handleSubmit(onSubmit)();
                   }
                 }}
                 placeholder={
@@ -258,7 +258,7 @@ export const WidgetChatScreen = () => {
           <AIInputToolbar>
             <AIInputTools />
             <AIInputSubmit
-              disabled={conversation?.status === "resolved" || !form.formState.isValid}
+              disabled={conversation?.status === "resolved" || !form.formState.isValid || isAgentTyping}
               status="ready"
               type="submit"
             />
