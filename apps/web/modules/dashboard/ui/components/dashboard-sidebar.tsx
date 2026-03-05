@@ -131,40 +131,14 @@ export const DashboardSidebar = () => {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton size="lg" className="w-full">
-                  <div className="flex size-4 items-center justify-center rounded-sm bg-primary/10">
-                    <BuildingIcon className="size-3 text-primary" />
-                  </div>
-                  <span className="truncate text-xs font-medium group-data-[collapsible=icon]:hidden">
-                    {activeOrg?.name ?? "Select Org"}
-                  </span>
-                  <ChevronsUpDownIcon className="ml-auto size-3 group-data-[collapsible=icon]:hidden" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-56">
-                {orgs?.map((org) => (
-                  <DropdownMenuItem
-                    key={org.id}
-                    onClick={() => handleSwitchOrg(org.id)}
-                    className={cn(activeOrg?.id === org.id && "bg-accent")}
-                  >
-                    <BuildingIcon className="mr-2 size-4" />
-                    <span className="truncate">{org.name}</span>
-                  </DropdownMenuItem>
-                ))}
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => router.push("/onboarding")}>
-                  <PlusIcon className="mr-2 size-4" />
-                  New Organization
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => router.push("/org-selection")}>
-                  <BuildingIcon className="mr-2 size-4" />
-                  Manage Organizations
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <SidebarMenuButton size="lg" className="w-full cursor-default hover:bg-transparent">
+              <div className="flex size-6 items-center justify-center rounded-lg bg-gradient-to-b from-primary to-[#0b63f3]">
+                <span className="text-xs font-bold text-white">O</span>
+              </div>
+              <span className="text-sm font-semibold group-data-[collapsible=icon]:hidden">
+                Omnixx
+              </span>
+            </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
@@ -248,12 +222,54 @@ export const DashboardSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
       <SidebarFooter>
+        {/* Organization Switcher */}
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuButton className="w-full p-2 group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:p-2">
+                <SidebarMenuButton className="w-full group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:p-2">
+                  <div className="flex size-4 items-center justify-center rounded-sm bg-primary/10">
+                    <BuildingIcon className="size-3 text-primary" />
+                  </div>
+                  <span className="truncate text-xs font-medium group-data-[collapsible=icon]:hidden">
+                    {activeOrg?.name ?? "Select Org"}
+                  </span>
+                  <ChevronsUpDownIcon className="ml-auto size-3 group-data-[collapsible=icon]:hidden" />
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                {orgs?.map((org) => (
+                  <DropdownMenuItem
+                    key={org.id}
+                    onClick={() => handleSwitchOrg(org.id)}
+                    className={cn(activeOrg?.id === org.id && "bg-accent")}
+                  >
+                    <BuildingIcon className="mr-2 size-4" />
+                    <span className="truncate">{org.name}</span>
+                  </DropdownMenuItem>
+                ))}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => router.push("/onboarding")}>
+                  <PlusIcon className="mr-2 size-4" />
+                  New Organization
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => router.push("/org-selection")}>
+                  <BuildingIcon className="mr-2 size-4" />
+                  Manage Organizations
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarMenuItem>
+        </SidebarMenu>
+
+        {/* User Profile */}
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuButton className="w-full group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:p-2">
                   <Avatar className="size-4">
                     <AvatarFallback className="text-[10px]">
                       {session?.user?.name?.charAt(0)?.toUpperCase() ?? <UserIcon className="size-3" />}

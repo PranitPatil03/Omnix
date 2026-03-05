@@ -1,0 +1,170 @@
+Clyra — Product Documentation
+================================
+
+1. OVERVIEW
+-----------
+Clyra is an AI-powered contract intelligence platform that helps individuals and teams review, analyze, and understand contracts quickly. Upload any contract PDF, and Clyra's AI provides risk detection, compliance checks, negotiation points, cost analysis, and more.
+
+Clyra is designed for legal professionals, startup founders, procurement teams, freelancers, and anyone who needs to review contracts without spending hours reading through dense legal language.
+
+Website: https://clyra.ai
+Support Email: support@clyra.ai
+Support Phone: +1 (888) 255-9271
+Business Hours: Monday to Friday, 9 AM – 6 PM EST. AI support is available 24/7.
+
+
+2. GETTING STARTED
+------------------
+Step 1: Sign Up
+  - Visit https://clyra.ai and click "Get Started"
+  - Create a free account with email or sign in with Google/GitHub
+  - No credit card required for the Basic plan
+
+Step 2: Upload Your First Contract
+  - Click "Upload Contract" or drag and drop a PDF into the upload area
+  - Supported format: PDF files only
+  - Maximum file size: 50 MB per document
+  - Wait for the AI to process (typically 30 seconds to 2 minutes)
+
+Step 3: Review Your Analysis
+  - Once processing is complete, you'll see a comprehensive dashboard with:
+    • Contract Type Detection (NDA, Employment, Service Agreement, etc.)
+    • Risk Assessment with severity levels
+    • Opportunities and favorable terms
+    • Overall Favorability Score (1-100)
+    • Contract Summary
+
+Step 4: Export (Pro Plan)
+  - Pro users can export the analysis as PDF or Word document
+  - Click "Export Report" and choose your preferred format
+
+
+3. PRICING & PLANS
+------------------
+
+BASIC PLAN — Free Forever
+  - PDF contract upload
+  - AI contract type detection
+  - 5 risks identified with severity levels (low, medium, high)
+  - 5 opportunities identified with impact levels
+  - Brief contract summary
+  - Overall favorability score (1-100)
+  - 3 contract analyses per month
+
+PRO PLAN — $20/month (billed monthly) or $16/month (billed annually at $192/year)
+  - Everything in Basic
+  - Unlimited PDF uploads
+  - 10+ detailed risks and opportunities per analysis
+  - Comprehensive multi-paragraph contract summary
+  - Improvement and negotiation points
+  - Key clauses identification and extraction
+  - Legal compliance assessment
+  - Compensation and IP breakdown
+  - PDF/Word report export
+  - Priority analysis processing (faster queue)
+  - Email support with 24-hour response time
+
+ENTERPRISE PLAN — Custom pricing (contact sales@clyra.ai)
+  - Everything in Pro
+  - Custom AI model training on your contract templates
+  - API access for bulk processing
+  - Team collaboration features
+  - Dedicated account manager
+  - SSO/SAML authentication
+  - Custom integrations (Salesforce, HubSpot, etc.)
+  - 99.9% SLA guarantee
+
+
+4. SUPPORTED CONTRACT TYPES
+----------------------------
+Clyra can analyze the following contract types (and more):
+  - Non-Disclosure Agreements (NDAs) — Mutual and Unilateral
+  - Employment Agreements — Full-time, Part-time, Contractor
+  - Service Level Agreements (SLAs)
+  - Master Service Agreements (MSAs)
+  - Software License Agreements
+  - SaaS Subscription Agreements
+  - Vendor/Supplier Contracts
+  - Lease Agreements — Commercial and Residential
+  - Partnership Agreements
+  - Franchise Agreements
+  - Distribution Agreements
+  - Consulting Agreements
+  - Intellectual Property Assignment Agreements
+  - Terms of Service / Terms of Use
+  - Privacy Policies
+  - Purchase Orders & Procurement Contracts
+
+
+5. AI ANALYSIS FEATURES
+------------------------
+
+5.1 Risk Detection
+  Clyra automatically identifies and categorizes contractual risks by severity:
+  - HIGH: Unlimited liability clauses, one-sided termination rights, IP ownership traps, non-compete overreach
+  - MEDIUM: Auto-renewal without clear opt-out, vague performance metrics, broad indemnification
+  - LOW: Missing standard clauses, ambiguous definitions, minor formatting issues
+
+5.2 Opportunity Detection
+  Identifies favorable terms you should be aware of:
+  - HIGH IMPACT: Favorable payment terms, strong IP protections for you, generous SLA guarantees
+  - MEDIUM IMPACT: Right to audit, reasonable termination notice periods
+  - LOW IMPACT: Standard force majeure protections, data backup obligations
+
+5.3 Legal Compliance Check
+  Assesses contract against common regulatory requirements:
+  - GDPR compliance for data handling
+  - CCPA consumer protection alignment
+  - SOC 2 security requirements
+  - Industry-specific regulations
+
+5.4 Negotiation Recommendations
+  AI suggests specific edits and counterproposals:
+  - "Consider adding a cap on liability at 2x the contract value"
+  - "Request a 30-day cure period before termination for cause"
+  - "Add a data deletion clause upon contract termination"
+
+5.5 Contract Summary
+  Basic Plan: 2-3 sentence overview
+  Pro Plan: Multi-paragraph comprehensive summary covering all key terms, obligations, and notable clauses
+
+
+6. SECURITY & PRIVACY
+-----------------------
+  - All data encrypted in transit (TLS 1.3) and at rest (AES-256)
+  - Documents are processed in isolated environments
+  - No contract data is used to train AI models
+  - SOC 2 Type II certified infrastructure
+  - GDPR and CCPA compliant
+  - Documents are automatically deleted after 90 days unless saved
+  - Two-factor authentication available
+  - Role-based access control for team plans
+
+
+7. INTEGRATIONS (Enterprise Plan)
+----------------------------------
+  - Salesforce — Auto-attach contract analyses to deals
+  - HubSpot — Link contracts to customer records
+  - Slack — Get notifications when analysis is complete
+  - Google Drive / Dropbox — Import contracts directly
+  - DocuSign — Analyze before signing
+  - API Access — RESTful API with webhook support
+
+
+8. TROUBLESHOOTING
+-------------------
+
+Q: My PDF upload failed. What should I do?
+A: Ensure the file is a valid PDF under 50 MB. Scanned documents should have clear, readable text. If the document is image-based, ensure it's at least 150 DPI quality.
+
+Q: The analysis seems incomplete. Why?
+A: Some contracts have complex or unusual structures. Try re-uploading. If the issue persists, contact support@clyra.ai with the contract (we'll review confidentially).
+
+Q: How do I cancel my Pro subscription?
+A: Go to Account Settings > Billing > Cancel Subscription. You'll retain Pro access until the end of your current billing period. No partial refunds for the current month.
+
+Q: Can I analyze contracts in languages other than English?
+A: Currently, Clyra supports English-language contracts only. Multi-language support (Spanish, French, German, Portuguese) is coming in Q3 2026.
+
+Q: My favorability score seems off. Is it accurate?
+A: The favorability score is an AI-generated estimate based on the balance of risks vs. opportunities. It's a helpful indicator but should not replace professional legal review for high-stakes contracts.

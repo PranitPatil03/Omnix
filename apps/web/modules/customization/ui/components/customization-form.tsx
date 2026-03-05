@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm, useWatch, useFieldArray } from "react-hook-form";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { Button } from "@workspace/ui/components/button";
@@ -30,6 +30,7 @@ import { VapiFormFields } from "./vapi-form-fields";
 import { FormSchema } from "../../types";
 import { widgetSettingsSchema } from "../../schemas";
 import { WidgetPreview } from "./widget-preview";
+import { PlusIcon, Trash2Icon } from "lucide-react";
 
 type WidgetSettings = Doc<"widgetSettings">;
 
@@ -44,23 +45,27 @@ export const CustomizationForm = ({
 }: CustomizationFormProps) => {
   const upsertWidgetSettings = useMutation(api.private.widgetSettings.upsert);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const form = useForm<FormSchema>({
-    resolver: zodResolver(widgetSettingsSchema),
+    resolver: zodResolver(widgetSettingsSchema) as any,
     defaultValues: {
       companyName: initialData?.companyName || "",
       tagline: initialData?.tagline || "",
       greetMessage:
         initialData?.greetMessage || "Hi! How can I help you today?",
-      defaultSuggestions: {
-        suggestion1: initialData?.defaultSuggestions.suggestion1 || "",
-        suggestion2: initialData?.defaultSuggestions.suggestion2 || "",
-        suggestion3: initialData?.defaultSuggestions.suggestion3 || "",
-      },
+      defaultSuggestions: initialData?.defaultSuggestions?.length
+        ? initialData.defaultSuggestions.map((s: string) => ({ value: s }))
+        : [{ value: "" }],
       vapiSettings: {
         assistantId: initialData?.vapiSettings.assistantId || "",
         phoneNumber: initialData?.vapiSettings.phoneNumber || "",
       },
     },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "defaultSuggestions",
   });
 
   // Reset form when data loads (e.g. after JWT refresh gives us the orgId)
@@ -70,11 +75,9 @@ export const CustomizationForm = ({
         companyName: initialData.companyName || "",
         tagline: initialData.tagline || "",
         greetMessage: initialData.greetMessage || "Hi! How can I help you today?",
-        defaultSuggestions: {
-          suggestion1: initialData.defaultSuggestions.suggestion1 || "",
-          suggestion2: initialData.defaultSuggestions.suggestion2 || "",
-          suggestion3: initialData.defaultSuggestions.suggestion3 || "",
-        },
+        defaultSuggestions: initialData.defaultSuggestions?.length
+          ? initialData.defaultSuggestions.map((s: string) => ({ value: s }))
+          : [{ value: "" }],
         vapiSettings: {
           assistantId: initialData.vapiSettings.assistantId || "",
           phoneNumber: initialData.vapiSettings.phoneNumber || "",
@@ -85,6 +88,10 @@ export const CustomizationForm = ({
 
   const onSubmit = async (values: FormSchema) => {
     try {
+      const suggestions = values.defaultSuggestions
+        .map((s) => s.value?.trim())
+        .filter(Boolean) as string[];
+
       const vapiSettings: WidgetSettings["vapiSettings"] = {
         assistantId:
           values.vapiSettings.assistantId === "none"
@@ -100,7 +107,7 @@ export const CustomizationForm = ({
         companyName: values.companyName || undefined,
         tagline: values.tagline || undefined,
         greetMessage: values.greetMessage,
-        defaultSuggestions: values.defaultSuggestions,
+        defaultSuggestions: suggestions,
         vapiSettings,
       });
 
@@ -195,65 +202,58 @@ export const CustomizationForm = ({
                 <Separator />
 
                 <div className="space-y-4">
-                  <div>
-                    <h3 className="mb-4 text-sm">
-                      Default Suggestions
-                    </h3>
-                    <p className="mb-4 text-muted-foreground text-sm">
-                      Quick reply suggestions shown to customers to help guide the
-                      conversation
-                    </p>
-
-                    <div className="space-y-4">
-                      <FormField
-                        control={form.control}
-                        name="defaultSuggestions.suggestion1"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Suggestion 1</FormLabel>
-                            <FormControl>
-                              <Input
-                                {...field}
-                                placeholder="e.g., How do I get started?"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="defaultSuggestions.suggestion2"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Suggestion 2</FormLabel>
-                            <FormControl>
-                              <Input
-                                {...field}
-                                placeholder="e.g., What are your pricing plans?"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="defaultSuggestions.suggestion3"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Suggestion 3</FormLabel>
-                            <FormControl>
-                              <Input
-                                {...field}
-                                placeholder="e.g., I need help with my account"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-sm">
+                        Default Suggestions
+                      </h3>
+                      <p className="text-muted-foreground text-sm">
+                        Quick reply suggestions shown to customers to help guide the
+                        conversation
+                      </p>
                     </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => append({ value: "" })}
+                      disabled={fields.length >= 5}
+                    >
+                      <PlusIcon className="size-4 mr-1" />
+                      Add
+                    </Button>
+                  </div>
+
+                  <div className="space-y-3">
+                    {fields.map((field, index) => (
+                      <div key={field.id} className="flex items-center gap-2">
+                        <FormField
+                          control={form.control}
+                          name={`defaultSuggestions.${index}.value`}
+                          render={({ field }) => (
+                            <FormItem className="flex-1">
+                              <FormControl>
+                                <Input
+                                  {...field}
+                                  placeholder={`Suggestion ${index + 1}`}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => remove(index)}
+                          disabled={fields.length <= 1}
+                          className="shrink-0 text-muted-foreground hover:text-destructive"
+                        >
+                          <Trash2Icon className="size-4" />
+                        </Button>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </CardContent>
@@ -289,11 +289,11 @@ export const CustomizationForm = ({
           companyName={watchedValues.companyName || ""}
           tagline={watchedValues.tagline || ""}
           greetMessage={watchedValues.greetMessage || ""}
-          suggestions={[
-            watchedValues.defaultSuggestions?.suggestion1 || "",
-            watchedValues.defaultSuggestions?.suggestion2 || "",
-            watchedValues.defaultSuggestions?.suggestion3 || "",
-          ]}
+          suggestions={
+            (watchedValues.defaultSuggestions || [])
+              .map((s) => s?.value)
+              .filter(Boolean) as string[]
+          }
         />
       </div>
     </div>

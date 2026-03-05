@@ -1,0 +1,231 @@
+CLYRA — SUPPORT POLICIES & PROCEDURES
+=======================================
+Last Updated: March 2026
+
+TABLE OF CONTENTS
+1. Return & Refund Policy
+2. Subscription Management
+3. Service Level Agreements
+4. Data Handling & Privacy
+5. Acceptable Use Policy
+6. Account & Billing Policies
+7. Support Tiers & Escalation
+8. Incident Response
+
+---
+
+1. RETURN & REFUND POLICY
+--------------------------
+
+1.1 Free Plan (Basic)
+  The Basic plan is free forever. No payment is required, no refund applicable.
+
+1.2 Pro Plan — 14-Day Money-Back Guarantee
+  - New Pro subscribers are eligible for a full refund within 14 calendar days of their initial upgrade.
+  - To request a refund, email support@clyra.ai with your account email and the subject line "Pro Plan Refund Request".
+  - Refunds are processed within 5-7 business days to the original payment method.
+  - After the 14-day window, no refunds are issued for the remaining billing period.
+  - If you cancel mid-cycle, you retain Pro access until the end of your current billing period.
+
+1.3 Annual Subscriptions
+  - Annual subscribers who request a refund within 14 days of purchase receive a full refund.
+  - Annual subscribers who cancel after 14 days can request a prorated refund for unused months. This is calculated as: (Remaining full months / 12) × Annual price paid.
+  - Partial months are not refunded.
+
+1.4 Enterprise Plans
+  - Enterprise refund terms are governed by individual contract agreements.
+  - Early termination fees may apply as specified in the Enterprise service agreement.
+
+1.5 Non-Refundable Items
+  - Processing fees for completed contract analyses
+  - Custom AI model training fees (Enterprise)
+  - API usage charges beyond included limits
+
+
+2. SUBSCRIPTION MANAGEMENT
+----------------------------
+
+2.1 Upgrading
+  - Upgrade from Basic to Pro at any time from Account Settings > Billing
+  - When upgrading mid-cycle, you're charged the prorated amount for the remaining days in the current billing period
+  - Full Pro features are available immediately after upgrade
+
+2.2 Downgrading
+  - Downgrade from Pro to Basic from Account Settings > Billing > Cancel Subscription
+  - Pro features remain active until the end of the current billing period
+  - All analyses completed during Pro subscription remain accessible
+  - Exported reports (PDF/Word) remain in your Downloads; they are not deleted
+
+2.3 Payment Methods
+  - Accepted: Visa, Mastercard, American Express, Discover, PayPal
+  - Currency: USD only (international transactions may incur bank conversion fees)
+  - Auto-renewal is enabled by default
+  - Failed payment: 3 retry attempts over 7 days. If all fail, account downgrades to Basic and a notification email is sent.
+
+2.4 Invoices & Receipts
+  - Monthly invoices are emailed automatically after each payment
+  - Historical invoices available at Account Settings > Billing > Invoice History
+  - Invoices include: date, amount, plan details, and payment method (last 4 digits)
+
+
+3. SERVICE LEVEL AGREEMENTS
+-----------------------------
+
+3.1 Platform Availability
+  - Target: 99.9% uptime (measured monthly, excluding planned maintenance)
+  - Planned maintenance window: Sundays 2:00 AM – 6:00 AM EST (announced 48 hours in advance)
+  - Unplanned outages: Status page at status.clyra.ai provides real-time updates
+
+3.2 Analysis Processing Times
+  - Basic Plan: Analyses processed within 5 minutes (typical: 1-2 minutes)
+  - Pro Plan: Priority processing within 3 minutes (typical: 30-90 seconds)
+  - Enterprise Plan: Dedicated processing queue, SLA per contract agreement
+
+3.3 Support Response Times
+  - Basic Plan: AI chat support 24/7, no human support SLA
+  - Pro Plan: Email support with 24-hour response time (business days), AI chat 24/7
+  - Enterprise Plan: Dedicated account manager, 4-hour response for critical issues, 12-hour for standard
+
+3.4 Data Availability
+  - Uploaded documents: Available for 90 days from upload date
+  - Analysis results: Available indefinitely while account is active
+  - Exported reports: Once downloaded, Clyra does not store copies
+
+
+4. DATA HANDLING & PRIVACY
+----------------------------
+
+4.1 Data Collection
+  Clyra collects the following data:
+  - Account information: name, email, billing details
+  - Uploaded documents: contract PDFs for analysis
+  - Usage data: timestamps, features used, analysis history
+  - Technical data: browser type, IP address (anonymized after 30 days)
+
+4.2 Data Processing
+  - Contracts are processed using AI language models hosted on secure, SOC 2 Type II certified infrastructure
+  - Processing occurs in US-based data centers (AWS us-east-1 and us-west-2)
+  - Documents are temporarily stored in encrypted, isolated processing environments during analysis
+  - No human reviews uploaded contracts unless explicitly requested for support purposes
+
+4.3 Data Retention
+  - Active accounts: Data retained while account is active
+  - Uploaded documents: Auto-deleted after 90 days (configurable for Enterprise)
+  - Account deletion: All data permanently deleted within 30 days of request
+  - Backup retention: Encrypted backups retained for 60 days after deletion for disaster recovery, then permanently destroyed
+
+4.4 Data Sharing
+  - Clyra does NOT sell, rent, or share user data with third parties
+  - Contract data is NOT used to train AI models
+  - Data may be shared with: payment processors (Stripe), email service (SendGrid), and cloud infrastructure (AWS) — all with data processing agreements in place
+  - Law enforcement: Data disclosed only with valid court order or subpoena
+
+4.5 GDPR Rights (for EU users)
+  - Right to access: Request a copy of all your data via support@clyra.ai
+  - Right to rectification: Update incorrect data in Account Settings
+  - Right to erasure: Request full account and data deletion
+  - Right to portability: Export your analysis data in JSON or CSV format
+  - Data Protection Officer: dpo@clyra.ai
+
+4.6 CCPA Rights (for California users)
+  - Right to know what personal information is collected
+  - Right to delete personal information  
+  - Right to opt-out of data sales (Clyra does not sell data)
+  - No financial incentive for data sharing
+
+
+5. ACCEPTABLE USE POLICY
+--------------------------
+
+5.1 Permitted Use
+  - Uploading your own contracts or those you're authorized to review
+  - Using analysis results for personal or business decision-making
+  - Sharing analysis results with authorized team members (Enterprise)
+
+5.2 Prohibited Use
+  - Uploading documents you don't have permission to view or analyze
+  - Using Clyra-generated analysis as formal legal advice (we're not a law firm)
+  - Automated bulk uploads exceeding fair use (more than 100 documents per day without Enterprise plan)
+  - Reverse engineering, scraping, or attempting to extract the AI model
+  - Sharing account credentials with unauthorized users
+  - Uploading malicious files or content
+
+5.3 Consequences
+  - First violation: Warning email with 7-day grace period
+  - Second violation: 30-day account suspension
+  - Severe violations: Immediate account termination without refund
+
+
+6. ACCOUNT & BILLING POLICIES
+-------------------------------
+
+6.1 Account Creation
+  - One account per email address
+  - Business email recommended (personal email accepted)
+  - Age requirement: 18+ or legal age in your jurisdiction
+  - Accurate registration information required
+
+6.2 Account Security
+  - Passwords must be 8+ characters with at least one uppercase letter, one number
+  - Two-factor authentication (2FA) strongly recommended
+  - Account lockout after 5 consecutive failed login attempts (auto-unlock after 30 minutes)
+  - Suspicious login detection: Email notification for logins from new devices or locations
+
+6.3 Billing Disputes
+  - Contact support@clyra.ai within 30 days of the charge
+  - Include transaction date, amount, and reason for dispute
+  - Resolution provided within 5 business days
+  - Chargebacks filed without contacting Clyra first may result in account suspension
+
+
+7. SUPPORT TIERS & ESCALATION
+-------------------------------
+
+7.1 Tier 1 — AI Chat Support (All Plans)
+  - Available: 24/7
+  - Handles: General questions, how-to guidance, troubleshooting, account basics
+  - Response time: Immediate
+  - Languages: English
+
+7.2 Tier 2 — Email Support (Pro & Enterprise)
+  - Available: Monday–Friday, 9 AM – 6 PM EST
+  - Handles: Technical issues, billing questions, analysis accuracy concerns
+  - Response time: 24 hours (Pro), 12 hours (Enterprise)
+  - Email: support@clyra.ai
+
+7.3 Tier 3 — Dedicated Support (Enterprise Only)
+  - Available: Business hours with on-call for critical issues
+  - Handles: Integration issues, custom configuration, data requests, escalated incidents
+  - Response time: 4 hours (critical), 12 hours (standard)
+  - Contact: Dedicated account manager via direct channel
+
+7.4 Escalation Process
+  Step 1: Contact Tier 1 or Tier 2 support
+  Step 2: If unresolved after 48 hours, request escalation to Tier 3
+  Step 3: If still unresolved, request management review via escalation@clyra.ai
+  Step 4: Final resolution guaranteed within 10 business days
+
+
+8. INCIDENT RESPONSE
+----------------------
+
+8.1 Incident Severity Levels
+  - P1 (Critical): Platform down, data breach, or security vulnerability affecting all users
+  - P2 (High): Major feature unavailable, analyses failing for multiple users
+  - P3 (Medium): Minor feature degradation, intermittent issues
+  - P4 (Low): Cosmetic issues, documentation errors, feature requests
+
+8.2 Response & Resolution Targets
+  - P1: Acknowledge within 15 minutes, resolve within 4 hours
+  - P2: Acknowledge within 1 hour, resolve within 8 hours
+  - P3: Acknowledge within 4 hours, resolve within 48 hours
+  - P4: Acknowledge within 24 hours, resolve in next release cycle
+
+8.3 Communication During Incidents
+  - Status page: status.clyra.ai (updated every 15 minutes during active incidents)
+  - Email notifications: Sent to affected users for P1 and P2 incidents
+  - Post-incident report: Published within 72 hours for P1 incidents
+
+---
+END OF DOCUMENT
+For questions about these policies, contact support@clyra.ai or call +1 (888) 255-9271.

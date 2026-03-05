@@ -1,0 +1,31 @@
+Category,Question,Answer
+Getting Started,What is Clyra?,Clyra is an AI-powered contract intelligence platform that helps individuals and teams review and analyze contracts quickly. Upload any contract PDF and receive comprehensive risk detection along with compliance checks and negotiation points.
+Getting Started,Who is Clyra for?,"Clyra is designed for legal professionals, startup founders, procurement teams, freelancers, and anyone who reviews contracts regularly."
+Getting Started,How do I sign up?,Visit clyra.ai and click Get Started. Create a free account with email or sign in with Google or GitHub. No credit card is required for the Basic plan.
+Getting Started,Is there a free plan?,"Yes. The Basic plan is free forever. It includes PDF upload, AI contract type detection, 5 risks with severity levels, 5 opportunities with impact levels, a brief summary, and an overall favorability score. You get 3 free analyses per month."
+Getting Started,How long does analysis take?,Most contracts are analyzed within 30 seconds to 2 minutes depending on length and complexity. Pro plan users get priority processing which is typically 30-50 percent faster.
+Pricing,How much does the Pro plan cost?,"The Pro plan costs $20 per month when billed monthly, or $16 per month when billed annually at $192 per year."
+Pricing,What is included in the Pro plan?,"Pro includes everything in Basic plus unlimited PDF uploads, 10+ detailed risks and opportunities, comprehensive contract summary, improvement and negotiation points, key clauses and legal compliance, compensation and IP breakdown, PDF and Word export, and priority processing."
+Pricing,Is there an Enterprise plan?,"Yes. Enterprise pricing is custom and includes everything in Pro plus custom AI training, API access, team collaboration, dedicated account manager, SSO, custom integrations, and 99.9 percent SLA. Contact sales@clyra.ai for details."
+Pricing,Can I get a refund?,"Clyra offers a 14-day money-back guarantee on the Pro plan. If you are not satisfied within 14 days of upgrading, contact support@clyra.ai for a full refund. After 14 days, you can cancel but no partial refund is given for the remaining period."
+Pricing,How do I cancel my subscription?,Go to Account Settings then Billing then Cancel Subscription. You will retain Pro access until the end of your current billing period.
+Features,What types of contracts can Clyra analyze?,"Clyra can analyze NDAs, employment agreements, service agreements, SLAs, MSAs, software licenses, SaaS agreements, vendor contracts, lease agreements, partnership agreements, franchise agreements, consulting agreements, IP assignments, terms of service, and privacy policies."
+Features,What is Risk Detection?,Clyra automatically identifies contractual risks categorized by severity as high medium or low. Examples include unlimited liability clauses and one-sided termination rights as high risk and auto-renewal traps as medium risk.
+Features,What is Legal Compliance Check?,Clyra assesses your contract against common regulatory requirements including GDPR and CCPA compliance as well as SOC 2 security requirements and industry-specific regulations.
+Features,What are Negotiation Recommendations?,The AI suggests specific edits and counterproposals such as adding a liability cap or requesting a cure period before termination.
+Features,Can I export my analysis report?,"Yes but only on the Pro plan. You can export as PDF or Word document by clicking Export Report in the analysis dashboard."
+Features,What is the Favorability Score?,The favorability score is a number from 1 to 100 that represents the overall balance between risks and opportunities in your contract. Higher scores mean the contract is more favorable to you.
+Security,Is my data secure?,"Yes. All data is encrypted in transit using TLS 1.3 and at rest using AES-256. Documents are processed in isolated environments. Clyra is SOC 2 Type II certified and GDPR and CCPA compliant."
+Security,Is my contract data used to train AI models?,No. Your contract data is never used to train or improve AI models. Your documents remain private and confidential.
+Security,How long are documents stored?,Documents are automatically deleted after 90 days unless you choose to save them in your account. You can also manually delete documents at any time.
+Security,Do you support two-factor authentication?,Yes. You can enable 2FA in Account Settings for an additional layer of security.
+Technical,What file formats are supported?,Currently Clyra supports PDF files only. Support for Word documents DOCX is planned for Q2 2026.
+Technical,What is the maximum file size?,The maximum file size for upload is 50 MB per document.
+Technical,Can I analyze contracts in other languages?,Currently Clyra supports English-language contracts only. Multi-language support including Spanish French German and Portuguese is planned for Q3 2026.
+Technical,Is there an API available?,API access is available on the Enterprise plan. Contact sales@clyra.ai for documentation and access.
+Support,How can I contact support?,Email support@clyra.ai or call +1 888 255 9271. Business hours are Monday to Friday 9 AM to 6 PM EST. AI chat support is available 24/7 through our website widget.
+Support,What is the support response time?,Pro plan users receive email support with 24-hour response time. Basic plan users can use the AI chat support which is available 24/7. Enterprise customers get a dedicated account manager.
+Support,I found a bug. How do I report it?,Email support@clyra.ai with a description of the issue and screenshots if possible. Include your browser and operating system for faster resolution.
+Account,How do I change my email address?,Go to Account Settings and update your email. You will receive a verification email at the new address.
+Account,How do I delete my account?,Contact support@clyra.ai to request account deletion. All your data including uploaded contracts and analyses will be permanently deleted within 30 days.
+Account,Can I have multiple team members on one account?,Team collaboration is available on the Enterprise plan. Each team member gets their own login with role-based access control.

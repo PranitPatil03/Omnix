@@ -6,11 +6,7 @@ export const upsert = mutation({
     companyName: v.optional(v.string()),
     tagline: v.optional(v.string()),
     greetMessage: v.string(),
-    defaultSuggestions: v.object({
-      suggestion1: v.optional(v.string()),
-      suggestion2: v.optional(v.string()),
-      suggestion3: v.optional(v.string()),
-    }),
+    defaultSuggestions: v.array(v.string()),
     vapiSettings: v.object({
       assistantId: v.optional(v.string()),
       phoneNumber: v.optional(v.string()),

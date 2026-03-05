@@ -144,11 +144,11 @@ A: Email us at support@clyra.ai or call +1 (888) 255-9271, Monday to Friday, 9 A
       tagline: "AI-Powered Contract Intelligence",
       greetMessage:
         "Hi! 👋 I'm Clyra's AI assistant. I can help you with contract analysis questions, pricing, and features. How can I help you today?",
-      defaultSuggestions: {
-        suggestion1: "What contracts can you analyze?",
-        suggestion2: "How much does the Pro plan cost?",
-        suggestion3: "Is my data secure?",
-      },
+      defaultSuggestions: [
+        "What contracts can you analyze?",
+        "How much does the Pro plan cost?",
+        "Is my data secure?",
+      ],
       vapiSettings: {
         assistantId: undefined,
         phoneNumber: undefined,

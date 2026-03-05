@@ -17,11 +17,14 @@ export const WidgetPreview = ({
 }: WidgetPreviewProps) => {
   return (
     <div className="flex flex-col overflow-hidden rounded-xl border bg-muted shadow-lg w-[320px] h-[520px]">
-      {/* Header - mirrors widget-header */}
-      <header className="bg-gradient-to-b from-primary to-[#0b63f3] p-4 text-primary-foreground">
-        <div className="flex items-center gap-x-2 px-2">
-          <p className="font-medium">Chat</p>
-        </div>
+      {/* Header - welcome banner */}
+      <header className="bg-gradient-to-b from-primary to-[#0b63f3] px-5 py-4 text-primary-foreground">
+        <h2 className="text-base font-semibold">
+          Hi! Welcome to {companyName || "Your Brand"} 👋
+        </h2>
+        {tagline && (
+          <p className="text-xs opacity-80 mt-0.5">{tagline}</p>
+        )}
       </header>
 
       {/* Chat preview area */}

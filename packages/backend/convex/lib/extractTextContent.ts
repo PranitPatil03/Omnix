@@ -1,13 +1,13 @@
-import { openai } from "@ai-sdk/openai";
+import { anthropic } from "@ai-sdk/anthropic";
 import { generateText } from "ai";
 import type { StorageActionWriter } from "convex/server";
 import { assert } from "convex-helpers";
 import { Id } from "../_generated/dataModel";
 
 const AI_MODELS = {
-  image: openai.chat("gpt-4o-mini"),
-  pdf: openai.chat("gpt-4o"),
-  html: openai.chat("gpt-4o"),
+  image: anthropic("claude-3-haiku-20240307"),
+  pdf: anthropic("claude-3-haiku-20240307"),
+  html: anthropic("claude-3-haiku-20240307"),
 } as const;
 
 const SUPPORTED_IMAGE_TYPES = [
@@ -60,7 +60,7 @@ async function extractTextFileContent(
   bytes: ArrayBuffer | undefined,
   mimeType: string
 ): Promise<string> {
-  const arrayBuffer = 
+  const arrayBuffer =
     bytes || (await (await ctx.storage.get(storageId))?.arrayBuffer());
 
   if (!arrayBuffer) {

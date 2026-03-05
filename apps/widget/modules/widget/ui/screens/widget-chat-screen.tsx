@@ -83,11 +83,7 @@ export const WidgetChatScreen = () => {
       return [];
     }
 
-    return Object.keys(widgetSettings.defaultSuggestions).map((key) => {
-      return widgetSettings.defaultSuggestions[
-        key as keyof typeof widgetSettings.defaultSuggestions
-      ];
-    });
+    return widgetSettings.defaultSuggestions || [];
   }, [widgetSettings]);
 
   const conversation = useQuery(
