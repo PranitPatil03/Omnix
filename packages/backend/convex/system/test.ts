@@ -7,7 +7,7 @@ import { escalateConversation } from "./ai/tools/escalateConversation";
 import { resolveConversation } from "./ai/tools/resolveConversation";
 import { search } from "./ai/tools/search";
 
-const TEST_ORG_ID = "jh7d1vg9e55xtmc7dykg23dn8h827ak2";
+const TEST_ORG_ID = "org_31QtvqJKwhtvop04esLJMkmFouB";
 
 const TEST_QUESTIONS = [
   "What is Clyra?",

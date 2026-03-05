@@ -45,6 +45,9 @@ export const OrganizationGuard = ({
         .setActive({ organizationId: firstOrg.id })
         .then(() => {
           document.cookie = `active_organization_id=${firstOrg.id};path=/;max-age=${60 * 60 * 24 * 365}`;
+          // Refresh the Next.js route so the server re-runs getToken() and
+          // the Convex provider gets a fresh JWT with the new orgId.
+          router.refresh();
         })
         .finally(() => {
           settingActiveRef.current = false;
