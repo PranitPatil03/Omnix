@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
+import { useEffect } from "react";
 import { toast } from "sonner";
 import { Button } from "@workspace/ui/components/button";
 import {
@@ -67,6 +68,24 @@ export const BusinessInfoForm = ({ initialData }: BusinessInfoFormProps) => {
       additionalContext: initialData?.additionalContext || "",
     },
   });
+
+  // Reset form when data loads (e.g. after JWT refresh gives us the orgId)
+  useEffect(() => {
+    if (initialData) {
+      form.reset({
+        companyName: initialData.companyName || "",
+        website: initialData.website || "",
+        industry: initialData.industry || "",
+        description: initialData.description || "",
+        productsAndServices: initialData.productsAndServices || "",
+        supportEmail: initialData.supportEmail || "",
+        supportPhone: initialData.supportPhone || "",
+        businessHours: initialData.businessHours || "",
+        returnPolicy: initialData.returnPolicy || "",
+        additionalContext: initialData.additionalContext || "",
+      });
+    }
+  }, [initialData, form]);
 
   const onSubmit = async (values: FormSchema) => {
     try {

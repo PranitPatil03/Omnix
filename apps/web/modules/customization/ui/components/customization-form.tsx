@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
+import { useEffect } from "react";
 import { toast } from "sonner";
 import { Button } from "@workspace/ui/components/button";
 import {
@@ -45,6 +46,8 @@ export const CustomizationForm = ({
   const form = useForm<FormSchema>({
     resolver: zodResolver(widgetSettingsSchema),
     defaultValues: {
+      companyName: initialData?.companyName || "",
+      tagline: initialData?.tagline || "",
       greetMessage:
         initialData?.greetMessage || "Hi! How can I help you today?",
       defaultSuggestions: {
@@ -58,6 +61,26 @@ export const CustomizationForm = ({
       },
     },
   });
+
+  // Reset form when data loads (e.g. after JWT refresh gives us the orgId)
+  useEffect(() => {
+    if (initialData) {
+      form.reset({
+        companyName: initialData.companyName || "",
+        tagline: initialData.tagline || "",
+        greetMessage: initialData.greetMessage || "Hi! How can I help you today?",
+        defaultSuggestions: {
+          suggestion1: initialData.defaultSuggestions.suggestion1 || "",
+          suggestion2: initialData.defaultSuggestions.suggestion2 || "",
+          suggestion3: initialData.defaultSuggestions.suggestion3 || "",
+        },
+        vapiSettings: {
+          assistantId: initialData.vapiSettings.assistantId || "",
+          phoneNumber: initialData.vapiSettings.phoneNumber || "",
+        },
+      });
+    }
+  }, [initialData, form]);
 
   const onSubmit = async (values: FormSchema) => {
     try {
@@ -73,17 +96,20 @@ export const CustomizationForm = ({
       };
 
       await upsertWidgetSettings({
+        companyName: values.companyName || undefined,
+        tagline: values.tagline || undefined,
         greetMessage: values.greetMessage,
         defaultSuggestions: values.defaultSuggestions,
         vapiSettings,
       });
 
+      form.reset(values);
       toast.success("Widget settings saved");
-    } catch(error) {
+    } catch (error) {
       console.error(error);
       toast.error("Something went wrong");
     }
-  } 
+  }
 
   return (
     <Form {...form}>
@@ -96,6 +122,50 @@ export const CustomizationForm = ({
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
+            <FormField
+              control={form.control}
+              name="companyName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Company / Brand Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="e.g., Clyra"
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Shown on the widget welcome screen as &quot;Hi there! Welcome to [Company Name] 👋&quot;
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Separator />
+
+            <FormField
+              control={form.control}
+              name="tagline"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tagline</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="e.g., AI-Powered Contract Intelligence"
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Shown below the greeting on the widget welcome screen
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Separator />
+
             <FormField
               control={form.control}
               name="greetMessage"

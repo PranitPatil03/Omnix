@@ -1,6 +1,8 @@
 import { z } from "zod";
 
 export const widgetSettingsSchema = z.object({
+  companyName: z.string().optional(),
+  tagline: z.string().optional(),
   greetMessage: z.string().min(1, "Greeting message is required"),
   defaultSuggestions: z.object({
     suggestion1: z.string().optional(),

@@ -3,6 +3,8 @@ import { mutation, query } from "../_generated/server";
 
 export const upsert = mutation({
   args: {
+    companyName: v.optional(v.string()),
+    tagline: v.optional(v.string()),
     greetMessage: v.string(),
     defaultSuggestions: v.object({
       suggestion1: v.optional(v.string()),
@@ -16,7 +18,7 @@ export const upsert = mutation({
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-            
+
     if (identity === null) {
       throw new ConvexError({
         code: "UNAUTHORIZED",
@@ -40,6 +42,8 @@ export const upsert = mutation({
 
     if (existingWidgetSettings) {
       await ctx.db.patch(existingWidgetSettings._id, {
+        companyName: args.companyName,
+        tagline: args.tagline,
         greetMessage: args.greetMessage,
         defaultSuggestions: args.defaultSuggestions,
         vapiSettings: args.vapiSettings,
@@ -47,6 +51,8 @@ export const upsert = mutation({
     } else {
       await ctx.db.insert("widgetSettings", {
         organizationId: orgId,
+        companyName: args.companyName,
+        tagline: args.tagline,
         greetMessage: args.greetMessage,
         defaultSuggestions: args.defaultSuggestions,
         vapiSettings: args.vapiSettings,
@@ -60,7 +66,7 @@ export const getOne = query({
   args: {},
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
-            
+
     if (identity === null) {
       // Return null instead of throwing - let client handle loading state
       return null;

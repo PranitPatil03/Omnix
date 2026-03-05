@@ -9,6 +9,8 @@ export default defineSchema({
     .index("by_organization_id", ["organizationId"]),
   widgetSettings: defineTable({
     organizationId: v.string(),
+    companyName: v.optional(v.string()),
+    tagline: v.optional(v.string()),
     greetMessage: v.string(),
     defaultSuggestions: v.object({
       suggestion1: v.optional(v.string()),
