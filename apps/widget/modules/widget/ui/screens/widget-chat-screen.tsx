@@ -33,7 +33,7 @@ import {
   AIMessageContent,
 } from "@workspace/ui/components/ai/message";
 import { AIResponse } from "@workspace/ui/components/ai/response";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 
 const formSchema = z.object({
   message: z.string().min(1, "Message is required"),
@@ -102,6 +102,18 @@ export const WidgetChatScreen = () => {
   });
 
   const [isAgentTyping, setIsAgentTyping] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
+
+  // Auto-clear send errors after 5 seconds
+  const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    if (sendError) {
+      errorTimerRef.current = setTimeout(() => setSendError(null), 5000);
+    }
+    return () => {
+      if (errorTimerRef.current) clearTimeout(errorTimerRef.current);
+    };
+  }, [sendError]);
 
   const createMessage = useAction(api.public.messages.create);
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -111,6 +123,7 @@ export const WidgetChatScreen = () => {
 
     const messageText = values.message;
     form.reset();
+    setSendError(null);
 
     if (conversation.status === "unresolved") {
       setIsAgentTyping(true);
@@ -122,6 +135,8 @@ export const WidgetChatScreen = () => {
         prompt: messageText,
         contactSessionId,
       });
+    } catch {
+      setSendError("Could not send message. Please try again.");
     } finally {
       setIsAgentTyping(false);
     }
@@ -203,8 +218,7 @@ export const WidgetChatScreen = () => {
           )}
         </AIConversationContent>
       </AIConversation>
-      {toUIMessages(messages.results ?? [])?.length === 1 && (
-        <AISuggestions className="flex w-full flex-col items-end p-2">
+      {toUIMessages(messages.results ?? [])?.length === 1 && (        <AISuggestions className="flex w-full flex-col items-end p-2">
           {suggestions.map((suggestion) => {
             if (!suggestion) {
               return null;
@@ -228,6 +242,11 @@ export const WidgetChatScreen = () => {
         </AISuggestions>
       )}
       <Form {...form}>
+        {sendError && (
+          <div className="px-3 py-2 text-xs text-red-600 bg-red-50 border-t border-red-100">
+            {sendError}
+          </div>
+        )}
         <AIInput
           className="rounded-none border-x-0 border-b-0"
           onSubmit={form.handleSubmit(onSubmit)}

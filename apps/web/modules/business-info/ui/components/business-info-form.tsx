@@ -83,6 +83,7 @@ export const BusinessInfoForm = ({ initialData }: BusinessInfoFormProps) => {
         additionalContext: values.additionalContext || undefined,
       });
 
+      form.reset(values);
       toast.success("Business information saved");
     } catch (error) {
       console.error(error);
