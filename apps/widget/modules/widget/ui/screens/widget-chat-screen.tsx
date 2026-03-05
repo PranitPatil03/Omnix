@@ -8,8 +8,7 @@ import { useThreadMessages, toUIMessages } from "@convex-dev/agent/react";
 import { WidgetHeader } from "@/modules/widget/ui/components/widget-header";
 import { Button } from "@workspace/ui/components/button";
 import { useAtomValue, useSetAtom } from "jotai";
-import { ArrowLeftIcon, MenuIcon, UserIcon, CheckCircleIcon } from "lucide-react";
-import { DicebearAvatar } from "@workspace/ui/components/dicebear-avatar";
+import { ArrowLeftIcon, MenuIcon, UserIcon, CheckCircleIcon, SendIcon } from "lucide-react";
 import { useInfiniteScroll } from "@workspace/ui/hooks/use-infinite-scroll";
 import { InfiniteScrollTrigger } from "@workspace/ui/components/infinite-scroll-trigger";
 import { contactSessionIdAtomFamily, conversationIdAtom, organizationIdAtom, screenAtom, widgetSettingsAtom } from "../../atoms/widget-atoms";
@@ -19,14 +18,9 @@ import { Form, FormField } from "@workspace/ui/components/form";
 import {
   AIConversation,
   AIConversationContent,
-  AIConversationScrollButton,
 } from "@workspace/ui/components/ai/conversation";
 import {
-  AIInput,
-  AIInputSubmit,
   AIInputTextarea,
-  AIInputToolbar,
-  AIInputTools,
 } from "@workspace/ui/components/ai/input";
 import {
   AIMessage,
@@ -242,7 +236,8 @@ export const WidgetChatScreen = () => {
           >
             <ArrowLeftIcon />
           </Button>
-          <p>Chat</p>
+          <img src="/logo.svg" alt="" className="size-6" />
+          <p className="font-medium">Chat</p>
         </div>
         <Button
           size="icon"
@@ -296,13 +291,6 @@ export const WidgetChatScreen = () => {
                       <AIResponse>{parsed.text}</AIResponse>
                     )}
                   </AIMessageContent>
-                  {message.role === "assistant" && (
-                    <DicebearAvatar
-                      imageUrl="/logo.svg"
-                      seed="assistant"
-                      size={32}
-                    />
-                  )}
                 </AIMessage>
 
                 {/* Follow-up suggestions + End conversation — after AI messages, only on last message */}
@@ -372,11 +360,6 @@ export const WidgetChatScreen = () => {
                   />
                 </div>
               </AIMessageContent>
-              <DicebearAvatar
-                imageUrl="/logo.svg"
-                seed="assistant"
-                size={32}
-              />
             </AIMessage>
           )}
         </AIConversationContent>
@@ -411,44 +394,45 @@ export const WidgetChatScreen = () => {
             {sendError}
           </div>
         )}
-        <AIInput
-          className="rounded-none border-x-0 border-b-0"
-          onSubmit={form.handleSubmit(onSubmit)}
-        >
-          <FormField
-            control={form.control}
-            disabled={conversation?.status === "resolved" || conversation?.status === "operator_review"}
-            name="message"
-            render={({ field }) => (
-              <AIInputTextarea
-                disabled={conversation?.status === "resolved" || conversation?.status === "operator_review" || isAgentTyping}
-                onChange={field.onChange}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    if (!isAgentTyping) form.handleSubmit(onSubmit)();
+        <div className="border-t bg-background p-2">
+          <div className="flex items-start gap-2">
+            <FormField
+              control={form.control}
+              disabled={conversation?.status === "resolved" || conversation?.status === "operator_review"}
+              name="message"
+              render={({ field }) => (
+                <AIInputTextarea
+                  className="min-h-[40px] max-h-[120px] flex-1 resize-none border-0 bg-transparent p-2 text-sm shadow-none focus-visible:ring-0"
+                  disabled={conversation?.status === "resolved" || conversation?.status === "operator_review" || isAgentTyping}
+                  onChange={field.onChange}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      if (!isAgentTyping) form.handleSubmit(onSubmit)();
+                    }
+                  }}
+                  placeholder={
+                    conversation?.status === "resolved"
+                      ? "This conversation has been resolved."
+                      : conversation?.status === "operator_review"
+                        ? "This conversation is under review."
+                        : "Type your message..."
                   }
-                }}
-                placeholder={
-                  conversation?.status === "resolved"
-                    ? "This conversation has been resolved."
-                    : conversation?.status === "operator_review"
-                      ? "This conversation is under review."
-                      : "Type your message..."
-                }
-                value={field.value}
-              />
-            )}
-          />
-          <AIInputToolbar>
-            <AIInputTools />
-            <AIInputSubmit
-              disabled={conversation?.status === "resolved" || conversation?.status === "operator_review" || !form.formState.isValid || isAgentTyping}
-              status="ready"
-              type="submit"
+                  value={field.value}
+                />
+              )}
             />
-          </AIInputToolbar>
-        </AIInput>
+            <Button
+              className="mt-1 size-8 shrink-0 rounded-lg"
+              disabled={conversation?.status === "resolved" || conversation?.status === "operator_review" || !form.formState.isValid || isAgentTyping}
+              onClick={form.handleSubmit(onSubmit)}
+              size="icon"
+              type="submit"
+            >
+              <SendIcon className="size-4" />
+            </Button>
+          </div>
+        </div>
       </Form>
     </>
   );
