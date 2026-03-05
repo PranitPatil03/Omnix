@@ -45,7 +45,7 @@ export const PluginCard = ({
             alt="Platform"
             className="object-contain"
             height={40}
-            width={40}
+            width={49}
             src="/logo.svg"
           />
         </div>

@@ -108,27 +108,35 @@ export const ConversationIdView = ({
   const removeMessage = useMutation(api.private.messages.remove);
 
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
-  const [editingContent, setEditingContent] = useState("");
 
   const handleEditStart = (messageId: string, content: string) => {
     setEditingMessageId(messageId);
-    setEditingContent(content);
+    form.setValue("message", content, { shouldValidate: true, shouldDirty: true });
+    setTimeout(() => {
+      document.querySelector<HTMLTextAreaElement>("[data-ai-input-textarea]")?.focus();
+    }, 0);
   };
 
   const handleEditSave = async () => {
-    if (!editingMessageId || !conversation?.threadId || !editingContent.trim()) return;
+    const content = form.getValues("message");
+    if (!editingMessageId || !conversation?.threadId || !content.trim()) return;
     try {
       await updateMessage({
         messageId: editingMessageId,
         threadId: conversation.threadId,
-        content: editingContent.trim(),
+        content: content.trim(),
       });
       setEditingMessageId(null);
-      setEditingContent("");
+      form.reset();
       toast.success("Message updated");
     } catch {
       toast.error("Failed to update message");
     }
+  };
+
+  const handleEditCancel = () => {
+    setEditingMessageId(null);
+    form.reset();
   };
 
   const handleDelete = async (messageId: string) => {
@@ -234,36 +242,9 @@ export const ConversationIdView = ({
                 </div>
               )}
               <AIMessageContent>
-                {editingMessageId === message.id ? (
-                  <div className="flex flex-col gap-2 w-full">
-                    <textarea
-                      className="w-full rounded-md border bg-background px-3 py-2 text-sm min-h-[60px] resize-none focus:outline-none focus:ring-1 focus:ring-ring"
-                      value={editingContent}
-                      onChange={(e) => setEditingContent(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && !e.shiftKey) {
-                          e.preventDefault();
-                          handleEditSave();
-                        }
-                        if (e.key === "Escape") {
-                          setEditingMessageId(null);
-                        }
-                      }}
-                    />
-                    <div className="flex gap-1.5 justify-end">
-                      <Button size="sm" variant="ghost" className="h-6 px-2 text-xs" onClick={() => setEditingMessageId(null)}>
-                        Cancel
-                      </Button>
-                      <Button size="sm" className="h-6 px-2 text-xs" onClick={handleEditSave}>
-                        Save
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <AIResponse>
-                    {message.content}
-                  </AIResponse>
-                )}
+                <AIResponse>
+                  {message.content}
+                </AIResponse>
               </AIMessageContent>
               {message.role === "user" && (
                 <DicebearAvatar
@@ -271,9 +252,9 @@ export const ConversationIdView = ({
                   size={32}
                 />
               )}
-              {/* For AI messages: show action buttons */}
-              {message.role === "assistant" && conversation?.status !== "resolved" && editingMessageId !== message.id && (
-                <div className="mt-1 flex items-center gap-1">
+              {/* For AI messages: show action buttons below the message */}
+              {message.role === "assistant" && conversation?.status !== "resolved" && (
+                <div className="flex items-center gap-1 mt-1">
                   <Button
                     size="sm"
                     variant="outline"
@@ -311,8 +292,15 @@ export const ConversationIdView = ({
       </AIConversation>
 
       <div className="p-2">
+        {editingMessageId && (
+          <div className="flex items-center gap-2 px-3 py-1.5 mb-1 rounded-t-md bg-muted-foreground/10 text-xs text-muted-foreground">
+            <PencilIcon className="size-3" />
+            <span>Editing message</span>
+            <button className="ml-auto hover:text-foreground" onClick={handleEditCancel}>✕</button>
+          </div>
+        )}
         <Form {...form}>
-          <AIInput onSubmit={form.handleSubmit(onSubmit)}>
+          <AIInput onSubmit={editingMessageId ? handleEditSave : form.handleSubmit(onSubmit)}>
             <FormField
               control={form.control}
               disabled={conversation?.status === "resolved"}
@@ -329,13 +317,22 @@ export const ConversationIdView = ({
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                       e.preventDefault();
-                      form.handleSubmit(onSubmit)();
+                      if (editingMessageId) {
+                        handleEditSave();
+                      } else {
+                        form.handleSubmit(onSubmit)();
+                      }
+                    }
+                    if (e.key === "Escape" && editingMessageId) {
+                      handleEditCancel();
                     }
                   }}
                   placeholder={
                     conversation?.status === "resolved"
                       ? "This conversation has been resolved"
-                      : "Type your response as an operator..."
+                      : editingMessageId
+                        ? "Edit the message and press Enter to save..."
+                        : "Type your response as an operator..."
                   }
                   value={field.value}
                 />
@@ -343,28 +340,50 @@ export const ConversationIdView = ({
             />
             <AIInputToolbar>
               <AIInputTools>
-                <AIInputButton
-                  onClick={handleEnhanceResponse}
+                {editingMessageId ? (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-7 px-2 text-xs"
+                    onClick={handleEditCancel}
+                  >
+                    Cancel
+                  </Button>
+                ) : (
+                  <AIInputButton
+                    onClick={handleEnhanceResponse}
+                    disabled={
+                      conversation?.status === "resolved" ||
+                      isEnhancing ||
+                      !form.formState.isValid
+                    }
+                  >
+                    <Wand2Icon />
+                    {isEnhancing ? "Enhancing..." : "Enhance"}
+                  </AIInputButton>
+                )}
+              </AIInputTools>
+              {editingMessageId ? (
+                <Button
+                  size="sm"
+                  className="h-7 px-3 text-xs"
+                  disabled={!form.formState.isValid}
+                  onClick={handleEditSave}
+                >
+                  <CheckIcon className="size-3 mr-1" /> Update
+                </Button>
+              ) : (
+                <AIInputSubmit
                   disabled={
                     conversation?.status === "resolved" ||
-                    isEnhancing ||
-                    !form.formState.isValid
+                    !form.formState.isValid ||
+                    form.formState.isSubmitting ||
+                    isEnhancing
                   }
-                >
-                  <Wand2Icon />
-                  {isEnhancing ? "Enhancing..." : "Enhance"}
-                </AIInputButton>
-              </AIInputTools>
-              <AIInputSubmit
-                disabled={
-                  conversation?.status === "resolved" ||
-                  !form.formState.isValid ||
-                  form.formState.isSubmitting ||
-                  isEnhancing
-                }
-                status="ready"
-                type="submit"
-              />
+                  status="ready"
+                  type="submit"
+                />
+              )}
             </AIInputToolbar>
           </AIInput>
         </Form>

@@ -110,19 +110,25 @@ export const WidgetChatScreen = () => {
   const prevMessageCount = useRef(0);
   // Track the latest new AI message that needs streaming
   const [streamingMessageId, setStreamingMessageId] = useState<string | null>(null);
+  // Track whether we're waiting for the user's message to appear in the list before showing typing
+  const waitingForUserMessage = useRef(false);
 
   const uiMessages = useMemo(() => toUIMessages(messages.results ?? []), [messages.results]);
 
-  // Detect when a new AI message arrives after we sent a user message
+  // Detect when new messages arrive in the list
   useEffect(() => {
     if (!uiMessages.length) return;
     const currentCount = uiMessages.length;
 
-    if (currentCount > prevMessageCount.current && isAgentTyping) {
-      // New message(s) arrived while we were waiting for the agent
+    if (currentCount > prevMessageCount.current) {
       const lastMessage = uiMessages[uiMessages.length - 1];
-      if (lastMessage && lastMessage.role === "assistant") {
-        // Stop typing indicator, start streaming the new message
+
+      if (lastMessage && lastMessage.role === "user" && waitingForUserMessage.current) {
+        // User's message just appeared in the list — now show typing indicator
+        waitingForUserMessage.current = false;
+        setIsAgentTyping(true);
+      } else if (lastMessage && lastMessage.role === "assistant" && isAgentTyping) {
+        // AI response arrived — stop typing, start streaming
         setIsAgentTyping(false);
         if (!streamedMessageIds.current.has(lastMessage.id)) {
           setStreamingMessageId(lastMessage.id);
@@ -159,9 +165,9 @@ export const WidgetChatScreen = () => {
     form.reset();
     setSendError(null);
 
-    // Show typing indicator only after user submits
+    // Mark that we're waiting for the user message to appear before showing typing
     if (conversation.status === "unresolved") {
-      setIsAgentTyping(true);
+      waitingForUserMessage.current = true;
     }
 
     try {
@@ -172,6 +178,7 @@ export const WidgetChatScreen = () => {
       });
     } catch {
       setSendError("Could not send message. Please try again.");
+      waitingForUserMessage.current = false;
       setIsAgentTyping(false);
     }
   };
