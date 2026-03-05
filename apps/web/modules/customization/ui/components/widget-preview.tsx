@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRightIcon, MessageSquareTextIcon, SendIcon } from "lucide-react";
+import { SendIcon } from "lucide-react";
 
 interface WidgetPreviewProps {
   companyName: string;
@@ -19,68 +19,47 @@ export const WidgetPreview = ({
     <div className="flex flex-col overflow-hidden rounded-xl border bg-muted shadow-lg w-[320px] h-[520px]">
       {/* Header - mirrors widget-header */}
       <header className="bg-gradient-to-b from-primary to-[#0b63f3] p-4 text-primary-foreground">
-        <div className="flex flex-col justify-between gap-y-2 px-2 py-6 font-semibold">
-          <p className="text-2xl leading-tight">
-            {companyName
-              ? `Hi! Welcome to ${companyName} 👋`
-              : "Hi! 👋"}
-          </p>
-          <p className="text-sm opacity-90">
-            {tagline || "Let's get you started"}
-          </p>
+        <div className="flex items-center gap-x-2 px-2">
+          <p className="font-medium">Chat</p>
         </div>
       </header>
 
-      {/* Body */}
-      <div className="flex flex-1 flex-col overflow-hidden">
-        {/* Start chat button */}
-        <div className="flex flex-col gap-y-3 p-3">
-          <div className="flex h-12 w-full items-center justify-between rounded-lg border bg-background px-4">
-            <div className="flex items-center gap-x-2 text-sm">
-              <MessageSquareTextIcon className="size-4 text-muted-foreground" />
-              <span>Start chat</span>
-            </div>
-            <ChevronRightIcon className="size-4 text-muted-foreground" />
+      {/* Chat preview area */}
+      <div className="flex flex-1 flex-col bg-background">
+        {/* Greeting message bubble */}
+        <div className="flex-1 p-3 space-y-2">
+          <div className="flex items-center gap-1.5 mb-0.5">
+            <span className="text-[10px] font-medium text-muted-foreground">
+              Milo
+            </span>
           </div>
+          <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-muted px-3 py-2 text-sm">
+            {greetMessage || "Hi! How can I help you today?"}
+          </div>
+
+          {/* Suggestion pills */}
+          {suggestions.filter(Boolean).length > 0 && (
+            <div className="flex flex-col items-end gap-1.5 pt-1">
+              {suggestions.filter(Boolean).map((suggestion, i) => (
+                <div
+                  key={i}
+                  className="rounded-full border bg-background px-3 py-1.5 text-xs text-muted-foreground"
+                >
+                  {suggestion}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Chat preview area */}
-        <div className="flex flex-1 flex-col bg-background border-t">
-          {/* Greeting message bubble */}
-          <div className="flex-1 p-3 space-y-2">
-            <div className="flex items-center gap-1.5 mb-0.5">
-              <span className="text-[10px] font-medium text-muted-foreground">
-                Milo
-              </span>
+        {/* Input area */}
+        <div className="border-t bg-background p-2">
+          <div className="flex items-center gap-2">
+            <div className="flex-1 rounded-lg bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
+              Type your message...
             </div>
-            <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-muted px-3 py-2 text-sm">
-              {greetMessage || "Hi! How can I help you today?"}
-            </div>
-
-            {/* Suggestion pills */}
-            {suggestions.filter(Boolean).length > 0 && (
-              <div className="flex flex-col items-end gap-1.5 pt-1">
-                {suggestions.filter(Boolean).map((suggestion, i) => (
-                  <div
-                    key={i}
-                    className="rounded-full border bg-background px-3 py-1.5 text-xs text-muted-foreground"
-                  >
-                    {suggestion}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Input area */}
-          <div className="border-t bg-background p-2">
-            <div className="flex items-center gap-2">
-              <div className="flex-1 rounded-lg bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
-                Type your message...
-              </div>
-              <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                <SendIcon className="size-3" />
-              </div>
+            <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+              <SendIcon className="size-3" />
             </div>
           </div>
         </div>

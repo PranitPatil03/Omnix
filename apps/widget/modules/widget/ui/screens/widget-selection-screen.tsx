@@ -96,14 +96,19 @@ export const WidgetSelectionScreen = () => {
         )}
         {hasVapiSecrets && widgetSettings?.vapiSettings?.phoneNumber && (
           <Button
-            className="h-16 w-full justify-between"
+            className="h-auto w-full justify-between py-4"
             variant="outline"
             onClick={() => setScreen("contact")}
             disabled={isPending}
           >
             <div className="flex items-center gap-x-2">
               <PhoneIcon className="size-4" />
-              <span>Call us</span>
+              <div className="flex flex-col items-start">
+                <span>Call us</span>
+                <span className="text-xs text-muted-foreground font-normal">
+                  {widgetSettings.vapiSettings.phoneNumber}
+                </span>
+              </div>
             </div>
             <ChevronRightIcon />
           </Button>
