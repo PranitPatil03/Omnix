@@ -167,3 +167,72 @@ export const getMany = query({
     return paginated;
   },
 });
+
+export const update = mutation({
+  args: {
+    messageId: v.string(),
+    threadId: v.string(),
+    content: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (identity === null) {
+      throw new ConvexError({ code: "UNAUTHORIZED", message: "Identity not found" });
+    }
+
+    const orgId = identity.orgId as string;
+    if (!orgId) {
+      throw new ConvexError({ code: "UNAUTHORIZED", message: "Organization not found" });
+    }
+
+    const conversation = await ctx.db
+      .query("conversations")
+      .withIndex("by_thread_id", (q) => q.eq("threadId", args.threadId))
+      .unique();
+
+    if (!conversation || conversation.organizationId !== orgId) {
+      throw new ConvexError({ code: "NOT_FOUND", message: "Conversation not found" });
+    }
+
+    await supportAgent.updateMessage(ctx, {
+      messageId: args.messageId,
+      patch: {
+        message: { role: "assistant", content: args.content },
+        status: "success",
+      },
+    });
+  },
+});
+
+export const remove = mutation({
+  args: {
+    messageId: v.string(),
+    threadId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (identity === null) {
+      throw new ConvexError({ code: "UNAUTHORIZED", message: "Identity not found" });
+    }
+
+    const orgId = identity.orgId as string;
+    if (!orgId) {
+      throw new ConvexError({ code: "UNAUTHORIZED", message: "Organization not found" });
+    }
+
+    const conversation = await ctx.db
+      .query("conversations")
+      .withIndex("by_thread_id", (q) => q.eq("threadId", args.threadId))
+      .unique();
+
+    if (!conversation || conversation.organizationId !== orgId) {
+      throw new ConvexError({ code: "NOT_FOUND", message: "Conversation not found" });
+    }
+
+    await supportAgent.deleteMessage(ctx, {
+      messageId: args.messageId,
+    });
+  },
+});

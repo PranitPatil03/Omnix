@@ -33,7 +33,8 @@ import {
   AIMessageContent,
 } from "@workspace/ui/components/ai/message";
 import { AIResponse } from "@workspace/ui/components/ai/response";
-import { useMemo, useState, useEffect, useRef } from "react";
+import { useMemo, useState, useEffect, useRef, useCallback } from "react";
+import { StreamingText } from "../components/streaming-text";
 
 const formSchema = z.object({
   message: z.string().min(1, "Message is required"),
@@ -103,6 +104,34 @@ export const WidgetChatScreen = () => {
 
   const [isAgentTyping, setIsAgentTyping] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
+  // Track which message IDs have already been streamed so we don't re-animate on re-renders
+  const streamedMessageIds = useRef<Set<string>>(new Set());
+  // Track the previous message count so we can detect new AI messages
+  const prevMessageCount = useRef(0);
+  // Track the latest new AI message that needs streaming
+  const [streamingMessageId, setStreamingMessageId] = useState<string | null>(null);
+
+  const uiMessages = useMemo(() => toUIMessages(messages.results ?? []), [messages.results]);
+
+  // Detect when a new AI message arrives after we sent a user message
+  useEffect(() => {
+    if (!uiMessages.length) return;
+    const currentCount = uiMessages.length;
+
+    if (currentCount > prevMessageCount.current && isAgentTyping) {
+      // New message(s) arrived while we were waiting for the agent
+      const lastMessage = uiMessages[uiMessages.length - 1];
+      if (lastMessage && lastMessage.role === "assistant") {
+        // Stop typing indicator, start streaming the new message
+        setIsAgentTyping(false);
+        if (!streamedMessageIds.current.has(lastMessage.id)) {
+          setStreamingMessageId(lastMessage.id);
+        }
+      }
+    }
+
+    prevMessageCount.current = currentCount;
+  }, [uiMessages, isAgentTyping]);
 
   // Auto-clear send errors after 5 seconds
   const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -115,6 +144,11 @@ export const WidgetChatScreen = () => {
     };
   }, [sendError]);
 
+  const handleStreamComplete = useCallback((messageId: string) => {
+    streamedMessageIds.current.add(messageId);
+    setStreamingMessageId(null);
+  }, []);
+
   const createMessage = useAction(api.public.messages.create);
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!conversation || !contactSessionId) {
@@ -125,6 +159,7 @@ export const WidgetChatScreen = () => {
     form.reset();
     setSendError(null);
 
+    // Show typing indicator only after user submits
     if (conversation.status === "unresolved") {
       setIsAgentTyping(true);
     }
@@ -137,7 +172,6 @@ export const WidgetChatScreen = () => {
       });
     } catch {
       setSendError("Could not send message. Please try again.");
-    } finally {
       setIsAgentTyping(false);
     }
   };
@@ -170,14 +204,36 @@ export const WidgetChatScreen = () => {
             onLoadMore={handleLoadMore}
             ref={topElementRef}
           />
-          {toUIMessages(messages.results ?? [])?.map((message) => {
+          {uiMessages?.map((message) => {
+            const isNewAIMessage = message.role === "assistant" && message.id === streamingMessageId;
+            const alreadyStreamed = streamedMessageIds.current.has(message.id);
+
             return (
               <AIMessage
                 from={message.role === "user" ? "user" : "assistant"}
                 key={message.id}
               >
+                {message.role === "assistant" && (
+                  <div className="flex items-center gap-1.5 mb-0.5">
+                    <span className="text-[10px] font-medium text-muted-foreground">
+                      {(message as typeof message & { agentName?: string }).agentName || "Milo"}
+                    </span>
+                  </div>
+                )}
                 <AIMessageContent>
-                  <AIResponse>{message.content}</AIResponse>
+                  {isNewAIMessage && !alreadyStreamed ? (
+                    <StreamingText
+                      content={message.content as string}
+                      speed={10}
+                      onComplete={() => handleStreamComplete(message.id)}
+                    >
+                      {(displayedText) => (
+                        <AIResponse>{displayedText}</AIResponse>
+                      )}
+                    </StreamingText>
+                  ) : (
+                    <AIResponse>{message.content}</AIResponse>
+                  )}
                 </AIMessageContent>
                 {message.role === "assistant" && (
                   <DicebearAvatar
@@ -218,7 +274,7 @@ export const WidgetChatScreen = () => {
           )}
         </AIConversationContent>
       </AIConversation>
-      {toUIMessages(messages.results ?? [])?.length === 1 && (<AISuggestions className="flex w-full flex-col items-end p-2">
+      {uiMessages?.length === 1 && (<AISuggestions className="flex w-full flex-col items-end p-2">
         {suggestions.map((suggestion) => {
           if (!suggestion) {
             return null;

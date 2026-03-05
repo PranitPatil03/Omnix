@@ -22,7 +22,7 @@ export const getMany = query({
 
     const conversations = await ctx.db
       .query("conversations")
-      .withIndex("by_contact_session_id", (q) => 
+      .withIndex("by_contact_session_id", (q) =>
         q.eq("contactSessionId", args.contactSessionId),
       )
       .order("desc")
@@ -120,7 +120,7 @@ export const create = mutation({
 
     const widgetSettings = await ctx.db
       .query("widgetSettings")
-      .withIndex("by_organization_id", (q) => 
+      .withIndex("by_organization_id", (q) =>
         q.eq("organizationId", args.organizationId),
       )
       .unique();
@@ -131,6 +131,7 @@ export const create = mutation({
 
     await saveMessage(ctx, components.agent, {
       threadId,
+      agentName: "Milo",
       message: {
         role: "assistant",
         content: widgetSettings?.greetMessage || "Hello, how can I help you today?",

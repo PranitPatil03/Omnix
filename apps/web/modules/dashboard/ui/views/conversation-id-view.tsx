@@ -7,7 +7,7 @@ import { api } from "@workspace/backend/_generated/api";
 import { Id } from "@workspace/backend/_generated/dataModel";
 import { Button } from "@workspace/ui/components/button";
 import { useAction, useMutation, useQuery } from "convex/react";
-import { CheckIcon, CopyIcon, MoreHorizontalIcon, Wand2Icon } from "lucide-react";
+import { CheckIcon, CopyIcon, MoreHorizontalIcon, PencilIcon, Trash2Icon, Wand2Icon } from "lucide-react";
 import {
   AIConversation,
   AIConversationContent,
@@ -32,7 +32,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DicebearAvatar } from "@workspace/ui/components/dicebear-avatar";
 import { ConversationStatusButton } from "../components/conversation-status-button";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { cn } from "@workspace/ui/lib/utils";
 import { Skeleton } from "@workspace/ui/components/skeleton";
 import { toast } from "sonner";
@@ -104,6 +104,47 @@ export const ConversationIdView = ({
   };
 
   const createMessage = useMutation(api.private.messages.create);
+  const updateMessage = useMutation(api.private.messages.update);
+  const removeMessage = useMutation(api.private.messages.remove);
+
+  const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+  const [editingContent, setEditingContent] = useState("");
+
+  const handleEditStart = (messageId: string, content: string) => {
+    setEditingMessageId(messageId);
+    setEditingContent(content);
+  };
+
+  const handleEditSave = async () => {
+    if (!editingMessageId || !conversation?.threadId || !editingContent.trim()) return;
+    try {
+      await updateMessage({
+        messageId: editingMessageId,
+        threadId: conversation.threadId,
+        content: editingContent.trim(),
+      });
+      setEditingMessageId(null);
+      setEditingContent("");
+      toast.success("Message updated");
+    } catch {
+      toast.error("Failed to update message");
+    }
+  };
+
+  const handleDelete = async (messageId: string) => {
+    if (!conversation?.threadId) return;
+    try {
+      await removeMessage({
+        messageId,
+        threadId: conversation.threadId,
+      });
+      toast.success("Message deleted");
+    } catch {
+      toast.error("Failed to delete message");
+    }
+  };
+
+  const uiMessages = useMemo(() => toUIMessages(messages.results ?? []), [messages.results]);
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       await createMessage({
@@ -178,16 +219,51 @@ export const ConversationIdView = ({
             onLoadMore={handleLoadMore}
             ref={topElementRef}
           />
-          {toUIMessages(messages.results ?? [])?.map((message) => (
+          {uiMessages?.map((message) => (
             <AIMessage
               // In reverse, because we are watching from "assistant" prespective
               from={message.role === "user" ? "assistant" : "user"}
               key={message.id}
             >
+              {/* Show agent name tag for AI messages */}
+              {message.role === "assistant" && (
+                <div className="flex items-center gap-1.5 mb-0.5">
+                  <span className="text-[10px] font-medium text-muted-foreground">
+                    {(message as typeof message & { agentName?: string }).agentName || "Milo"}
+                  </span>
+                </div>
+              )}
               <AIMessageContent>
-                <AIResponse>
-                  {message.content}
-                </AIResponse>
+                {editingMessageId === message.id ? (
+                  <div className="flex flex-col gap-2 w-full">
+                    <textarea
+                      className="w-full rounded-md border bg-background px-3 py-2 text-sm min-h-[60px] resize-none focus:outline-none focus:ring-1 focus:ring-ring"
+                      value={editingContent}
+                      onChange={(e) => setEditingContent(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                          e.preventDefault();
+                          handleEditSave();
+                        }
+                        if (e.key === "Escape") {
+                          setEditingMessageId(null);
+                        }
+                      }}
+                    />
+                    <div className="flex gap-1.5 justify-end">
+                      <Button size="sm" variant="ghost" className="h-6 px-2 text-xs" onClick={() => setEditingMessageId(null)}>
+                        Cancel
+                      </Button>
+                      <Button size="sm" className="h-6 px-2 text-xs" onClick={handleEditSave}>
+                        Save
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <AIResponse>
+                    {message.content}
+                  </AIResponse>
+                )}
               </AIMessageContent>
               {message.role === "user" && (
                 <DicebearAvatar
@@ -195,9 +271,9 @@ export const ConversationIdView = ({
                   size={32}
                 />
               )}
-              {/* For AI messages: show "Use this reply" so operator can edit & send it */}
-              {message.role === "assistant" && conversation?.status !== "resolved" && (
-                <div className="mt-1 flex justify-start">
+              {/* For AI messages: show action buttons */}
+              {message.role === "assistant" && conversation?.status !== "resolved" && editingMessageId !== message.id && (
+                <div className="mt-1 flex items-center gap-1">
                   <Button
                     size="sm"
                     variant="outline"
@@ -209,6 +285,22 @@ export const ConversationIdView = ({
                     ) : (
                       <><CopyIcon className="size-3" /> Use this reply</>
                     )}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-6 gap-1.5 px-2 text-xs text-muted-foreground hover:text-foreground"
+                    onClick={() => handleEditStart(message.id, message.content as string)}
+                  >
+                    <PencilIcon className="size-3" /> Edit
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-6 gap-1.5 px-2 text-xs text-destructive hover:text-destructive"
+                    onClick={() => handleDelete(message.id)}
+                  >
+                    <Trash2Icon className="size-3" /> Delete
                   </Button>
                 </div>
               )}
