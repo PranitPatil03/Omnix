@@ -3,7 +3,7 @@ import { internalMutation } from "../_generated/server";
 export const seedClyra = internalMutation({
   args: {},
   handler: async (ctx) => {
-    const organizationId = "org_31QtvqJKwhtvop04esLJMkmFouB";
+    const organizationId = "jh7d1vg9e55xtmc7dykg23dn8h827ak2";
 
     // 1. Seed business info
     const existingInfo = await ctx.db

@@ -1,15 +1,13 @@
-import { createOpenAI } from "@ai-sdk/openai";
+import { createAnthropic } from "@ai-sdk/anthropic";
 import { Agent } from "@convex-dev/agent";
 import { components } from "../../../_generated/api";
 import { SUPPORT_AGENT_PROMPT } from "../constants";
 
-// Use Groq's OpenAI-compatible API for fast inference
-const groq = createOpenAI({
-  apiKey: process.env.GROQ_API_KEY,
-  baseURL: "https://api.groq.com/openai/v1",
+const anthropic = createAnthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
 export const supportAgent = new Agent(components.agent, {
-  chat: groq("llama-3.3-70b-versatile"),
+  chat: anthropic("claude-3-haiku-20240307"),
   instructions: SUPPORT_AGENT_PROMPT,
 });

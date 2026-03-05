@@ -80,7 +80,7 @@ export const create = action({
         : SUPPORT_AGENT_PROMPT;
 
       try {
-        await supportAgent.generateText(
+        const result = await supportAgent.generateText(
           ctx,
           { threadId: args.threadId },
           {
@@ -93,6 +93,7 @@ export const create = action({
             },
           },
         );
+        console.log("[SupportAgent] AI response:", JSON.stringify(result.text));
       } catch (error) {
         console.error("[SupportAgent] generateText failed:", error);
         // NOTE: generateText saves the user message internally BEFORE calling the AI.
