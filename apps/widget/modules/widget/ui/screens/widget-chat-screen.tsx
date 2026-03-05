@@ -218,28 +218,28 @@ export const WidgetChatScreen = () => {
           )}
         </AIConversationContent>
       </AIConversation>
-      {toUIMessages(messages.results ?? [])?.length === 1 && (        <AISuggestions className="flex w-full flex-col items-end p-2">
-          {suggestions.map((suggestion) => {
-            if (!suggestion) {
-              return null;
-            }
+      {toUIMessages(messages.results ?? [])?.length === 1 && (<AISuggestions className="flex w-full flex-col items-end p-2">
+        {suggestions.map((suggestion) => {
+          if (!suggestion) {
+            return null;
+          }
 
-            return (
-              <AISuggestion
-                key={suggestion}
-                onClick={() => {
-                  form.setValue("message", suggestion, {
-                    shouldValidate: true,
-                    shouldDirty: true,
-                    shouldTouch: true,
-                  });
-                  form.handleSubmit(onSubmit)();
-                }}
-                suggestion={suggestion}
-              />
-            )
-          })}
-        </AISuggestions>
+          return (
+            <AISuggestion
+              key={suggestion}
+              onClick={() => {
+                form.setValue("message", suggestion, {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                  shouldTouch: true,
+                });
+                form.handleSubmit(onSubmit)();
+              }}
+              suggestion={suggestion}
+            />
+          )
+        })}
+      </AISuggestions>
       )}
       <Form {...form}>
         {sendError && (
