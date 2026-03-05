@@ -1,14 +1,29 @@
+"use node";
+
 import { VapiClient, Vapi } from "@vapi-ai/server-sdk";
 import { internal } from "../_generated/api";
 import { action } from "../_generated/server";
-import { getSecretValue, parseSecretString } from "../lib/secrets";
 import { ConvexError } from "convex/values";
+import { decrypt } from "../lib/encryption";
+
+function parsePluginSecrets(plugin: { secretValue?: string }): {
+  privateApiKey: string;
+  publicApiKey: string;
+} | null {
+  if (!plugin.secretValue) return null;
+  try {
+    const decrypted = decrypt(plugin.secretValue);
+    return JSON.parse(decrypted);
+  } catch {
+    return null;
+  }
+}
 
 export const getAssistants = action({
   args: {},
   handler: async (ctx): Promise<Vapi.Assistant[]> => {
     const identity = await ctx.auth.getUserIdentity();
-            
+
     if (identity === null) {
       throw new ConvexError({
         code: "UNAUTHORIZED",
@@ -40,12 +55,7 @@ export const getAssistants = action({
       });
     }
 
-    const secretName = plugin.secretName;
-    const secretValue = await getSecretValue(secretName);
-    const secretData = parseSecretString<{
-      privateApiKey: string;
-      publicApiKey: string;
-    }>(secretValue);
+    const secretData = parsePluginSecrets(plugin);
 
     if (!secretData) {
       throw new ConvexError({
@@ -75,7 +85,7 @@ export const getPhoneNumbers = action({
   args: {},
   handler: async (ctx): Promise<Vapi.PhoneNumbersListResponseItem[]> => {
     const identity = await ctx.auth.getUserIdentity();
-            
+
     if (identity === null) {
       throw new ConvexError({
         code: "UNAUTHORIZED",
@@ -107,12 +117,7 @@ export const getPhoneNumbers = action({
       });
     }
 
-    const secretName = plugin.secretName;
-    const secretValue = await getSecretValue(secretName);
-    const secretData = parseSecretString<{
-      privateApiKey: string;
-      publicApiKey: string;
-    }>(secretValue);
+    const secretData = parsePluginSecrets(plugin);
 
     if (!secretData) {
       throw new ConvexError({

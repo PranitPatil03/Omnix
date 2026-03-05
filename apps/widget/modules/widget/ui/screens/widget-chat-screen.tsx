@@ -8,7 +8,7 @@ import { useThreadMessages, toUIMessages } from "@convex-dev/agent/react";
 import { WidgetHeader } from "@/modules/widget/ui/components/widget-header";
 import { Button } from "@workspace/ui/components/button";
 import { useAtomValue, useSetAtom } from "jotai";
-import { ArrowLeftIcon, MenuIcon, UserIcon, CheckCircleIcon, SendIcon } from "lucide-react";
+import { ArrowLeftIcon, UserIcon, CheckCircleIcon, SendIcon } from "lucide-react";
 import { useInfiniteScroll } from "@workspace/ui/hooks/use-infinite-scroll";
 import { InfiniteScrollTrigger } from "@workspace/ui/components/infinite-scroll-trigger";
 import { contactSessionIdAtomFamily, conversationIdAtom, organizationIdAtom, screenAtom, widgetSettingsAtom } from "../../atoms/widget-atoms";
@@ -46,6 +46,16 @@ function parseSuggestions(content: string): { text: string; suggestions: string[
   }
 
   return { text: textLines.join("\n").trimEnd(), suggestions };
+}
+
+/** Check if a message is a system notification (prefixed with [system]) */
+function isSystemMessage(content: string): boolean {
+  return content.startsWith("[system]");
+}
+
+/** Strip the [system] prefix from message content */
+function getSystemText(content: string): string {
+  return content.replace(/^\[system\]\s*/, "");
 }
 
 const formSchema = z.object({
@@ -236,15 +246,8 @@ export const WidgetChatScreen = () => {
           >
             <ArrowLeftIcon />
           </Button>
-          <img src="/logo.svg" alt="" className="size-6" />
           <p className="font-medium">Chat</p>
         </div>
-        <Button
-          size="icon"
-          variant="transparent"
-        >
-          <MenuIcon />
-        </Button>
       </WidgetHeader>
       <AIConversation>
         <AIConversationContent>
@@ -255,14 +258,27 @@ export const WidgetChatScreen = () => {
             ref={topElementRef}
           />
           {uiMessages?.map((message, index) => {
+            const contentStr = message.content as string;
+            const isLastMessage = index === uiMessages.length - 1;
+
+            // System messages (escalation/end) — render as centered alert
+            if (message.role === "assistant" && isSystemMessage(contentStr)) {
+              return (
+                <div key={message.id} className="flex justify-center px-4 py-2">
+                  <div className="rounded-full bg-muted px-4 py-1.5 text-xs text-muted-foreground text-center">
+                    {getSystemText(contentStr)}
+                  </div>
+                </div>
+              );
+            }
+
             const isNewAIMessage = message.role === "assistant" && message.id === streamingMessageId;
             const alreadyStreamed = streamedMessageIds.current.has(message.id);
-            const isLastMessage = index === uiMessages.length - 1;
 
             // Parse suggestions from assistant messages
             const parsed = message.role === "assistant"
-              ? parseSuggestions(message.content as string)
-              : { text: message.content as string, suggestions: [] };
+              ? parseSuggestions(contentStr)
+              : { text: contentStr, suggestions: [] };
 
             return (
               <div key={message.id}>

@@ -1,7 +1,9 @@
 "use client";
 
 import {
+  ExternalLinkIcon,
   GlobeIcon,
+  KeyIcon,
   PhoneCallIcon,
   PhoneIcon,
   WorkflowIcon,
@@ -33,6 +35,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Button } from "@workspace/ui/components/button";
 import { VapiConnectedView } from "../components/vapi-connected-view";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card";
 
 const vapiFeatures: Feature[] = [
   {
@@ -99,12 +108,24 @@ const VapiPluginForm = ({
     <Dialog onOpenChange={setOpen} open={open}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Enable Vapi</DialogTitle>
+          <DialogTitle>Connect Vapi</DialogTitle>
         </DialogHeader>
         <DialogDescription>
-          Your API keys are safely encrypted and stored using AWS Secrets
-          Manager.
+          Enter your Vapi API keys to enable AI voice calls and phone support.
         </DialogDescription>
+        <div className="rounded-lg border bg-muted/50 p-3 text-sm space-y-2">
+          <p className="font-medium">Where to find your API keys:</p>
+          <a
+            href="https://dashboard.vapi.ai/org/api-keys"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-primary hover:underline"
+          >
+            <KeyIcon className="size-3.5" />
+            Open Vapi Dashboard → API Keys
+            <ExternalLinkIcon className="size-3" />
+          </a>
+        </div>
         <Form {...form}>
           <form
             className="flex flex-col gap-y-4"
@@ -115,11 +136,11 @@ const VapiPluginForm = ({
               name="publicApiKey"
               render={({ field }) => (
                 <FormItem>
-                  <Label>Public API key</Label>
+                  <Label>Public API Key</Label>
                   <FormControl>
                     <Input
                       {...field}
-                      placeholder="Your public API key"
+                      placeholder="pk_xxxxxxxx-xxxx-xxxx-xxxx"
                       type="password"
                     />
                   </FormControl>
@@ -132,11 +153,11 @@ const VapiPluginForm = ({
               name="privateApiKey"
               render={({ field }) => (
                 <FormItem>
-                  <Label>Private API key</Label>
+                  <Label>Private API Key</Label>
                   <FormControl>
                     <Input
                       {...field}
-                      placeholder="Your private API key"
+                      placeholder="sk_xxxxxxxx-xxxx-xxxx-xxxx"
                       type="password"
                     />
                   </FormControl>
@@ -224,6 +245,64 @@ export const VapiView = () => {
             <h1 className="text-2xl md:text-4xl">Vapi Plugin</h1>
             <p className="text-muted-foreground">Connect Vapi to enable AI voice calls and phone support</p>
           </div>
+
+          {!vapiPlugin && (
+            <Card className="mt-8">
+              <CardHeader>
+                <CardTitle className="text-lg">Setup Guide</CardTitle>
+                <CardDescription>
+                  Follow these steps to connect Vapi to your account
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ol className="space-y-4 text-sm">
+                  <li className="flex gap-3">
+                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">1</span>
+                    <div>
+                      <p className="font-medium">Create a Vapi account</p>
+                      <p className="text-muted-foreground">
+                        Sign up at{" "}
+                        <a href="https://vapi.ai" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline inline-flex items-center gap-1">
+                          vapi.ai <ExternalLinkIcon className="size-3" />
+                        </a>
+                      </p>
+                    </div>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">2</span>
+                    <div>
+                      <p className="font-medium">Get your API keys</p>
+                      <p className="text-muted-foreground">
+                        Go to{" "}
+                        <a href="https://dashboard.vapi.ai/org/api-keys" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline inline-flex items-center gap-1">
+                          Dashboard → API Keys <ExternalLinkIcon className="size-3" />
+                        </a>{" "}
+                        and copy both your <strong>Public</strong> and <strong>Private</strong> API keys
+                      </p>
+                    </div>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">3</span>
+                    <div>
+                      <p className="font-medium">Connect below</p>
+                      <p className="text-muted-foreground">
+                        Click the &quot;Connect&quot; button and paste your API keys
+                      </p>
+                    </div>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">4</span>
+                    <div>
+                      <p className="font-medium">Configure your widget</p>
+                      <p className="text-muted-foreground">
+                        After connecting, go to <strong>Widget Customization</strong> to select your voice assistant and phone number
+                      </p>
+                    </div>
+                  </li>
+                </ol>
+              </CardContent>
+            </Card>
+          )}
 
           <div className="mt-8">
             {vapiPlugin ? (

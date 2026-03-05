@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { Button } from "@workspace/ui/components/button";
@@ -29,6 +29,7 @@ import { api } from "@workspace/backend/_generated/api";
 import { VapiFormFields } from "./vapi-form-fields";
 import { FormSchema } from "../../types";
 import { widgetSettingsSchema } from "../../schemas";
+import { WidgetPreview } from "./widget-preview";
 
 type WidgetSettings = Doc<"widgetSettings">;
 
@@ -111,169 +112,190 @@ export const CustomizationForm = ({
     }
   }
 
+  const watchedValues = useWatch({ control: form.control });
+
   return (
-    <Form {...form}>
-      <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
-        <Card>
-          <CardHeader>
-            <CardTitle>General Chat Settings</CardTitle>
-            <CardDescription>
-              Configure basic chat widget behavior and messages
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <FormField
-              control={form.control}
-              name="companyName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Company / Brand Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="e.g., Clyra"
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Shown on the widget welcome screen as &quot;Hi there! Welcome to [Company Name] 👋&quot;
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+    <div className="flex gap-8 items-start">
+      <div className="flex-1 min-w-0">
+        <Form {...form}>
+          <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
+            <Card>
+              <CardHeader>
+                <CardTitle>General Chat Settings</CardTitle>
+                <CardDescription>
+                  Configure basic chat widget behavior and messages
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="companyName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Company / Brand Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="e.g., Clyra"
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Shown on the widget welcome screen as &quot;Hi there! Welcome to [Company Name] 👋&quot;
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <Separator />
+                <Separator />
 
-            <FormField
-              control={form.control}
-              name="tagline"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Tagline</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="e.g., AI-Powered Contract Intelligence"
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Shown below the greeting on the widget welcome screen
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  control={form.control}
+                  name="tagline"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tagline</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="e.g., AI-Powered Contract Intelligence"
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Shown below the greeting on the widget welcome screen
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <Separator />
+                <Separator />
 
-            <FormField
-              control={form.control}
-              name="greetMessage"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Greeting Message</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      {...field}
-                      placeholder="Welcome message shown when chat open"
-                      rows={3}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    The first message customers see when they open the chat
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  control={form.control}
+                  name="greetMessage"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Greeting Message</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          {...field}
+                          placeholder="Welcome message shown when chat open"
+                          rows={3}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        The first message customers see when they open the chat
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <Separator />
-
-            <div className="space-y-4">
-              <div>
-                <h3 className="mb-4 text-sm">
-                  Default Suggestions
-                </h3>
-                <p className="mb-4 text-muted-foreground text-sm">
-                  Quick reply suggestions shown to customers to help guide the
-                  conversation
-                </p>
+                <Separator />
 
                 <div className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="defaultSuggestions.suggestion1"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Suggestion 1</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="e.g., How do I get started?"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="defaultSuggestions.suggestion2"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Suggestion 2</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="e.g., What are your pricing plans?"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="defaultSuggestions.suggestion3"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Suggestion 3</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="e.g., I need help with my account"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <div>
+                    <h3 className="mb-4 text-sm">
+                      Default Suggestions
+                    </h3>
+                    <p className="mb-4 text-muted-foreground text-sm">
+                      Quick reply suggestions shown to customers to help guide the
+                      conversation
+                    </p>
+
+                    <div className="space-y-4">
+                      <FormField
+                        control={form.control}
+                        name="defaultSuggestions.suggestion1"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Suggestion 1</FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                placeholder="e.g., How do I get started?"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="defaultSuggestions.suggestion2"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Suggestion 2</FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                placeholder="e.g., What are your pricing plans?"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="defaultSuggestions.suggestion3"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Suggestion 3</FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                placeholder="e.g., I need help with my account"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </CardContent>
+            </Card>
+
+            {hasVapiPlugin && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Voice Assistant Settings</CardTitle>
+                  <CardDescription>
+                    Configure voice calling features powered by Vapi
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <VapiFormFields form={form} />
+                </CardContent>
+              </Card>
+            )}
+
+            <div className="flex justify-end">
+              <Button disabled={form.formState.isSubmitting} type="submit">
+                Save Settings
+              </Button>
             </div>
-          </CardContent>
-        </Card>
+          </form>
+        </Form>
+      </div>
 
-        {hasVapiPlugin && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Voice Assistant Settings</CardTitle>
-              <CardDescription>
-                Configure voice calling features powered by Vapi
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <VapiFormFields form={form} />
-            </CardContent>
-          </Card>
-        )}
-
-        <div className="flex justify-end">
-          <Button disabled={form.formState.isSubmitting} type="submit">
-            Save Settings
-          </Button>
-        </div>
-      </form>
-    </Form>
+      {/* Live Widget Preview */}
+      <div className="hidden lg:block sticky top-8">
+        <p className="text-sm font-medium text-muted-foreground mb-3">Live Preview</p>
+        <WidgetPreview
+          companyName={watchedValues.companyName || ""}
+          tagline={watchedValues.tagline || ""}
+          greetMessage={watchedValues.greetMessage || ""}
+          suggestions={[
+            watchedValues.defaultSuggestions?.suggestion1 || "",
+            watchedValues.defaultSuggestions?.suggestion2 || "",
+            watchedValues.defaultSuggestions?.suggestion3 || "",
+          ]}
+        />
+      </div>
+    </div>
   );
 };

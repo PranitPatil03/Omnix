@@ -187,8 +187,8 @@ export const updateStatus = mutation({
     // Save a visible message in the thread so operators see the status change
     const statusMessage =
       args.status === "escalated"
-        ? "🙋 Customer requested to talk to a human agent."
-        : "✅ Customer ended the conversation.";
+        ? "[system] Our human support team will reach you shortly. Thank you for your patience!"
+        : "[system] This conversation has been ended by the customer.";
 
     await saveMessage(ctx, components.agent, {
       threadId: conversation.threadId,

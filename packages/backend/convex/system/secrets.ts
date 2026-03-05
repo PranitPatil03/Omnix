@@ -1,7 +1,9 @@
+"use node";
+
 import { v } from "convex/values";
 import { internal } from "../_generated/api";
 import { internalAction } from "../_generated/server";
-import { upsertSecret } from "../lib/secrets";
+import { encrypt } from "../lib/encryption";
 
 export const upsert = internalAction({
   args: {
@@ -11,12 +13,12 @@ export const upsert = internalAction({
   },
   handler: async (ctx, args) => {
     const secretName = `tenant/${args.organizationId}/${args.service}`;
-
-    await upsertSecret(secretName, args.value);
+    const encrypted = encrypt(JSON.stringify(args.value));
 
     await ctx.runMutation(internal.system.plugins.upsert, {
       service: args.service,
       secretName,
+      secretValue: encrypted,
       organizationId: args.organizationId,
     });
 

@@ -1,7 +1,9 @@
+"use node";
+
 import { v } from "convex/values";
 import { internal } from "../_generated/api";
 import { action } from "../_generated/server";
-import { getSecretValue, parseSecretString } from "../lib/secrets";
+import { decrypt } from "../lib/encryption";
 
 export const getVapiSecrets = action({
   args: {
@@ -16,28 +18,19 @@ export const getVapiSecrets = action({
       },
     );
 
-    if (!plugin) {
+    if (!plugin || !plugin.secretValue) {
       return null;
     }
 
-    const secretName = plugin.secretName;
-
-    const secret = await getSecretValue(secretName);
-
-    const secretData = parseSecretString<{
-      privateApiKey: string;
-      publicApiKey: string;
-    }>(secret);
-
-    if (!secretData) {
+    let secretData: { privateApiKey?: string; publicApiKey?: string } | null = null;
+    try {
+      const decrypted = decrypt(plugin.secretValue);
+      secretData = JSON.parse(decrypted);
+    } catch {
       return null;
     }
 
-    if (!secretData.publicApiKey) {
-      return null;
-    }
-
-    if (!secretData.privateApiKey) {
+    if (!secretData?.publicApiKey || !secretData?.privateApiKey) {
       return null;
     }
 

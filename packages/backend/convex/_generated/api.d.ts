@@ -14,6 +14,7 @@ import type * as betterAuth_adapter from "../betterAuth/adapter.js";
 import type * as betterAuth_auth from "../betterAuth/auth.js";
 import type * as constants from "../constants.js";
 import type * as http from "../http.js";
+import type * as lib_encryption from "../lib/encryption.js";
 import type * as lib_extractTextContent from "../lib/extractTextContent.js";
 import type * as lib_secrets from "../lib/secrets.js";
 import type * as playground from "../playground.js";
@@ -71,6 +72,7 @@ declare const fullApi: ApiFromModules<{
   "betterAuth/auth": typeof betterAuth_auth;
   constants: typeof constants;
   http: typeof http;
+  "lib/encryption": typeof lib_encryption;
   "lib/extractTextContent": typeof lib_extractTextContent;
   "lib/secrets": typeof lib_secrets;
   playground: typeof playground;
