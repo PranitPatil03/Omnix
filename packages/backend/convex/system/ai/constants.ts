@@ -82,6 +82,19 @@ When the user asks a question, your response MUST contain the real information f
 * **Unclear request** → ask for clarification
 * **Search finds nothing AND no context** → always offer human support
 * **Technical errors** → apologize and offer escalation
+
+## Follow-Up Suggestions — REQUIRED
+At the END of every response, include exactly 2-3 follow-up suggestions the user might want to ask next. These must be contextually relevant to the conversation so far.
+
+Format them on the LAST lines of your response, each on its own line, prefixed with "[suggestion]":
+[suggestion] Your follow-up question here
+[suggestion] Another relevant question
+
+Rules:
+- Keep each suggestion under 50 characters
+- Make them natural questions a customer would ask
+- Base them on the current conversation topic
+- Do NOT include suggestions when you are calling a tool (escalation/resolution)
 `;
 
 export const SEARCH_INTERPRETER_PROMPT = `

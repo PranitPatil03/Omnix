@@ -36,6 +36,24 @@ import { AIResponse } from "@workspace/ui/components/ai/response";
 import { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import { StreamingText } from "../components/streaming-text";
 
+/** Parse [suggestion] lines from AI message content and return { text, suggestions } */
+function parseSuggestions(content: string): { text: string; suggestions: string[] } {
+  const lines = content.split("\n");
+  const suggestions: string[] = [];
+  const textLines: string[] = [];
+
+  for (const line of lines) {
+    const match = line.match(/^\[suggestion\]\s*(.+)/);
+    if (match && match[1]) {
+      suggestions.push(match[1].trim());
+    } else {
+      textLines.push(line);
+    }
+  }
+
+  return { text: textLines.join("\n").trimEnd(), suggestions };
+}
+
 const formSchema = z.object({
   message: z.string().min(1, "Message is required"),
 });
@@ -179,6 +197,8 @@ export const WidgetChatScreen = () => {
         contactSessionId,
         status: "operator_review",
       });
+      // Close the widget via postMessage to parent (embed)
+      window.parent.postMessage({ type: "close" }, "*");
     } catch {
       setSendError("Could not end conversation.");
     }
@@ -239,45 +259,97 @@ export const WidgetChatScreen = () => {
             onLoadMore={handleLoadMore}
             ref={topElementRef}
           />
-          {uiMessages?.map((message) => {
+          {uiMessages?.map((message, index) => {
             const isNewAIMessage = message.role === "assistant" && message.id === streamingMessageId;
             const alreadyStreamed = streamedMessageIds.current.has(message.id);
+            const isLastMessage = index === uiMessages.length - 1;
+
+            // Parse suggestions from assistant messages
+            const parsed = message.role === "assistant"
+              ? parseSuggestions(message.content as string)
+              : { text: message.content as string, suggestions: [] };
 
             return (
-              <AIMessage
-                from={message.role === "user" ? "user" : "assistant"}
-                key={message.id}
-              >
-                {message.role === "assistant" && (
-                  <div className="flex items-center gap-1.5 mb-0.5">
-                    <span className="text-[10px] font-medium text-muted-foreground">
-                      {(message as typeof message & { agentName?: string }).agentName || "Milo"}
-                    </span>
-                  </div>
-                )}
-                <AIMessageContent>
-                  {isNewAIMessage && !alreadyStreamed ? (
-                    <StreamingText
-                      content={message.content as string}
-                      speed={10}
-                      onComplete={() => handleStreamComplete(message.id)}
-                    >
-                      {(displayedText) => (
-                        <AIResponse>{displayedText}</AIResponse>
-                      )}
-                    </StreamingText>
-                  ) : (
-                    <AIResponse>{message.content}</AIResponse>
+              <div key={message.id}>
+                <AIMessage
+                  from={message.role === "user" ? "user" : "assistant"}
+                >
+                  {message.role === "assistant" && (
+                    <div className="flex items-center gap-1.5 mb-0.5">
+                      <span className="text-[10px] font-medium text-muted-foreground">
+                        {(message as typeof message & { agentName?: string }).agentName || "Milo"}
+                      </span>
+                    </div>
                   )}
-                </AIMessageContent>
-                {message.role === "assistant" && (
-                  <DicebearAvatar
-                    imageUrl="/logo.svg"
-                    seed="assistant"
-                    size={32}
-                  />
-                )}
-              </AIMessage>
+                  <AIMessageContent>
+                    {isNewAIMessage && !alreadyStreamed ? (
+                      <StreamingText
+                        content={parsed.text}
+                        speed={10}
+                        onComplete={() => handleStreamComplete(message.id)}
+                      >
+                        {(displayedText) => (
+                          <AIResponse>{displayedText}</AIResponse>
+                        )}
+                      </StreamingText>
+                    ) : (
+                      <AIResponse>{parsed.text}</AIResponse>
+                    )}
+                  </AIMessageContent>
+                  {message.role === "assistant" && (
+                    <DicebearAvatar
+                      imageUrl="/logo.svg"
+                      seed="assistant"
+                      size={32}
+                    />
+                  )}
+                </AIMessage>
+
+                {/* Follow-up suggestions + End conversation — after AI messages, only on last message */}
+                {message.role === "assistant" &&
+                  isLastMessage &&
+                  index > 0 &&
+                  conversation?.status === "unresolved" &&
+                  !isAgentTyping &&
+                  streamingMessageId === null && (
+                    <div className="flex flex-col items-end gap-1.5 px-3 py-2">
+                      {parsed.suggestions.map((suggestion) => (
+                        <AISuggestion
+                          key={suggestion}
+                          onClick={() => {
+                            form.setValue("message", suggestion, {
+                              shouldValidate: true,
+                              shouldDirty: true,
+                              shouldTouch: true,
+                            });
+                            form.handleSubmit(onSubmit)();
+                          }}
+                          suggestion={suggestion}
+                        />
+                      ))}
+                      <div className="flex items-center gap-2 mt-1">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-7 gap-1.5 px-3 text-xs"
+                          onClick={handleConnectToHuman}
+                        >
+                          <UserIcon className="size-3" />
+                          Talk to a human
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-7 gap-1.5 px-3 text-xs"
+                          onClick={handleEndConversation}
+                        >
+                          <CheckCircleIcon className="size-3" />
+                          End conversation
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+              </div>
             )
           })}
 
@@ -332,33 +404,7 @@ export const WidgetChatScreen = () => {
         })}
       </AISuggestions>
       )}
-      {/* Action suggestions after AI response — shown when last message is from assistant and user has chatted */}
-      {uiMessages.length > 1 &&
-        uiMessages[uiMessages.length - 1]?.role === "assistant" &&
-        conversation?.status === "unresolved" &&
-        !isAgentTyping &&
-        streamingMessageId === null && (
-          <div className="flex items-center gap-2 px-3 py-2">
-            <Button
-              size="sm"
-              variant="outline"
-              className="h-7 gap-1.5 px-3 text-xs"
-              onClick={handleConnectToHuman}
-            >
-              <UserIcon className="size-3" />
-              Talk to a human
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="h-7 gap-1.5 px-3 text-xs"
-              onClick={handleEndConversation}
-            >
-              <CheckCircleIcon className="size-3" />
-              End conversation
-            </Button>
-          </div>
-        )}
+
       <Form {...form}>
         {sendError && (
           <div className="px-3 py-2 text-xs text-red-600 bg-red-50 border-t border-red-100">
