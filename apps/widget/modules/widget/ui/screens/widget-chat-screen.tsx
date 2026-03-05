@@ -8,12 +8,12 @@ import { useThreadMessages, toUIMessages } from "@convex-dev/agent/react";
 import { WidgetHeader } from "@/modules/widget/ui/components/widget-header";
 import { Button } from "@workspace/ui/components/button";
 import { useAtomValue, useSetAtom } from "jotai";
-import { ArrowLeftIcon, MenuIcon } from "lucide-react";
+import { ArrowLeftIcon, MenuIcon, UserIcon, CheckCircleIcon } from "lucide-react";
 import { DicebearAvatar } from "@workspace/ui/components/dicebear-avatar";
 import { useInfiniteScroll } from "@workspace/ui/hooks/use-infinite-scroll";
 import { InfiniteScrollTrigger } from "@workspace/ui/components/infinite-scroll-trigger";
 import { contactSessionIdAtomFamily, conversationIdAtom, organizationIdAtom, screenAtom, widgetSettingsAtom } from "../../atoms/widget-atoms";
-import { useAction, useQuery } from "convex/react";
+import { useAction, useMutation, useQuery } from "convex/react";
 import { api } from "@workspace/backend/_generated/api";
 import { Form, FormField } from "@workspace/ui/components/form";
 import {
@@ -156,6 +156,34 @@ export const WidgetChatScreen = () => {
   }, []);
 
   const createMessage = useAction(api.public.messages.create);
+  const updateConversationStatus = useMutation(api.public.conversations.updateStatus);
+
+  const handleConnectToHuman = async () => {
+    if (!conversationId || !contactSessionId) return;
+    try {
+      await updateConversationStatus({
+        conversationId,
+        contactSessionId,
+        status: "escalated",
+      });
+    } catch {
+      setSendError("Could not connect to a human agent.");
+    }
+  };
+
+  const handleEndConversation = async () => {
+    if (!conversationId || !contactSessionId) return;
+    try {
+      await updateConversationStatus({
+        conversationId,
+        contactSessionId,
+        status: "operator_review",
+      });
+    } catch {
+      setSendError("Could not end conversation.");
+    }
+  };
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!conversation || !contactSessionId) {
       return;
@@ -304,6 +332,33 @@ export const WidgetChatScreen = () => {
         })}
       </AISuggestions>
       )}
+      {/* Action suggestions after AI response — shown when last message is from assistant and user has chatted */}
+      {uiMessages.length > 1 &&
+        uiMessages[uiMessages.length - 1]?.role === "assistant" &&
+        conversation?.status === "unresolved" &&
+        !isAgentTyping &&
+        streamingMessageId === null && (
+          <div className="flex items-center gap-2 px-3 py-2">
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-7 gap-1.5 px-3 text-xs"
+              onClick={handleConnectToHuman}
+            >
+              <UserIcon className="size-3" />
+              Talk to a human
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-7 gap-1.5 px-3 text-xs"
+              onClick={handleEndConversation}
+            >
+              <CheckCircleIcon className="size-3" />
+              End conversation
+            </Button>
+          </div>
+        )}
       <Form {...form}>
         {sendError && (
           <div className="px-3 py-2 text-xs text-red-600 bg-red-50 border-t border-red-100">
@@ -316,11 +371,11 @@ export const WidgetChatScreen = () => {
         >
           <FormField
             control={form.control}
-            disabled={conversation?.status === "resolved"}
+            disabled={conversation?.status === "resolved" || conversation?.status === "operator_review"}
             name="message"
             render={({ field }) => (
               <AIInputTextarea
-                disabled={conversation?.status === "resolved" || isAgentTyping}
+                disabled={conversation?.status === "resolved" || conversation?.status === "operator_review" || isAgentTyping}
                 onChange={field.onChange}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
@@ -331,7 +386,9 @@ export const WidgetChatScreen = () => {
                 placeholder={
                   conversation?.status === "resolved"
                     ? "This conversation has been resolved."
-                    : "Type your message..."
+                    : conversation?.status === "operator_review"
+                      ? "This conversation is under review."
+                      : "Type your message..."
                 }
                 value={field.value}
               />
@@ -340,7 +397,7 @@ export const WidgetChatScreen = () => {
           <AIInputToolbar>
             <AIInputTools />
             <AIInputSubmit
-              disabled={conversation?.status === "resolved" || !form.formState.isValid || isAgentTyping}
+              disabled={conversation?.status === "resolved" || conversation?.status === "operator_review" || !form.formState.isValid || isAgentTyping}
               status="ready"
               type="submit"
             />

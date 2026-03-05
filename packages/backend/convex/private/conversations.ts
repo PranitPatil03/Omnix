@@ -15,7 +15,8 @@ export const updateStatus = mutation({
     status: v.union(
       v.literal("unresolved"),
       v.literal("escalated"),
-      v.literal("resolved")
+      v.literal("resolved"),
+      v.literal("operator_review")
     ),
   },
   handler: async (ctx, args) => {
@@ -106,7 +107,8 @@ export const getMany = query({
       v.union(
         v.literal("unresolved"),
         v.literal("escalated"),
-        v.literal("resolved")
+        v.literal("resolved"),
+        v.literal("operator_review")
       )
     ),
   },

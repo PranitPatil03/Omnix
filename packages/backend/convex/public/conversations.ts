@@ -148,3 +148,44 @@ export const create = mutation({
     return conversationId;
   },
 });
+
+export const updateStatus = mutation({
+  args: {
+    conversationId: v.id("conversations"),
+    contactSessionId: v.id("contactSessions"),
+    status: v.union(
+      v.literal("escalated"),
+      v.literal("operator_review")
+    ),
+  },
+  handler: async (ctx, args) => {
+    const session = await ctx.db.get(args.contactSessionId);
+
+    if (!session || session.expiresAt < Date.now()) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "Invalid session",
+      });
+    }
+
+    const conversation = await ctx.db.get(args.conversationId);
+
+    if (!conversation) {
+      throw new ConvexError({
+        code: "NOT_FOUND",
+        message: "Conversation not found",
+      });
+    }
+
+    if (conversation.contactSessionId !== session._id) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "Incorrect session",
+      });
+    }
+
+    await ctx.db.patch(args.conversationId, {
+      status: args.status,
+    });
+  },
+});

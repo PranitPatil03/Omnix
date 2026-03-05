@@ -37,7 +37,8 @@ export default defineSchema({
     status: v.union(
       v.literal("unresolved"),
       v.literal("escalated"),
-      v.literal("resolved")
+      v.literal("resolved"),
+      v.literal("operator_review")
     ),
   })
     .index("by_organization_id", ["organizationId"])

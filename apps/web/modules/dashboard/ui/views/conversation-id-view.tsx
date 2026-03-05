@@ -175,12 +175,15 @@ export const ConversationIdView = ({
 
     setIsUpdatingStatus(true);
 
-    let newStatus: "unresolved" | "resolved" | "escalated";
+    let newStatus: "unresolved" | "resolved" | "escalated" | "operator_review";
 
     // Cycle through states: unresolved -> escalated -> resolved -> unresolved
+    // operator_review -> resolved
     if (conversation.status === "unresolved") {
       newStatus = "escalated";
     } else if (conversation.status === "escalated") {
+      newStatus = "resolved"
+    } else if (conversation.status === "operator_review") {
       newStatus = "resolved"
     } else {
       newStatus = "unresolved"
@@ -233,57 +236,59 @@ export const ConversationIdView = ({
               from={message.role === "user" ? "assistant" : "user"}
               key={message.id}
             >
-              {/* Show agent name tag for AI messages */}
-              {message.role === "assistant" && (
-                <div className="flex items-center gap-1.5 mb-0.5">
-                  <span className="text-[10px] font-medium text-muted-foreground">
-                    {(message as typeof message & { agentName?: string }).agentName || "Milo"}
-                  </span>
-                </div>
-              )}
-              <AIMessageContent>
-                <AIResponse>
-                  {message.content}
-                </AIResponse>
-              </AIMessageContent>
+              <div className="flex flex-col gap-1">
+                {/* Show agent name tag for AI messages */}
+                {message.role === "assistant" && (
+                  <div className="flex items-center gap-1.5 mb-0.5">
+                    <span className="text-[10px] font-medium text-muted-foreground">
+                      {(message as typeof message & { agentName?: string }).agentName || "Milo"}
+                    </span>
+                  </div>
+                )}
+                <AIMessageContent>
+                  <AIResponse>
+                    {message.content}
+                  </AIResponse>
+                </AIMessageContent>
+                {/* For AI messages: show action buttons below the message */}
+                {message.role === "assistant" && conversation?.status !== "resolved" && (
+                  <div className="flex items-center gap-1">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-6 gap-1.5 px-2 text-xs text-muted-foreground hover:text-foreground"
+                      onClick={() => handleUseAIReply(message.content as string)}
+                    >
+                      {copiedMessageId === message.content ? (
+                        <><CheckIcon className="size-3" /> Loaded</>
+                      ) : (
+                        <><CopyIcon className="size-3" /> Use this reply</>
+                      )}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-6 gap-1.5 px-2 text-xs text-muted-foreground hover:text-foreground"
+                      onClick={() => handleEditStart(message.id, message.content as string)}
+                    >
+                      <PencilIcon className="size-3" /> Edit
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-6 gap-1.5 px-2 text-xs text-destructive hover:text-destructive"
+                      onClick={() => handleDelete(message.id)}
+                    >
+                      <Trash2Icon className="size-3" /> Delete
+                    </Button>
+                  </div>
+                )}
+              </div>
               {message.role === "user" && (
                 <DicebearAvatar
                   seed={conversation?.contactSessionId ?? "user"}
                   size={32}
                 />
-              )}
-              {/* For AI messages: show action buttons below the message */}
-              {message.role === "assistant" && conversation?.status !== "resolved" && (
-                <div className="flex items-center gap-1 mt-1">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="h-6 gap-1.5 px-2 text-xs text-muted-foreground hover:text-foreground"
-                    onClick={() => handleUseAIReply(message.content as string)}
-                  >
-                    {copiedMessageId === message.content ? (
-                      <><CheckIcon className="size-3" /> Loaded</>
-                    ) : (
-                      <><CopyIcon className="size-3" /> Use this reply</>
-                    )}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="h-6 gap-1.5 px-2 text-xs text-muted-foreground hover:text-foreground"
-                    onClick={() => handleEditStart(message.id, message.content as string)}
-                  >
-                    <PencilIcon className="size-3" /> Edit
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="h-6 gap-1.5 px-2 text-xs text-destructive hover:text-destructive"
-                    onClick={() => handleDelete(message.id)}
-                  >
-                    <Trash2Icon className="size-3" /> Delete
-                  </Button>
-                </div>
               )}
             </AIMessage>
           ))}

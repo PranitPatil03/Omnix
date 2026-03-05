@@ -1,7 +1,7 @@
 import { Hint } from "@workspace/ui/components/hint";
 import { Doc } from "@workspace/backend/_generated/dataModel"
 import { Button } from "@workspace/ui/components/button";
-import { ArrowRightIcon, ArrowUpIcon, CheckIcon } from "lucide-react";
+import { ArrowRightIcon, ArrowUpIcon, CheckIcon, EyeIcon } from "lucide-react";
 
 export const ConversationStatusButton = ({
   status,
@@ -29,6 +29,17 @@ export const ConversationStatusButton = ({
         <Button disabled={disabled} onClick={onClick} size="sm" variant="warning">
           <ArrowUpIcon />
           Escalated
+        </Button>
+      </Hint>
+    );
+  }
+
+  if (status === "operator_review") {
+    return (
+      <Hint text="Mark as resolved">
+        <Button disabled={disabled} onClick={onClick} size="sm" variant="outline">
+          <EyeIcon />
+          Operator Review
         </Button>
       </Hint>
     );

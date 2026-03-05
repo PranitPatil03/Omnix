@@ -16,7 +16,7 @@ import {
 } from "@workspace/ui/components/select";
 import { cn } from "@workspace/ui/lib/utils";
 import { usePaginatedQuery } from "convex/react";
-import { ListIcon, ArrowRightIcon, ArrowUpIcon, CheckIcon, CornerUpLeftIcon } from "lucide-react";
+import { ListIcon, ArrowRightIcon, ArrowUpIcon, CheckIcon, CornerUpLeftIcon, EyeIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ConversationStatusIcon } from "@workspace/ui/components/conversation-status-icon";
@@ -33,7 +33,7 @@ export const ConversationsPanel = () => {
   const conversations = usePaginatedQuery(
     api.private.conversations.getMany,
     {
-      status: 
+      status:
         statusFilter === "all"
           ? undefined
           : statusFilter,
@@ -61,7 +61,7 @@ export const ConversationsPanel = () => {
         <Select
           defaultValue="all"
           onValueChange={(value) => setStatusFilter(
-            value as "unresolved" | "escalated" | "resolved" | "all"
+            value as "unresolved" | "escalated" | "resolved" | "operator_review" | "all"
           )}
           value={statusFilter}
         >
@@ -95,6 +95,12 @@ export const ConversationsPanel = () => {
                 <span>Resolved</span>
               </div>
             </SelectItem>
+            <SelectItem value="operator_review">
+              <div className="flex items-center gap-2">
+                <EyeIcon className="size-4" />
+                <span>Operator Review</span>
+              </div>
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -121,14 +127,14 @@ export const ConversationsPanel = () => {
                   className={cn(
                     "relative flex cursor-pointer items-start gap-3 border-b p-4 py-5 text-sm leading-tight hover:bg-accent hover:text-accent-foreground",
                     pathname === `/conversations/${conversation._id}` &&
-                      "bg-accent text-accent-foreground"
+                    "bg-accent text-accent-foreground"
                   )}
                   href={`/conversations/${conversation._id}`}
                 >
                   <div className={cn(
                     "-translate-y-1/2 absolute top-1/2 left-0 h-[64%] w-1 rounded-r-full bg-neutral-300 opacity-0 transition-opacity",
                     pathname === `/conversations/${conversation._id}` &&
-                      "opacity-100"
+                    "opacity-100"
                   )} />
 
                   <DicebearAvatar

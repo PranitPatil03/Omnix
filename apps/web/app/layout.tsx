@@ -4,6 +4,7 @@ import "@workspace/ui/globals.css"
 import { Providers } from "@/components/providers"
 import { Toaster } from "@workspace/ui/components/sonner";
 import { getToken } from "@/lib/auth-server";
+import { Metadata } from "next";
 
 const fontSans = Geist({
   subsets: ["latin"],
@@ -15,7 +16,10 @@ const fontMono = Geist_Mono({
   variable: "--font-mono",
 })
 
-
+export const metadata: Metadata = {
+  title: "Omnix",
+  description: "AI-powered support agent for your business",
+}
 
 export default async function RootLayout({
   children,
