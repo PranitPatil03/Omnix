@@ -58,7 +58,9 @@ export const WidgetSelectionScreen = () => {
       <WidgetHeader>
         <div className="flex flex-col justify-between gap-y-2 px-2 py-6 font-semibold">
           <p className="text-3xl">
-            Hi there! {widgetSettings?.companyName ? `Welcome to ${widgetSettings.companyName}` : ""} 👋
+            {widgetSettings?.companyName
+              ? `Hi there! Welcome to ${widgetSettings.companyName} 👋`
+              : "Hi there! 👋"}
           </p>
           <p className="text-lg">
             {widgetSettings?.tagline || "Let's get you started"}

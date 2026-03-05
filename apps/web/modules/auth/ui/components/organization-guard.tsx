@@ -45,9 +45,11 @@ export const OrganizationGuard = ({
         .setActive({ organizationId: firstOrg.id })
         .then(() => {
           document.cookie = `active_organization_id=${firstOrg.id};path=/;max-age=${60 * 60 * 24 * 365}`;
-          // Refresh the Next.js route so the server re-runs getToken() and
-          // the Convex provider gets a fresh JWT with the new orgId.
-          router.refresh();
+          // Full reload is required: the Convex JWT provider caches the token
+          // by sessionId, which does NOT change when an org is activated.
+          // Only a full browser reload resets the module-level token cache and
+          // forces a fresh JWT (with orgId) from the server.
+          window.location.reload();
         })
         .finally(() => {
           settingActiveRef.current = false;
