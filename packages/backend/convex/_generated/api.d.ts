@@ -45,7 +45,9 @@ import type * as system_contactSessions from "../system/contactSessions.js";
 import type * as system_conversations from "../system/conversations.js";
 import type * as system_plugins from "../system/plugins.js";
 import type * as system_secrets from "../system/secrets.js";
+import type * as system_seed from "../system/seed.js";
 import type * as system_subscriptions from "../system/subscriptions.js";
+import type * as system_test from "../system/test.js";
 import type * as users from "../users.js";
 
 import type {
@@ -100,7 +102,9 @@ declare const fullApi: ApiFromModules<{
   "system/conversations": typeof system_conversations;
   "system/plugins": typeof system_plugins;
   "system/secrets": typeof system_secrets;
+  "system/seed": typeof system_seed;
   "system/subscriptions": typeof system_subscriptions;
+  "system/test": typeof system_test;
   users: typeof users;
 }>;
 declare const fullApiWithMounts: typeof fullApi;

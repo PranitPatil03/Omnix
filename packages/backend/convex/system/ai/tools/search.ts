@@ -1,11 +1,16 @@
-import { openai } from "@ai-sdk/openai";
+import { createOpenAI } from "@ai-sdk/openai";
 import { createTool } from "@convex-dev/agent";
 import { generateText } from "ai";
 import z from "zod";
 import { internal } from "../../../_generated/api";
-import { supportAgent } from "../agents/supportAgent";
 import rag from "../rag";
 import { SEARCH_INTERPRETER_PROMPT } from "../constants";
+
+// Use Groq's OpenAI-compatible API for fast inference (same as the support agent)
+const groq = createOpenAI({
+  apiKey: process.env.GROQ_API_KEY,
+  baseURL: "https://api.groq.com/openai/v1",
+});
 
 export const search = createTool({
   description: "Search the knowledge base for relevant information to help answer user questions",
@@ -16,7 +21,7 @@ export const search = createTool({
   }),
   handler: async (ctx, args) => {
     if (!ctx.threadId) {
-      return "Missing thread ID";
+      return "No relevant information found in the knowledge base for this query.";
     }
 
     const conversation = await ctx.runQuery(
@@ -25,21 +30,27 @@ export const search = createTool({
     );
 
     if (!conversation) {
-      return "Conversation not found";
+      return "No relevant information found in the knowledge base for this query.";
     }
 
     const orgId = conversation.organizationId;
 
-    const searchResult = await rag.search(ctx, {
-      namespace: orgId,
-      query: args.query,
-      limit: 5,
-    });
+    let searchText = "";
+    try {
+      const searchResult = await rag.search(ctx, {
+        namespace: orgId,
+        query: args.query,
+        limit: 5,
+      });
+      searchText = searchResult.text?.trim() ?? "";
+    } catch {
+      // RAG search unavailable – agent will fall back to business context
+      return "No relevant information found in the knowledge base for this query.";
+    }
 
-    const contextText = `Found results in ${searchResult.entries
-      .map((e) => e.title || null)
-      .filter((t) => t !== null)
-      .join(", ")}. Here is the context:\n\n${searchResult.text}`;
+    if (!searchText) {
+      return "No relevant information found in the knowledge base for this query.";
+    }
 
     const response = await generateText({
       messages: [
@@ -49,18 +60,10 @@ export const search = createTool({
         },
         {
           role: "user",
-          content: `User asked: "${args.query}"\n\nSearch results: ${contextText}`
+          content: `User asked: "${args.query}"\n\nSearch results: ${searchText}`
         }
       ],
-      model: openai.chat("gpt-4o-mini"),
-    });
-
-    await supportAgent.saveMessage(ctx, {
-      threadId: ctx.threadId,
-      message: {
-        role: "assistant",
-        content: response.text,
-      },
+      model: groq("llama-3.3-70b-versatile"),
     });
 
     return response.text;
