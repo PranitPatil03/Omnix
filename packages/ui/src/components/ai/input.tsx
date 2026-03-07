@@ -199,7 +199,7 @@ export const AIInputSubmit = ({
   children,
   ...props
 }: AIInputSubmitProps) => {
-  let Icon = <img src="/images/icons/send.png" alt="Send" className="size-4 brightness-0 invert" />;
+  let Icon = <SendIcon className="size-4" />;
 
   if (status === "submitted") {
     Icon = <Loader2Icon className="animate-spin" />;

@@ -1,4 +1,4 @@
-import { ArrowLeftIcon, MicIcon, MicOffIcon } from "lucide-react";
+import { ArrowLeftIcon, MicIcon, MicOffIcon, PhoneIcon } from "lucide-react";
 import { Button } from "@workspace/ui/components/button";
 import {
   AIConversation,
@@ -57,7 +57,7 @@ export const WidgetVoiceScreen = () => {
       ) : (
         <div className="flex flex-1 h-full flex-col items-center justify-center gap-y-4">
           <div className="flex items-center justify-center rounded-full border bg-muted/50 p-4">
-            <img src="/images/icons/voice.png" alt="Voice" className="size-6 opacity-50" />
+            <MicIcon className="size-6 opacity-50" />
           </div>
           <p className="text-muted-foreground">Transcript will appear here</p>
         </div>
@@ -83,7 +83,7 @@ export const WidgetVoiceScreen = () => {
                 variant="destructive"
                 onClick={() => endCall()}
               >
-                <img src="/images/icons/call.png" alt="End Call" className="mr-2 size-4 brightness-0 invert" />
+                <PhoneIcon className="mr-2 size-4" />
                 End call
               </Button>
             ) : (
@@ -93,7 +93,7 @@ export const WidgetVoiceScreen = () => {
                 size="lg"
                 onClick={() => startCall()}
               >
-                <img src="/images/icons/call.png" alt="Start Call" className="mr-2 size-4 brightness-0 invert" />
+                <PhoneIcon className="mr-2 size-4" />
                 Start call
               </Button>
             )}

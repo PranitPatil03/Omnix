@@ -13,7 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@workspace/ui/components/card";
-import { Loader2Icon, PlusIcon } from "lucide-react";
+import { BuildingIcon, Loader2Icon, PlusIcon } from "lucide-react";
 
 export const OrgSelectionView = () => {
   const router = useRouter();
@@ -111,7 +111,7 @@ export const OrgSelectionView = () => {
                 className="flex w-full items-center gap-3 rounded-lg border p-3 text-left hover:bg-accent transition-colors disabled:opacity-50"
               >
                 <div className="flex size-9 items-center justify-center rounded-md bg-primary/10">
-                  <img src="/images/icons/orgs.png" alt="Org" className="size-4" />
+                  <BuildingIcon className="size-4 text-primary" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-sm truncate">{org.name}</p>

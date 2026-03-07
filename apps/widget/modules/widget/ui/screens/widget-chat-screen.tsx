@@ -8,7 +8,7 @@ import { useThreadMessages, toUIMessages } from "@convex-dev/agent/react";
 import { WidgetHeader } from "@/modules/widget/ui/components/widget-header";
 import { Button } from "@workspace/ui/components/button";
 import { useAtomValue, useSetAtom } from "jotai";
-import { ArrowLeftIcon, UserIcon, CheckCircleIcon } from "lucide-react";
+import { ArrowLeftIcon, UserIcon, CheckCircleIcon, SendIcon } from "lucide-react";
 import { useInfiniteScroll } from "@workspace/ui/hooks/use-infinite-scroll";
 import { InfiniteScrollTrigger } from "@workspace/ui/components/infinite-scroll-trigger";
 import { contactSessionIdAtomFamily, conversationIdAtom, organizationIdAtom, screenAtom, widgetSettingsAtom } from "../../atoms/widget-atoms";
@@ -412,7 +412,7 @@ export const WidgetChatScreen = () => {
               size="icon"
               type="submit"
             >
-              <img src="/images/icons/send.png" alt="Send" className="size-4 brightness-0 invert" />
+              <SendIcon className="size-4" />
             </Button>
           </div>
         </div>

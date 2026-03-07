@@ -62,7 +62,7 @@ export const WidgetPreview = ({
               Type your message...
             </div>
             <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <img src="/images/icons/send.png" alt="Send" className="size-3 brightness-0 invert" />
+              <SendIcon className="size-3" />
             </div>
           </div>
         </div>

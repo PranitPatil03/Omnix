@@ -16,11 +16,9 @@ export const WidgetFooter = () => {
         size="icon"
         variant="ghost"
       >
-        <img
-          src="/images/icons/home.png"
-          alt="Home"
+        <HomeIcon
           className={cn(
-            "size-5 object-contain transition-all",
+            "size-5 transition-all",
             screen === "selection" ? "opacity-100" : "opacity-50 hover:opacity-80"
           )}
         />
@@ -31,11 +29,9 @@ export const WidgetFooter = () => {
         size="icon"
         variant="ghost"
       >
-        <img
-          src="/images/icons/messages.png"
-          alt="Messages"
+        <InboxIcon
           className={cn(
-            "size-5 object-contain transition-all",
+            "size-5 transition-all",
             screen === "inbox" ? "opacity-100" : "opacity-50 hover:opacity-80"
           )}
         />

@@ -4,6 +4,16 @@ import {
   BuildingIcon,
   ChevronsUpDownIcon,
   LogOutIcon,
+  MessageSquareTextIcon,
+  DatabaseIcon,
+  BriefcaseIcon,
+  LayoutGridIcon,
+  MicIcon,
+  PaletteIcon,
+  SettingsIcon,
+  CreditCardIcon,
+  UserIcon,
+  UsersIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -42,12 +52,12 @@ const customerSupportItems = [
   {
     title: "Conversations",
     url: "/conversations",
-    icon: "/images/icons/messages.png",
+    icon: MessageSquareTextIcon,
   },
   {
     title: "Knowledge Base",
     url: "/files",
-    icon: "/images/icons/knowledge-base.png",
+    icon: DatabaseIcon,
   },
 ];
 
@@ -55,22 +65,22 @@ const configurationItems = [
   {
     title: "Business Info",
     url: "/business-info",
-    icon: "/images/icons/business-info.png",
+    icon: BriefcaseIcon,
   },
   {
     title: "Integrations",
     url: "/integrations",
-    icon: "/images/icons/menu.png",
+    icon: LayoutGridIcon,
   },
   {
     title: "Voice Assistant",
     url: "/plugins/vapi",
-    icon: "/images/icons/voice.png",
+    icon: MicIcon,
   },
   {
     title: "Widget Customization",
     url: "/customization",
-    icon: "/images/icons/paint.png",
+    icon: PaletteIcon,
   },
 ];
 
@@ -78,12 +88,12 @@ const accountItems = [
   {
     title: "Settings",
     url: "/settings",
-    icon: "/images/icons/settings.png",
+    icon: SettingsIcon,
   },
   {
     title: "Plans & Billing",
     url: "/billing",
-    icon: "/images/icons/bill.png",
+    icon: CreditCardIcon,
   },
 ];
 
@@ -146,7 +156,7 @@ export const DashboardSidebar = () => {
                     tooltip={item.title}
                   >
                     <Link href={item.url}>
-                      <img src={item.icon} alt={item.title} className="size-4 object-contain group-data-[active=true]/menu-button:brightness-0 group-data-[active=true]/menu-button:invert" />
+                      <item.icon className="size-4" />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
@@ -172,7 +182,7 @@ export const DashboardSidebar = () => {
                     tooltip={item.title}
                   >
                     <Link href={item.url}>
-                      <img src={item.icon} alt={item.title} className="size-4 object-contain group-data-[active=true]/menu-button:brightness-0 group-data-[active=true]/menu-button:invert" />
+                      <item.icon className="size-4" />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
@@ -198,7 +208,7 @@ export const DashboardSidebar = () => {
                     tooltip={item.title}
                   >
                     <Link href={item.url}>
-                      <img src={item.icon} alt={item.title} className="size-4 object-contain group-data-[active=true]/menu-button:brightness-0 group-data-[active=true]/menu-button:invert" />
+                      <item.icon className="size-4" />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
@@ -215,7 +225,7 @@ export const DashboardSidebar = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton className="w-full bg-[#0b63f3] text-white hover:bg-[#0b63f3]/90 active:bg-[#0b63f3]/90 hover:text-white h-auto py-2 group-data-[collapsible=icon]:p-2 group-data-[collapsible=icon]:justify-center">
-                  <img src="/images/icons/profile.png" alt="Profile" className="size-5 brightness-0 invert shrink-0 group-data-[collapsible=icon]:size-5" />
+                  <UserIcon className="size-5 shrink-0 group-data-[collapsible=icon]:size-5" />
                   <div className="flex flex-col items-start min-w-0 group-data-[collapsible=icon]:hidden">
                     <span className="truncate text-sm font-semibold">
                       {session?.user?.name ?? session?.user?.email ?? "User"}
@@ -253,7 +263,7 @@ export const DashboardSidebar = () => {
                   ))}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => router.push("/org-selection")}>
-                    <img src="/images/icons/orgs.png" alt="Orgs" className="mr-2 size-4" />
+                    <UsersIcon className="mr-2 size-4" />
                     Manage Organizations
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
@@ -261,7 +271,7 @@ export const DashboardSidebar = () => {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem onClick={() => router.push("/settings")}>
-                  <img src="/images/icons/settings.png" alt="Settings" className="mr-2 size-4" />
+                  <SettingsIcon className="mr-2 size-4" />
                   Account Settings
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleSignOut}>
