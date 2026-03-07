@@ -272,8 +272,9 @@ export const ConversationIdView = ({
               return (
                 <div key={message.id}>
                   {/* Normal chat message bubble — same as any other message, no action buttons */}
+                  {/* Role is always "assistant" here; reversed to "user" for operator dashboard perspective */}
                   <AIMessage
-                    from={message.role === "user" ? "assistant" : "user"}
+                    from="user"
                   >
                     <div className="flex flex-col gap-1">
                       {message.role === "assistant" && (
