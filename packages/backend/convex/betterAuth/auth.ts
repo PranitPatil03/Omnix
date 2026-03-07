@@ -41,6 +41,11 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>): BetterAuthOptions
     plugins: [
       organization({
         allowUserToCreateOrganization: true,
+        sendInvitationEmail: async (data) => {
+          // Silently mock the email sending to prevent Better Auth from failing.
+          // We are using URL-based invites instead of email-based.
+          console.log(`[Invited ${data.email}] to join org ${data.organization.name}`);
+        },
       }),
       convex({
         authConfig,

@@ -99,34 +99,53 @@ export const InviteView = ({ id }: InviteViewProps) => {
                         )}
 
                         <div className="space-y-4 text-center text-sm text-muted-foreground">
-                            <p>
-                                Logged in as <strong>{session?.user?.email}</strong>
-                            </p>
-                            <p>
-                                Make sure this matches the email address the invitation was sent to.
-                            </p>
+                            {session ? (
+                                <>
+                                    <p>
+                                        Logged in as <strong>{session?.user?.email}</strong>
+                                    </p>
+                                    <p>
+                                        Make sure this matches the email address the invitation was sent to.
+                                    </p>
+                                </>
+                            ) : (
+                                <p>You need to be logged in to accept this invitation.</p>
+                            )}
                         </div>
                     </CardContent>
                 )}
 
                 {!success && (
                     <CardFooter className="flex gap-3 pb-8">
-                        <Button
-                            className="w-full"
-                            variant="outline"
-                            onClick={handleDecline}
-                            disabled={isAccepting}
-                        >
-                            Decline
-                        </Button>
-                        <Button
-                            className="w-full"
-                            onClick={handleAccept}
-                            disabled={isAccepting}
-                        >
-                            {isAccepting && <Loader2Icon className="mr-2 size-4 animate-spin" />}
-                            Accept Invite
-                        </Button>
+                        {!session ? (
+                            <Button
+                                className="w-full"
+                                onClick={() => {
+                                    router.push(`/sign-in?callbackUrl=/invite/${id}`);
+                                }}
+                            >
+                                Log in to Accept
+                            </Button>
+                        ) : (
+                            <>
+                                <Button
+                                    className="w-full"
+                                    variant="outline"
+                                    onClick={handleDecline}
+                                    disabled={isAccepting}
+                                >
+                                    Decline
+                                </Button>
+                                <Button
+                                    className="w-full"
+                                    onClick={handleAccept}
+                                    disabled={isAccepting}
+                                >
+                                    {isAccepting && <Loader2Icon className="mr-2 size-4 animate-spin" />}
+                                    Accept Invite
+                                </Button>
+                            </>
+                        )}
                     </CardFooter>
                 )}
             </Card>
