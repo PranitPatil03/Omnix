@@ -28,7 +28,6 @@ import {
 } from "@workspace/ui/components/ai/message";
 import { AIResponse } from "@workspace/ui/components/ai/response";
 import { useMemo, useState, useEffect, useRef, useCallback } from "react";
-import { StreamingText } from "../components/streaming-text";
 
 /** Parse [suggestion] lines from AI message content and return { text, suggestions } */
 function parseSuggestions(content: string): { text: string; suggestions: string[] } {
@@ -129,13 +128,7 @@ export const WidgetChatScreen = () => {
 
   const [isAgentTyping, setIsAgentTyping] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
-  // Track which message IDs have already been streamed so we don't re-animate on re-renders
-  const streamedMessageIds = useRef<Set<string>>(new Set());
-  // Track the previous message count so we can detect new AI messages
   const prevMessageCount = useRef(0);
-  // Track the latest new AI message that needs streaming
-  const [streamingMessageId, setStreamingMessageId] = useState<string | null>(null);
-  // Track whether we're waiting for the user's message to appear in the list before showing typing
   const waitingForUserMessage = useRef(false);
 
   const uiMessages = useMemo(() => toUIMessages(messages.results ?? []), [messages.results]);
@@ -144,20 +137,16 @@ export const WidgetChatScreen = () => {
   useEffect(() => {
     if (!uiMessages.length) return;
     const currentCount = uiMessages.length;
+    const lastMessage = uiMessages[uiMessages.length - 1];
 
     if (currentCount > prevMessageCount.current) {
-      const lastMessage = uiMessages[uiMessages.length - 1];
-
       if (lastMessage && lastMessage.role === "user" && waitingForUserMessage.current) {
         // User's message just appeared in the list — now show typing indicator
         waitingForUserMessage.current = false;
         setIsAgentTyping(true);
       } else if (lastMessage && lastMessage.role === "assistant" && isAgentTyping) {
-        // AI response arrived — stop typing, start streaming
+        // AI response row created — step 1 of streaming
         setIsAgentTyping(false);
-        if (!streamedMessageIds.current.has(lastMessage.id)) {
-          setStreamingMessageId(lastMessage.id);
-        }
       }
     }
 
@@ -174,11 +163,6 @@ export const WidgetChatScreen = () => {
       if (errorTimerRef.current) clearTimeout(errorTimerRef.current);
     };
   }, [sendError]);
-
-  const handleStreamComplete = useCallback((messageId: string) => {
-    streamedMessageIds.current.add(messageId);
-    setStreamingMessageId(null);
-  }, []);
 
   const createMessage = useAction(api.public.messages.create);
   const updateConversationStatus = useMutation(api.public.conversations.updateStatus);
@@ -282,8 +266,10 @@ export const WidgetChatScreen = () => {
               );
             }
 
-            const isNewAIMessage = message.role === "assistant" && message.id === streamingMessageId;
-            const alreadyStreamed = streamedMessageIds.current.has(message.id);
+            // Skip rendering empty assistant bubbles — they represent the "typing" state before streaming starts
+            if (message.role === "assistant" && (!contentStr || contentStr.trim().length === 0)) {
+              return null;
+            }
 
             // Parse suggestions from assistant messages
             const parsed = message.role === "assistant"
@@ -303,19 +289,7 @@ export const WidgetChatScreen = () => {
                     </div>
                   )}
                   <AIMessageContent>
-                    {isNewAIMessage && !alreadyStreamed ? (
-                      <StreamingText
-                        content={parsed.text}
-                        speed={10}
-                        onComplete={() => handleStreamComplete(message.id)}
-                      >
-                        {(displayedText) => (
-                          <AIResponse>{displayedText}</AIResponse>
-                        )}
-                      </StreamingText>
-                    ) : (
-                      <AIResponse>{parsed.text}</AIResponse>
-                    )}
+                    <AIResponse>{parsed.text}</AIResponse>
                   </AIMessageContent>
                 </AIMessage>
 
@@ -323,9 +297,7 @@ export const WidgetChatScreen = () => {
                 {message.role === "assistant" &&
                   isLastMessage &&
                   index > 0 &&
-                  conversation?.status === "unresolved" &&
-                  !isAgentTyping &&
-                  streamingMessageId === null && (
+                  conversation?.status === "unresolved" && (
                     <div className="flex flex-col items-start gap-1.5 px-3 py-2">
                       <div className="flex flex-wrap gap-1.5">
                         {parsed.suggestions.map((suggestion) => (
@@ -372,8 +344,8 @@ export const WidgetChatScreen = () => {
             )
           })}
 
-          {/* Typing indicator — shown while AI is generating, only after messages have loaded */}
-          {isAgentTyping && messages.status !== "LoadingFirstPage" && (
+          {/* Typing indicator — shown while AI is generating (meaning an empty assistant message exists or we are waiting for one) */}
+          {(isAgentTyping || (uiMessages.length > 0 && uiMessages[uiMessages.length - 1].role === "assistant" && (!uiMessages[uiMessages.length - 1].content || (uiMessages[uiMessages.length - 1].content as string).trim().length === 0))) && messages.status !== "LoadingFirstPage" && (
             <AIMessage from="assistant">
               <AIMessageContent>
                 <div className="flex items-center gap-1.5 px-1 py-1">
