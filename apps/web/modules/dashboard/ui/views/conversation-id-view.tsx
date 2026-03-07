@@ -43,12 +43,22 @@ const formSchema = z.object({
 
 /** Check if a message is a system notification (prefixed with [system]) */
 function isSystemMessage(content: string): boolean {
-  return content.startsWith("[system]");
+  return content.startsWith("[system]") || content.startsWith("[system:");
 }
 
-/** Strip the [system] prefix from message content */
+/** Get the type of system message: 'escalated', 'ended', or 'generic' */
+function getSystemType(content: string): "escalated" | "ended" | "generic" {
+  if (content.startsWith("[system:escalated]")) return "escalated";
+  if (content.startsWith("[system:ended]")) return "ended";
+  return "generic";
+}
+
+/** Strip the [system] or [system:*] prefix and return operator-facing text (after ||) */
 function getSystemText(content: string): string {
-  return content.replace(/^\[system\]\s*/, "");
+  const stripped = content.replace(/^\[system(?::\w+)?\]\s*/, "");
+  // Operator text is after "||", user-facing text is before
+  const parts = stripped.split(" || ");
+  return (parts[1]?.trim() || parts[0]?.trim() || stripped);
 }
 
 /** Strip [suggestion] lines from AI message content */
@@ -252,11 +262,21 @@ export const ConversationIdView = ({
           {uiMessages?.map((message) => {
             const contentStr = message.content as string;
 
-            // System messages — render as centered alert without action buttons
+            // System messages — render as notification banner without action buttons
             if (message.role === "assistant" && isSystemMessage(contentStr)) {
+              const systemType = getSystemType(contentStr);
+              const isEscalated = systemType === "escalated";
+
               return (
                 <div key={message.id} className="flex justify-center px-4 py-2">
-                  <div className="rounded-full bg-muted-foreground/10 px-4 py-1.5 text-xs text-muted-foreground text-center">
+                  <div
+                    className={cn(
+                      "rounded-2xl px-4 py-2.5 text-xs font-medium text-center shadow-sm max-w-[85%]",
+                      isEscalated
+                        ? "bg-amber-50 text-amber-800 border border-amber-200"
+                        : "bg-emerald-50 text-emerald-800 border border-emerald-200"
+                    )}
+                  >
                     {getSystemText(contentStr)}
                   </div>
                 </div>

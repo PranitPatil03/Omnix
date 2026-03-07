@@ -184,11 +184,12 @@ export const updateStatus = mutation({
       });
     }
 
-    // Save a visible message in the thread so operators see the status change
+    // Save a visible message in the thread so operators see the status change.
+    // Format: [system:type] user-facing text || operator-facing text
     const statusMessage =
       args.status === "escalated"
-        ? "[system] Our human support team will reach you shortly. Thank you for your patience!"
-        : "[system] This conversation has been ended by the customer.";
+        ? "[system:escalated] Our human support team will reach you shortly. Thank you for your patience! || 🚨 Customer has requested human support — please respond as soon as possible."
+        : "[system:ended] This conversation has been ended. Thank you for reaching out! || ✅ This conversation has been ended by the customer.";
 
     await saveMessage(ctx, components.agent, {
       threadId: conversation.threadId,

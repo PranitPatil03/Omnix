@@ -50,12 +50,22 @@ function parseSuggestions(content: string): { text: string; suggestions: string[
 
 /** Check if a message is a system notification (prefixed with [system]) */
 function isSystemMessage(content: string): boolean {
-  return content.startsWith("[system]");
+  return content.startsWith("[system]") || content.startsWith("[system:");
 }
 
-/** Strip the [system] prefix from message content */
+/** Get the type of system message: 'escalated', 'ended', or 'generic' */
+function getSystemType(content: string): "escalated" | "ended" | "generic" {
+  if (content.startsWith("[system:escalated]")) return "escalated";
+  if (content.startsWith("[system:ended]")) return "ended";
+  return "generic";
+}
+
+/** Strip the [system] or [system:*] prefix and return user-facing text (before ||) */
 function getSystemText(content: string): string {
-  return content.replace(/^\[system\]\s*/, "");
+  const stripped = content.replace(/^\[system(?::\w+)?\]\s*/, "");
+  // User-facing text is before "||", operator text is after
+  const parts = stripped.split(" || ");
+  return parts[0]?.trim() || stripped;
 }
 
 const formSchema = z.object({
@@ -259,9 +269,17 @@ export const WidgetChatScreen = () => {
 
             // System messages (escalation/end) — render as centered alert
             if (message.role === "assistant" && isSystemMessage(contentStr)) {
+              const systemType = getSystemType(contentStr);
+              const isEscalated = systemType === "escalated";
+
               return (
                 <div key={message.id} className="flex justify-center px-4 py-2">
-                  <div className="rounded-full bg-muted px-4 py-1.5 text-xs text-muted-foreground text-center">
+                  <div
+                    className={`rounded-full px-4 py-1.5 text-xs font-medium text-center ${isEscalated
+                      ? "bg-amber-50 text-amber-700 border border-amber-200"
+                      : "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                      }`}
+                  >
                     {getSystemText(contentStr)}
                   </div>
                 </div>
