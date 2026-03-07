@@ -20,7 +20,7 @@ export const WidgetFooter = () => {
           src="/images/icons/home.png"
           alt="Home"
           className={cn(
-            "size-5 object-contain brightness-0 dark:invert transition-all",
+            "size-5 object-contain transition-all",
             screen === "selection" ? "opacity-100" : "opacity-50 hover:opacity-80"
           )}
         />
@@ -35,7 +35,7 @@ export const WidgetFooter = () => {
           src="/images/icons/messages.png"
           alt="Messages"
           className={cn(
-            "size-5 object-contain brightness-0 dark:invert transition-all",
+            "size-5 object-contain transition-all",
             screen === "inbox" ? "opacity-100" : "opacity-50 hover:opacity-80"
           )}
         />

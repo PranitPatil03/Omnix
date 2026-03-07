@@ -13,7 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@workspace/ui/components/card";
-import { BuildingIcon, Loader2Icon, PlusIcon } from "lucide-react";
+import { Loader2Icon, PlusIcon } from "lucide-react";
 
 export const OrgSelectionView = () => {
   const router = useRouter();
@@ -92,12 +92,10 @@ export const OrgSelectionView = () => {
   return (
     <Card className="w-full max-w-md">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">
-          {hasOrgs ? "Select Organization" : "Create Your Organization"}
-        </CardTitle>
+        <CardTitle className="text-2xl">Manage Organizations</CardTitle>
         <CardDescription>
           {hasOrgs
-            ? "Choose an organization or create a new one"
+            ? "Switch between organizations or create a new one"
             : "Create your first organization to get started"}
         </CardDescription>
       </CardHeader>
@@ -113,7 +111,7 @@ export const OrgSelectionView = () => {
                 className="flex w-full items-center gap-3 rounded-lg border p-3 text-left hover:bg-accent transition-colors disabled:opacity-50"
               >
                 <div className="flex size-9 items-center justify-center rounded-md bg-primary/10">
-                  <BuildingIcon className="size-4 text-primary" />
+                  <img src="/images/icons/orgs.png" alt="Org" className="size-4" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-sm truncate">{org.name}</p>
@@ -135,7 +133,7 @@ export const OrgSelectionView = () => {
             onClick={() => setCreating(true)}
           >
             <PlusIcon className="mr-2 size-4" />
-            Create Organization
+            Create New Organization
           </Button>
         ) : (
           <form onSubmit={handleCreateOrg} className="space-y-3">

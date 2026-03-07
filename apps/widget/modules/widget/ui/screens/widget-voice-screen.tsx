@@ -57,7 +57,7 @@ export const WidgetVoiceScreen = () => {
       ) : (
         <div className="flex flex-1 h-full flex-col items-center justify-center gap-y-4">
           <div className="flex items-center justify-center rounded-full border bg-muted/50 p-4">
-            <img src="/images/icons/voice.png" alt="Voice" className="size-6 opacity-50 brightness-0 dark:invert" />
+            <img src="/images/icons/voice.png" alt="Voice" className="size-6 opacity-50" />
           </div>
           <p className="text-muted-foreground">Transcript will appear here</p>
         </div>

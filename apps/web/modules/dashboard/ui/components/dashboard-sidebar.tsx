@@ -4,9 +4,6 @@ import {
   BuildingIcon,
   ChevronsUpDownIcon,
   LogOutIcon,
-  UserIcon,
-  SettingsIcon,
-  PlusIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -40,7 +37,6 @@ import {
   DropdownMenuGroup,
   DropdownMenuLabel,
 } from "@workspace/ui/components/dropdown-menu";
-import { Avatar, AvatarFallback } from "@workspace/ui/components/avatar";
 
 const customerSupportItems = [
   {
@@ -126,7 +122,8 @@ export const DashboardSidebar = () => {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" className="w-full cursor-default hover:bg-transparent pl-1">
-              <img src="/logo.svg" alt="Omnix Logo" className="h-6 object-contain" />
+              <img src="/logo.svg" alt="Omnixx Logo" className="h-6 object-contain" />
+              <span className="text-lg font-bold tracking-tight group-data-[collapsible=icon]:hidden">Omnixx</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -149,7 +146,7 @@ export const DashboardSidebar = () => {
                     tooltip={item.title}
                   >
                     <Link href={item.url}>
-                      <img src={item.icon} alt={item.title} className="size-4 object-contain brightness-0 dark:invert group-data-[active=true]/menu-button:brightness-0 group-data-[active=true]/menu-button:invert" />
+                      <img src={item.icon} alt={item.title} className="size-4 object-contain group-data-[active=true]/menu-button:brightness-0 group-data-[active=true]/menu-button:invert" />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
@@ -175,7 +172,7 @@ export const DashboardSidebar = () => {
                     tooltip={item.title}
                   >
                     <Link href={item.url}>
-                      <img src={item.icon} alt={item.title} className="size-4 object-contain brightness-0 dark:invert group-data-[active=true]/menu-button:brightness-0 group-data-[active=true]/menu-button:invert" />
+                      <img src={item.icon} alt={item.title} className="size-4 object-contain group-data-[active=true]/menu-button:brightness-0 group-data-[active=true]/menu-button:invert" />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
@@ -201,7 +198,7 @@ export const DashboardSidebar = () => {
                     tooltip={item.title}
                   >
                     <Link href={item.url}>
-                      <img src={item.icon} alt={item.title} className="size-4 object-contain brightness-0 dark:invert group-data-[active=true]/menu-button:brightness-0 group-data-[active=true]/menu-button:invert" />
+                      <img src={item.icon} alt={item.title} className="size-4 object-contain group-data-[active=true]/menu-button:brightness-0 group-data-[active=true]/menu-button:invert" />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
@@ -218,8 +215,9 @@ export const DashboardSidebar = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton className="w-full bg-[#0b63f3] text-white hover:bg-[#0b63f3]/90 active:bg-[#0b63f3]/90 hover:text-white h-auto py-2 group-data-[collapsible=icon]:p-2 group-data-[collapsible=icon]:justify-center">
+                  <img src="/images/icons/profile.png" alt="Profile" className="size-5 brightness-0 invert shrink-0 group-data-[collapsible=icon]:size-5" />
                   <div className="flex flex-col items-start min-w-0 group-data-[collapsible=icon]:hidden">
-                    <span className="truncate text-xs font-semibold">
+                    <span className="truncate text-sm font-semibold">
                       {session?.user?.name ?? session?.user?.email ?? "User"}
                     </span>
                     <span className="truncate text-[10px] text-white/80 font-medium flex items-center gap-1">
@@ -228,19 +226,10 @@ export const DashboardSidebar = () => {
                     </span>
                   </div>
 
-                  {/* Avatar shown when collapsed */}
-                  <div className="hidden group-data-[collapsible=icon]:flex">
-                    <Avatar className="size-6 border border-white/20">
-                      <AvatarFallback className="text-[10px] bg-transparent text-white">
-                        {session?.user?.name?.charAt(0)?.toUpperCase() ?? <UserIcon className="size-3" />}
-                      </AvatarFallback>
-                    </Avatar>
-                  </div>
-
                   <ChevronsUpDownIcon className="ml-auto size-4 group-data-[collapsible=icon]:hidden" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-64" side="top" sideOffset={8}>
+              <DropdownMenuContent align="end" className="w-64 ml-2" side="right" sideOffset={8}>
                 <div className="px-2 py-2">
                   <p className="text-sm font-semibold">{session?.user?.name}</p>
                   <p className="text-xs text-muted-foreground">{session?.user?.email}</p>
@@ -263,12 +252,8 @@ export const DashboardSidebar = () => {
                     </DropdownMenuItem>
                   ))}
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => router.push("/onboarding")}>
-                    <PlusIcon className="mr-2 size-4" />
-                    New Organization
-                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => router.push("/org-selection")}>
-                    <BuildingIcon className="mr-2 size-4" />
+                    <img src="/images/icons/orgs.png" alt="Orgs" className="mr-2 size-4" />
                     Manage Organizations
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
@@ -276,7 +261,7 @@ export const DashboardSidebar = () => {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem onClick={() => router.push("/settings")}>
-                  <SettingsIcon className="mr-2 size-4" />
+                  <img src="/images/icons/settings.png" alt="Settings" className="mr-2 size-4" />
                   Account Settings
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleSignOut}>
