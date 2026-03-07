@@ -6,6 +6,8 @@ import {
   organization,
   useSession,
 } from "@/lib/auth-client";
+import { useQuery } from "convex/react";
+import { api } from "@workspace/backend/_generated/api";
 import { Button } from "@workspace/ui/components/button";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
@@ -138,6 +140,9 @@ export const MembersSettings = () => {
     }
   }, [orgId]);
 
+  const subscription = useQuery(api.private.subscriptions.getStatus);
+  const isActive = subscription?.status === "active";
+
   useEffect(() => {
     fetchMembers();
     fetchInvitations();
@@ -159,6 +164,12 @@ export const MembersSettings = () => {
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!activeOrg || !inviteEmail.trim()) return;
+
+    // Check plan limits (Free plan is limited to 1 member total)
+    if (!isActive && (members.length + invitations.length) >= 1) {
+      setInviteError("Free plan is limited to 1 member. Let's upgrade you to Pro!");
+      return;
+    }
 
     setInviting(true);
     setInviteError("");
@@ -323,13 +334,29 @@ export const MembersSettings = () => {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleCancelInvitation(inv.id)}
-                      >
-                        <XIcon className="size-4" />
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          title="Copy Invitation Link"
+                          onClick={() => {
+                            const url = `${window.location.origin}/invite/${inv.id}`;
+                            navigator.clipboard.writeText(url);
+                            // We can use alert or toast. The parent file might have sonner toast. Let's just alert for simplicity or assuming standard behavior.
+                            alert("Invitation link copied to clipboard!");
+                          }}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2" /><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></svg>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          title="Cancel Invitation"
+                          onClick={() => handleCancelInvitation(inv.id)}
+                        >
+                          <XIcon className="size-4" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}

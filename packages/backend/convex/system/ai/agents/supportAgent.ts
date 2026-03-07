@@ -11,6 +11,6 @@ export const AI_AGENT_NAME = "Milo";
 
 export const supportAgent = new Agent(components.agent, {
   name: AI_AGENT_NAME,
-  chat: anthropic("claude-3-5-haiku-20241022"),
+  chat: anthropic("claude-haiku-4-5-20251001"),
   instructions: SUPPORT_AGENT_PROMPT,
 });

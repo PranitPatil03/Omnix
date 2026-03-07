@@ -45,14 +45,22 @@ export const VapiAssistantsTab = () => {
           <h3 className="text-sm font-medium">Your Assistants</h3>
           <p className="text-sm text-muted-foreground">Manage or generate new voice assistants</p>
         </div>
-        <Button onClick={handleGenerate} disabled={isGenerating || isLoading}>
-          {isGenerating ? (
-            <Loader2Icon className="mr-2 size-4 animate-spin" />
-          ) : (
-            <PlusIcon className="mr-2 size-4" />
-          )}
-          Generate from Business Info
-        </Button>
+        {assistants && assistants.length > 0 ? (
+          <Button asChild variant="outline">
+            <a href="https://dashboard.vapi.ai/assistants" target="_blank" rel="noopener noreferrer">
+              Update in Vapi
+            </a>
+          </Button>
+        ) : (
+          <Button onClick={handleGenerate} disabled={isGenerating || isLoading}>
+            {isGenerating ? (
+              <Loader2Icon className="mr-2 size-4 animate-spin" />
+            ) : (
+              <PlusIcon className="mr-2 size-4" />
+            )}
+            Generate from Business Info
+          </Button>
+        )}
       </div>
       <Table>
         <TableHeader>
