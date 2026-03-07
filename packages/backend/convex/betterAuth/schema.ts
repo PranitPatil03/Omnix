@@ -76,6 +76,7 @@ export default defineSchema({
     status: v.string(),
     expiresAt: v.number(),
     inviterId: v.string(),
+    createdAt: v.optional(v.number()),
   })
     .index("organizationId", ["organizationId"])
     .index("email", ["email"]),

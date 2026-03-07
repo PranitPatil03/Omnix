@@ -2451,6 +2451,7 @@ export declare const components: {
               }
             | {
                 data: {
+                  createdAt?: number;
                   email: string;
                   expiresAt: number;
                   inviterId: string;
@@ -2691,6 +2692,7 @@ export declare const components: {
                     | "status"
                     | "expiresAt"
                     | "inviterId"
+                    | "createdAt"
                     | "_id";
                   operator?:
                     | "lt"
@@ -2969,6 +2971,7 @@ export declare const components: {
                     | "status"
                     | "expiresAt"
                     | "inviterId"
+                    | "createdAt"
                     | "_id";
                   operator?:
                     | "lt"
@@ -3375,6 +3378,7 @@ export declare const components: {
             | {
                 model: "invitation";
                 update: {
+                  createdAt?: number;
                   email?: string;
                   expiresAt?: number;
                   inviterId?: string;
@@ -3391,6 +3395,7 @@ export declare const components: {
                     | "status"
                     | "expiresAt"
                     | "inviterId"
+                    | "createdAt"
                     | "_id";
                   operator?:
                     | "lt"
@@ -3718,6 +3723,7 @@ export declare const components: {
             | {
                 model: "invitation";
                 update: {
+                  createdAt?: number;
                   email?: string;
                   expiresAt?: number;
                   inviterId?: string;
@@ -3734,6 +3740,7 @@ export declare const components: {
                     | "status"
                     | "expiresAt"
                     | "inviterId"
+                    | "createdAt"
                     | "_id";
                   operator?:
                     | "lt"

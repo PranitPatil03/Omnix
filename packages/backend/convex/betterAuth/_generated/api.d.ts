@@ -108,6 +108,7 @@ export type Mounts = {
             }
           | {
               data: {
+                createdAt?: number;
                 email: string;
                 expiresAt: number;
                 inviterId: string;
@@ -348,6 +349,7 @@ export type Mounts = {
                   | "status"
                   | "expiresAt"
                   | "inviterId"
+                  | "createdAt"
                   | "_id";
                 operator?:
                   | "lt"
@@ -626,6 +628,7 @@ export type Mounts = {
                   | "status"
                   | "expiresAt"
                   | "inviterId"
+                  | "createdAt"
                   | "_id";
                 operator?:
                   | "lt"
@@ -1032,6 +1035,7 @@ export type Mounts = {
           | {
               model: "invitation";
               update: {
+                createdAt?: number;
                 email?: string;
                 expiresAt?: number;
                 inviterId?: string;
@@ -1048,6 +1052,7 @@ export type Mounts = {
                   | "status"
                   | "expiresAt"
                   | "inviterId"
+                  | "createdAt"
                   | "_id";
                 operator?:
                   | "lt"
@@ -1375,6 +1380,7 @@ export type Mounts = {
           | {
               model: "invitation";
               update: {
+                createdAt?: number;
                 email?: string;
                 expiresAt?: number;
                 inviterId?: string;
@@ -1391,6 +1397,7 @@ export type Mounts = {
                   | "status"
                   | "expiresAt"
                   | "inviterId"
+                  | "createdAt"
                   | "_id";
                 operator?:
                   | "lt"
