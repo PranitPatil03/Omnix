@@ -42,9 +42,32 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>): BetterAuthOptions
       organization({
         allowUserToCreateOrganization: true,
         sendInvitationEmail: async (data) => {
-          // Silently mock the email sending to prevent Better Auth from failing.
-          // We are using URL-based invites instead of email-based.
-          console.log(`[Invited ${data.email}] to join org ${data.organization.name}`);
+          try {
+            const { Resend } = await import("resend");
+            const resend = new Resend(process.env.RESEND_API_KEY);
+            const inviteUrl = `${process.env.SITE_URL}/invite/${data.id}`;
+            await resend.emails.send({
+              from: "Omnix <onboarding@resend.dev>",
+              to: data.email,
+              subject: `You've been invited to join ${data.organization.name} on Omnix`,
+              html: `
+                <div style="font-family:sans-serif;max-width:480px;margin:0 auto">
+                  <h2 style="color:#111">You've been invited!</h2>
+                  <p>You have been invited to join <strong>${data.organization.name}</strong> on Omnix as a <strong>${data.role}</strong>.</p>
+                  <p>Click the link below to accept the invitation:</p>
+                  <a href="${inviteUrl}" style="display:inline-block;padding:12px 24px;background:#000;color:#fff;border-radius:6px;text-decoration:none;font-weight:600;margin:16px 0">
+                    Accept Invitation
+                  </a>
+                  <p style="color:#888;font-size:13px">Or copy this link: ${inviteUrl}</p>
+                  <p style="color:#888;font-size:13px">If you weren't expecting this, you can safely ignore this email.</p>
+                </div>
+              `,
+            });
+          } catch (err) {
+            // Log but don't throw — the invitation is already saved in DB.
+            // User can still use the URL-based invite link as fallback.
+            console.error("Failed to send invite email via Resend:", err);
+          }
         },
       }),
       convex({
