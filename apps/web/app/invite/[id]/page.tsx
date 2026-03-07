@@ -6,6 +6,5 @@ export default async function InvitePage({
     params: Promise<{ id: string }>;
 }) {
     const { id } = await params;
-
     return <InviteView id={id} />;
 }
