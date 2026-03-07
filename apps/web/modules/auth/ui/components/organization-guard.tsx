@@ -34,28 +34,39 @@ export const OrganizationGuard = ({
     if (
       session &&
       !activeOrg &&
+      !orgPending &&
       !listPending &&
       orgs &&
       orgs.length > 0 &&
       !settingActiveRef.current
     ) {
+      // Prevent reload loop: if we already attempted activation recently, skip
+      const lastAttempt = sessionStorage.getItem("org_activation_attempt");
+      if (lastAttempt && Date.now() - parseInt(lastAttempt) < 5000) {
+        return;
+      }
+
       settingActiveRef.current = true;
-      const firstOrg = orgs[0]!;
+      sessionStorage.setItem("org_activation_attempt", Date.now().toString());
+
+      // Prefer the org saved in cookie, otherwise use the first
+      const cookieOrgId = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("active_organization_id="))
+        ?.split("=")[1];
+      const targetOrg = (cookieOrgId && orgs.find((o) => o.id === cookieOrgId)) || orgs[0]!;
+
       organization
-        .setActive({ organizationId: firstOrg.id })
+        .setActive({ organizationId: targetOrg.id })
         .then(() => {
-          document.cookie = `active_organization_id=${firstOrg.id};path=/;max-age=${60 * 60 * 24 * 365}`;
-          // Full reload is required: the Convex JWT provider caches the token
-          // by sessionId, which does NOT change when an org is activated.
-          // Only a full browser reload resets the module-level token cache and
-          // forces a fresh JWT (with orgId) from the server.
+          document.cookie = `active_organization_id=${targetOrg.id};path=/;max-age=${60 * 60 * 24 * 365}`;
           window.location.reload();
         })
         .finally(() => {
           settingActiveRef.current = false;
         });
     }
-  }, [session, activeOrg, listPending, orgs]);
+  }, [session, activeOrg, orgPending, listPending, orgs]);
 
   // Show spinner while we're resolving the org state
   if (orgPending || listPending || (session && orgs && orgs.length > 0 && !activeOrg)) {

@@ -248,22 +248,9 @@ export const WidgetChatScreen = () => {
             const contentStr = message.content as string;
             const isLastMessage = index === uiMessages.length - 1;
 
-            // System messages (escalation/end) — render as normal chat message without suggestions
+            // Hide system messages entirely from widget
             if (message.role === "assistant" && isSystemMessage(contentStr)) {
-              return (
-                <div key={message.id}>
-                  <AIMessage from="assistant">
-                    <div className="flex items-center gap-1.5 mb-0.5">
-                      <span className="text-[10px] font-medium text-muted-foreground">
-                        {(message as typeof message & { agentName?: string }).agentName || "Milo"}
-                      </span>
-                    </div>
-                    <AIMessageContent>
-                      <AIResponse>{getSystemText(contentStr)}</AIResponse>
-                    </AIMessageContent>
-                  </AIMessage>
-                </div>
-              );
+              return null;
             }
 
             // Skip rendering empty assistant bubbles — they represent the "typing" state before streaming starts
@@ -281,13 +268,6 @@ export const WidgetChatScreen = () => {
                 <AIMessage
                   from={message.role === "user" ? "user" : "assistant"}
                 >
-                  {message.role === "assistant" && (
-                    <div className="flex items-center gap-1.5 mb-0.5">
-                      <span className="text-[10px] font-medium text-muted-foreground">
-                        {(message as typeof message & { agentName?: string }).agentName || "Milo"}
-                      </span>
-                    </div>
-                  )}
                   <AIMessageContent>
                     <AIResponse>{parsed.text}</AIResponse>
                   </AIMessageContent>

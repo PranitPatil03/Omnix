@@ -4,7 +4,6 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { formatDistanceToNow } from "date-fns";
 import { ArrowLeftIcon } from "lucide-react";
 import { contactSessionIdAtomFamily, conversationIdAtom, organizationIdAtom, screenAtom } from "@/modules/widget/atoms/widget-atoms";
-import { ConversationStatusIcon } from "@workspace/ui/components/conversation-status-icon";
 import { WidgetHeader } from "@/modules/widget/ui/components/widget-header";
 import { WidgetFooter } from "../components/widget-footer";
 import { Button } from "@workspace/ui/components/button";
@@ -26,8 +25,8 @@ export const WidgetInboxScreen = () => {
     api.public.conversations.getMany,
     contactSessionId
       ? {
-          contactSessionId,
-        }
+        contactSessionId,
+      }
       : "skip",
     {
       initialNumItems: 10,
@@ -55,7 +54,7 @@ export const WidgetInboxScreen = () => {
         </div>
       </WidgetHeader>
       <div className="flex flex-1 flex-col gap-y-2 p-4 overflow-y-auto">
-        {conversations?.results.length > 0 && 
+        {conversations?.results.length > 0 &&
           conversations?.results.map((conversation) => (
             <Button
               className="h-20 w-full justify-between"
@@ -73,12 +72,9 @@ export const WidgetInboxScreen = () => {
                     {formatDistanceToNow(new Date(conversation._creationTime))}
                   </p>
                 </div>
-                <div className="flex w-full items-center justify-between gap-x-2">
-                  <p className="truncate text-sm">
-                    {conversation.lastMessage?.text}
-                  </p>
-                  <ConversationStatusIcon status={conversation.status} className="shrink-0" />
-                </div>
+                <p className="truncate text-sm">
+                  {conversation.lastMessage?.text}
+                </p>
               </div>
             </Button>
           ))
