@@ -327,25 +327,30 @@ export const WidgetChatScreen = () => {
                   !isAgentTyping &&
                   streamingMessageId === null && (
                     <div className="flex flex-col items-start gap-1.5 px-3 py-2">
-                      {parsed.suggestions.map((suggestion) => (
-                        <AISuggestion
-                          key={suggestion}
-                          onClick={() => {
-                            form.setValue("message", suggestion, {
-                              shouldValidate: true,
-                              shouldDirty: true,
-                              shouldTouch: true,
-                            });
-                            form.handleSubmit(onSubmit)();
-                          }}
-                          suggestion={suggestion}
-                        />
-                      ))}
-                      <div className="flex items-center gap-2 mt-1">
+                      <div className="flex flex-wrap gap-1.5">
+                        {parsed.suggestions.map((suggestion) => (
+                          <button
+                            key={suggestion}
+                            type="button"
+                            className="rounded-full border border-border bg-background px-3 py-1 text-[11px] text-foreground hover:bg-muted transition-colors cursor-pointer whitespace-normal text-left"
+                            onClick={() => {
+                              form.setValue("message", suggestion, {
+                                shouldValidate: true,
+                                shouldDirty: true,
+                                shouldTouch: true,
+                              });
+                              form.handleSubmit(onSubmit)();
+                            }}
+                          >
+                            {suggestion}
+                          </button>
+                        ))}
+                      </div>
+                      <div className="flex flex-wrap items-center gap-2 mt-1">
                         <Button
                           size="sm"
                           variant="outline"
-                          className="h-7 gap-1.5 px-3 text-xs"
+                          className="h-7 gap-1.5 px-3 text-[11px]"
                           onClick={handleConnectToHuman}
                         >
                           <UserIcon className="size-3" />
@@ -354,7 +359,7 @@ export const WidgetChatScreen = () => {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="h-7 gap-1.5 px-3 text-xs"
+                          className="h-7 gap-1.5 px-3 text-[11px]"
                           onClick={handleEndConversation}
                         >
                           <CheckCircleIcon className="size-3" />
