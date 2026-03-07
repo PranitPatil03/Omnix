@@ -1,7 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import {
   BotIcon,
+  PlusIcon,
+  Loader2Icon,
 } from "lucide-react";
 import {
   Table,
@@ -12,12 +15,45 @@ import {
   TableRow,
 } from "@workspace/ui/components/table";
 import { useVapiAssistants } from "../../hooks/use-vapi-data";
+import { useAction } from "convex/react";
+import { api } from "@workspace/backend/_generated/api";
+import { Button } from "@workspace/ui/components/button";
+import { toast } from "sonner";
 
 export const VapiAssistantsTab = () => {
-  const { data: assistants, isLoading } = useVapiAssistants();
+  const { data: assistants, isLoading, mutate } = useVapiAssistants();
+  const generateAssistant = useAction(api.private.vapi.createVoiceAssistant);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const handleGenerate = async () => {
+    setIsGenerating(true);
+    try {
+      await generateAssistant();
+      toast.success("Voice assistant generated successfully using your business info!");
+      mutate();
+    } catch (error) {
+      toast.error("Failed to generate assistant. Have you saved your business info?");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   return (
     <div className="border-t bg-background">
+      <div className="flex items-center justify-between p-4 border-b">
+        <div>
+          <h3 className="text-sm font-medium">Your Assistants</h3>
+          <p className="text-sm text-muted-foreground">Manage or generate new voice assistants</p>
+        </div>
+        <Button onClick={handleGenerate} disabled={isGenerating || isLoading}>
+          {isGenerating ? (
+            <Loader2Icon className="mr-2 size-4 animate-spin" />
+          ) : (
+            <PlusIcon className="mr-2 size-4" />
+          )}
+          Generate from Business Info
+        </Button>
+      </div>
       <Table>
         <TableHeader>
           <TableRow>

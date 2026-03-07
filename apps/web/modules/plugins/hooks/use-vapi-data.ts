@@ -10,6 +10,7 @@ export const useVapiAssistants = (): {
   data: Assistants;
   isLoading: boolean;
   error: Error | null;
+  mutate: () => Promise<void>;
 } => {
   const [data, setData] = useState<Assistants>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -17,39 +18,25 @@ export const useVapiAssistants = (): {
 
   const getAssistants = useAction(api.private.vapi.getAssistants);
 
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      const result = await getAssistants();
+      setData(result);
+      setError(null);
+    } catch (error) {
+      setError(error as Error);
+      toast.error("Failed to fetch assistants");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    let cancelled = false;
-
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const result = await getAssistants();
-        if (cancelled) {
-          return;
-        }
-        setData(result);
-        setError(null);
-      } catch (error) {
-        if (cancelled) {
-          return;
-        }
-        setError(error as Error);
-        toast.error("Failed to fetch assistants");
-      } finally {
-        if (!cancelled) {
-          setIsLoading(false);
-        }
-      }
-    };
-
     fetchData();
-
-    return () => {
-      cancelled = true;
-    };
   }, []);
 
-  return { data, isLoading, error };
+  return { data, isLoading, error, mutate: fetchData };
 };
 
 export const useVapiPhoneNumbers = (): {
