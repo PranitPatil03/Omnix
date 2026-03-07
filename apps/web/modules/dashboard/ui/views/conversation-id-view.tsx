@@ -53,12 +53,9 @@ function getSystemType(content: string): "escalated" | "ended" | "generic" {
   return "generic";
 }
 
-/** Strip the [system] or [system:*] prefix and return operator-facing text (after ||) */
+/** Strip the [system] or [system:*] prefix from message content */
 function getSystemText(content: string): string {
-  const stripped = content.replace(/^\[system(?::\w+)?\]\s*/, "");
-  // Operator text is after "||", user-facing text is before
-  const parts = stripped.split(" || ");
-  return (parts[1]?.trim() || parts[0]?.trim() || stripped);
+  return content.replace(/^\[system(?::\w+)?\]\s*/, "");
 }
 
 /** Strip [suggestion] lines from AI message content */
@@ -262,22 +259,50 @@ export const ConversationIdView = ({
           {uiMessages?.map((message) => {
             const contentStr = message.content as string;
 
-            // System messages — render as notification banner without action buttons
+            // System messages — render as normal chat message + extra operator notification
             if (message.role === "assistant" && isSystemMessage(contentStr)) {
               const systemType = getSystemType(contentStr);
               const isEscalated = systemType === "escalated";
 
+              // Operator-facing notification text
+              const notificationText = isEscalated
+                ? "🚨 Customer has requested human support — please respond as soon as possible."
+                : "✅ This conversation has been ended by the customer.";
+
               return (
-                <div key={message.id} className="flex justify-center px-4 py-2">
-                  <div
-                    className={cn(
-                      "rounded-2xl px-4 py-2.5 text-xs font-medium text-center shadow-sm max-w-[85%]",
-                      isEscalated
-                        ? "bg-amber-50 text-amber-800 border border-amber-200"
-                        : "bg-emerald-50 text-emerald-800 border border-emerald-200"
-                    )}
+                <div key={message.id}>
+                  {/* Normal chat message bubble — same as any other message, no action buttons */}
+                  <AIMessage
+                    from={message.role === "user" ? "assistant" : "user"}
                   >
-                    {getSystemText(contentStr)}
+                    <div className="flex flex-col gap-1">
+                      {message.role === "assistant" && (
+                        <div className="flex items-center gap-1.5 mb-0.5">
+                          <span className="text-[10px] font-medium text-muted-foreground">
+                            {(message as typeof message & { agentName?: string }).agentName || "Milo"}
+                          </span>
+                        </div>
+                      )}
+                      <AIMessageContent>
+                        <AIResponse>
+                          {getSystemText(contentStr)}
+                        </AIResponse>
+                      </AIMessageContent>
+                    </div>
+                  </AIMessage>
+
+                  {/* Extra green notification banner — operator only */}
+                  <div className="flex justify-center px-4 pt-3 pb-1">
+                    <div
+                      className={cn(
+                        "flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium shadow-sm max-w-[85%]",
+                        isEscalated
+                          ? "bg-gradient-to-b from-amber-400 to-amber-500 text-white"
+                          : "bg-gradient-to-b from-emerald-400 to-emerald-500 text-white"
+                      )}
+                    >
+                      {notificationText}
+                    </div>
                   </div>
                 </div>
               );

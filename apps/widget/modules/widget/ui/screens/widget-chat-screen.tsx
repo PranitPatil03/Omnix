@@ -60,12 +60,9 @@ function getSystemType(content: string): "escalated" | "ended" | "generic" {
   return "generic";
 }
 
-/** Strip the [system] or [system:*] prefix and return user-facing text (before ||) */
+/** Strip the [system] or [system:*] prefix from message content */
 function getSystemText(content: string): string {
-  const stripped = content.replace(/^\[system(?::\w+)?\]\s*/, "");
-  // User-facing text is before "||", operator text is after
-  const parts = stripped.split(" || ");
-  return parts[0]?.trim() || stripped;
+  return content.replace(/^\[system(?::\w+)?\]\s*/, "");
 }
 
 const formSchema = z.object({
@@ -267,21 +264,20 @@ export const WidgetChatScreen = () => {
             const contentStr = message.content as string;
             const isLastMessage = index === uiMessages.length - 1;
 
-            // System messages (escalation/end) — render as centered alert
+            // System messages (escalation/end) — render as normal chat message without suggestions
             if (message.role === "assistant" && isSystemMessage(contentStr)) {
-              const systemType = getSystemType(contentStr);
-              const isEscalated = systemType === "escalated";
-
               return (
-                <div key={message.id} className="flex justify-center px-4 py-2">
-                  <div
-                    className={`rounded-full px-4 py-1.5 text-xs font-medium text-center ${isEscalated
-                      ? "bg-amber-50 text-amber-700 border border-amber-200"
-                      : "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                      }`}
-                  >
-                    {getSystemText(contentStr)}
-                  </div>
+                <div key={message.id}>
+                  <AIMessage from="assistant">
+                    <div className="flex items-center gap-1.5 mb-0.5">
+                      <span className="text-[10px] font-medium text-muted-foreground">
+                        {(message as typeof message & { agentName?: string }).agentName || "Milo"}
+                      </span>
+                    </div>
+                    <AIMessageContent>
+                      <AIResponse>{getSystemText(contentStr)}</AIResponse>
+                    </AIMessageContent>
+                  </AIMessage>
                 </div>
               );
             }
@@ -330,7 +326,7 @@ export const WidgetChatScreen = () => {
                   conversation?.status === "unresolved" &&
                   !isAgentTyping &&
                   streamingMessageId === null && (
-                    <div className="flex flex-col items-end gap-1.5 px-3 py-2">
+                    <div className="flex flex-col items-start gap-1.5 px-3 py-2">
                       {parsed.suggestions.map((suggestion) => (
                         <AISuggestion
                           key={suggestion}
