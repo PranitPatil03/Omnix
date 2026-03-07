@@ -1,280 +1,415 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
-  BotIcon,
-  MessageSquareTextIcon,
-  ShieldCheckIcon,
-  ZapIcon,
   ArrowRightIcon,
-  HeadphonesIcon,
-  FileTextIcon,
-  PaletteIcon,
+  CheckIcon,
+  ChevronDownIcon,
 } from "lucide-react";
-import { Button } from "@workspace/ui/components/button";
+
+/* ------------------------------------------------------------------ */
+/*  Data                                                               */
+/* ------------------------------------------------------------------ */
+
+const features = [
+  {
+    icon: "/images/icons/message.png",
+    name: "AI-Powered Chat Agent",
+    description:
+      "Powered by Claude & GPT, your agent answers questions, searches your knowledge base, and resolves issues automatically.",
+  },
+  {
+    icon: "/images/icons/knowledge-base.png",
+    name: "Knowledge Base (RAG)",
+    description:
+      "Upload PDFs, docs, and text. The AI retrieves accurate answers with retrieval-augmented generation.",
+  },
+  {
+    icon: "/images/icons/paint.png",
+    name: "Embeddable Widget",
+    description:
+      "Customize and embed a chat widget on any site with a single script tag. Fully brandable.",
+  },
+  {
+    icon: "/images/icons/voice.png",
+    name: "Voice AI Support",
+    description:
+      "Let customers talk to an AI voice assistant powered by Vapi, directly from the widget.",
+  },
+  {
+    icon: "/images/icons/messages.png",
+    name: "Real-time Conversations",
+    description:
+      "Monitor live customer chats, view AI responses, and take over escalated conversations.",
+  },
+  {
+    icon: "/images/icons/orgs.png",
+    name: "Multi-Tenant & Secure",
+    description:
+      "Organization-based isolation keeps every team's data, conversations, and files completely separated.",
+  },
+];
+
+const plans = [
+  {
+    name: "Free Plan",
+    price: "$0",
+    description:
+      "For individuals getting started with AI customer support.",
+    features: [
+      "AI chat support",
+      "1 team member",
+      "Basic knowledge base",
+      "Embeddable chat widget",
+      "Community support",
+    ],
+    cta: "Get Started",
+    highlight: false,
+  },
+  {
+    name: "Pro Plan",
+    price: "$29",
+    description:
+      "For teams that need more power and customization.",
+    features: [
+      "Everything in Free",
+      "Up to 5 team members",
+      "Widget customization",
+      "Voice support (Vapi)",
+      "Priority support",
+      "Advanced analytics",
+    ],
+    cta: "Upgrade Now",
+    highlight: true,
+  },
+  {
+    name: "Business Plan",
+    price: null,
+    description:
+      "For large organizations needing full-scale automation.",
+    features: [
+      "Everything in Pro",
+      "Unlimited team members",
+      "Multi-org management",
+      "Custom integrations",
+      "Dedicated account manager",
+      "Enterprise-grade security",
+    ],
+    cta: "Talk to Team",
+    highlight: false,
+  },
+];
+
+const faqs = [
+  {
+    q: "How does the AI chat agent work?",
+    a: "The AI agent uses large language models (Claude & GPT) combined with retrieval-augmented generation to search your uploaded knowledge base and respond to customer queries in real time. It can answer questions, escalate to humans, and learn from your documents.",
+  },
+  {
+    q: "Can I customize the chat widget's appearance?",
+    a: "Yes. You can fully customize the widget's colors, greeting message, suggested questions, and position. It's embedded on your site with a single script tag and adapts to your brand.",
+  },
+  {
+    q: "What file types does the knowledge base support?",
+    a: "You can upload PDFs, plain text files, and documents. The system chunks and embeds them so the AI can retrieve accurate, contextual answers from your content.",
+  },
+  {
+    q: "How does voice AI support work?",
+    a: "Voice support is powered by Vapi. Customers can speak to an AI assistant directly from the chat widget. The voice agent uses the same knowledge base as the text agent for consistent answers.",
+  },
+  {
+    q: "Is my data isolated from other organizations?",
+    a: "Absolutely. Omnixx uses organization-based multi-tenancy. Each team's conversations, files, and configurations are completely separated and cannot be accessed by other organizations.",
+  },
+  {
+    q: "Do I need technical knowledge to get started?",
+    a: "Not at all. Sign up, create an organization, upload your documents, and copy a single embed script into your website. No coding required.",
+  },
+  {
+    q: "Can I transfer chats to a human agent?",
+    a: "Yes. When the AI detects it cannot resolve a query, it escalates the conversation. Your team can monitor all live chats from the dashboard and take over at any time.",
+  },
+];
+
+/* ------------------------------------------------------------------ */
+/*  Component                                                          */
+/* ------------------------------------------------------------------ */
 
 export default function LandingPage() {
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* Navigation */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between mx-auto px-4 md:px-8">
-          <div className="flex items-center gap-2">
-            <BotIcon className="size-6 text-primary" />
-            <span className="text-xl font-bold">Omnix</span>
-          </div>
-          <nav className="hidden md:flex items-center gap-6 text-sm">
-            <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">
-              Features
-            </a>
-            <a href="#how-it-works" className="text-muted-foreground hover:text-foreground transition-colors">
-              How it Works
-            </a>
-            <a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors">
-              Pricing
-            </a>
+    <div className="relative min-h-screen overflow-hidden bg-white">
+      {/* ── Navigation ── */}
+      <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+          <Link href="/" className="flex items-center gap-2.5">
+            <Image src="/logo.svg" alt="Omnixx" width={24} height={20} />
+            <span className="text-xl font-normal tracking-tight text-gray-900">
+              Omnixx
+            </span>
+          </Link>
+          <nav className="hidden items-center gap-8 text-sm md:flex">
+            <Link
+              href="/sign-in"
+              className="text-gray-500 transition-colors hover:text-gray-900"
+            >
+              Sign In
+            </Link>
+            <Link
+              href="/sign-up"
+              className="inline-flex h-9 items-center rounded-sm bg-gray-900 px-5 text-sm font-medium text-white transition-all hover:bg-gray-800"
+            >
+              Login
+            </Link>
           </nav>
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" asChild>
-              <Link href="/sign-in">Sign In</Link>
-            </Button>
-            <Button asChild>
-              <Link href="/sign-up">Get Started</Link>
-            </Button>
-          </div>
         </div>
       </header>
 
-      {/* Hero */}
-      <section className="flex flex-col items-center justify-center gap-8 px-4 py-24 md:py-32 text-center">
-        <div className="inline-flex items-center rounded-full border px-4 py-1.5 text-sm text-muted-foreground">
-          <ZapIcon className="mr-2 size-3.5" />
-          AI-Powered Customer Support
-        </div>
-        <h1 className="max-w-4xl text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-          Your AI Support Agent,{" "}
-          <span className="bg-gradient-to-r from-blue-500 to-blue-700 bg-clip-text text-transparent">
-            Always On
-          </span>
+      {/* ── Hero ── */}
+      <section className="relative flex flex-col items-center px-6 pt-28 pb-20 text-center md:pt-40 md:pb-32">
+        {/* TrueVox-style gradient background with dot pattern */}
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(ellipse 70% 50% at 50% 60%, rgba(255,255,255,0.95) 0%, transparent 60%), radial-gradient(ellipse 100% 60% at 0% 10%, #ffffff 0%, transparent 50%), radial-gradient(ellipse 80% 80% at 100% 0%, #e8f0ff 0%, transparent 55%), linear-gradient(180deg, #f0f4ff 0%, #c8d8ff 35%, #5b8ef5 65%, #4a7ee8 100%)",
+          }}
+        />
+        {/* Random dot pattern overlay */}
+        <div
+          className="pointer-events-none absolute inset-0 opacity-40"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle, rgba(255,255,255,0.5) 1px, transparent 1px), radial-gradient(circle, rgba(255,255,255,0.35) 0.8px, transparent 0.8px), radial-gradient(circle, rgba(255,255,255,0.45) 1px, transparent 1px), radial-gradient(circle, rgba(255,255,255,0.3) 0.7px, transparent 0.7px)",
+            backgroundSize:
+              "47px 53px, 71px 37px, 31px 67px, 59px 43px",
+            backgroundPosition:
+              "0px 0px, 13px 29px, 37px 11px, 7px 41px",
+          }}
+        />
+
+        <h1 className="relative max-w-3xl text-4xl font-normal tracking-tight text-gray-900 sm:text-5xl md:text-6xl lg:text-7xl">
+          AI support agents{" "}
+          <br className="hidden sm:block" />
+          that never sleep
         </h1>
-        <p className="max-w-2xl text-lg text-muted-foreground md:text-xl">
-          Deploy an intelligent AI chatbot that resolves customer queries instantly,
-          escalates when needed, and learns from your knowledge base — all embeddable
-          in a single script tag.
+        <p className="relative mt-6 max-w-lg text-base font-normal leading-relaxed text-gray-500 md:text-lg">
+          Deploy an intelligent AI chatbot that resolves customer queries
+          instantly, escalates when needed, and learns from your knowledge base.
         </p>
-        <div className="flex flex-col sm:flex-row gap-4">
-          <Button size="lg" asChild>
-            <Link href="/sign-up">
-              Start Free <ArrowRightIcon className="ml-2 size-4" />
-            </Link>
-          </Button>
-          <Button size="lg" variant="outline" asChild>
-            <a href="#features">Learn More</a>
-          </Button>
+        <div className="relative mt-10 flex flex-col items-center gap-4 sm:flex-row">
+          <Link
+            href="/sign-up"
+            className="inline-flex h-12 items-center gap-2 rounded-sm bg-gradient-to-b from-blue-400 to-blue-600 px-8 text-sm font-medium text-white shadow-[0_4px_14px_rgba(37,99,235,0.4)] transition-all hover:scale-[1.02] hover:shadow-[0_6px_20px_rgba(37,99,235,0.6)]"
+          >
+            Get Started Free
+            <ArrowRightIcon className="size-4" />
+          </Link>
+          <a
+            href="#features"
+            className="inline-flex h-12 items-center rounded-sm border border-gray-300 bg-white px-8 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+          >
+            How It Works
+          </a>
         </div>
       </section>
 
-      {/* Features */}
-      <section id="features" className="border-t bg-muted/40 px-4 py-24 md:py-32">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+      {/* ── Features – Bento Grid (3 × 2) ── */}
+      <section id="features" className="relative px-6 py-20 md:py-28">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-14 text-center">
+            <h2 className="text-3xl font-normal tracking-tight text-gray-900 sm:text-4xl md:text-5xl">
               Everything You Need
             </h2>
-            <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-              A complete AI support platform that handles conversations,
-              knowledge management, and customer communication.
+            <p className="mt-4 text-base text-gray-500">
+              A complete AI support platform — chat, knowledge, voice, and more.
             </p>
           </div>
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {[
-              {
-                icon: BotIcon,
-                title: "AI Chat Agent",
-                description:
-                  "Powered by GPT-4o, your agent answers questions, searches your knowledge base, and resolves issues automatically.",
-              },
-              {
-                icon: MessageSquareTextIcon,
-                title: "Live Conversations",
-                description:
-                  "Monitor all customer conversations in real-time. Escalated chats land in your inbox for human follow-up.",
-              },
-              {
-                icon: FileTextIcon,
-                title: "Knowledge Base (RAG)",
-                description:
-                  "Upload PDFs, docs, and text files. The AI searches them with retrieval-augmented generation for accurate answers.",
-              },
-              {
-                icon: HeadphonesIcon,
-                title: "Voice Support",
-                description:
-                  "Integrate Vapi for voice-based AI assistants your customers can call directly from the widget.",
-              },
-              {
-                icon: PaletteIcon,
-                title: "Customizable Widget",
-                description:
-                  "Tailor the chat widget&apos;s greeting, suggestions, and appearance. Embed it anywhere with one script tag.",
-              },
-              {
-                icon: ShieldCheckIcon,
-                title: "Multi-Tenant & Secure",
-                description:
-                  "Organization-based isolation ensures each team&apos;s data, conversations, and files are completely separated.",
-              },
-            ].map((feature) => (
+
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
+            {features.map((feature) => (
               <div
-                key={feature.title}
-                className="group rounded-xl border bg-background p-6 shadow-sm transition-shadow hover:shadow-md"
+                key={feature.name}
+                className="group relative flex flex-col overflow-hidden rounded-xl border border-gray-200/80 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-100/50"
               >
-                <div className="mb-4 inline-flex rounded-lg bg-primary/10 p-3">
-                  <feature.icon className="size-6 text-primary" />
+                {/* Animated shimmer on hover */}
+                <div className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-blue-50/60 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+
+                <div className="relative">
+                  <Image
+                    src={feature.icon}
+                    alt={feature.name}
+                    width={48}
+                    height={48}
+                    className="mb-5 size-12 transition-transform duration-300 group-hover:scale-110"
+                  />
+                  <h3 className="text-lg font-medium text-gray-900">
+                    {feature.name}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-gray-500">
+                    {feature.description}
+                  </p>
                 </div>
-                <h3 className="mb-2 text-lg font-semibold">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {feature.description}
-                </p>
+
+                {/* Corner glow */}
+                <div className="pointer-events-none absolute -bottom-16 -right-16 h-32 w-32 rounded-full bg-blue-400/10 opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-100" />
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* How It Works */}
-      <section id="how-it-works" className="px-4 py-24 md:py-32">
-        <div className="container mx-auto max-w-4xl">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              Up and Running in Minutes
+      {/* ── Pricing ── */}
+      <section id="pricing" className="relative px-6 py-20 md:py-28">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-14 text-center">
+            <h2 className="text-3xl font-normal tracking-tight text-gray-900 sm:text-4xl md:text-5xl">
+              Simple,
+              <br className="hidden sm:block" />
+              Transparent Pricing
             </h2>
-            <p className="mt-4 text-lg text-muted-foreground">
-              Three simple steps to deploy your AI support agent.
+            <p className="mt-4 text-base text-gray-500">
+              Choose the plan that fits your team. Scale your AI support
+              <br className="hidden sm:block" />
+              with no hidden fees or surprises.
             </p>
           </div>
-          <div className="grid gap-12 md:grid-cols-3">
-            {[
-              {
-                step: "1",
-                title: "Create Your Organization",
-                description:
-                  "Sign up, create an organization, and invite your team members.",
-              },
-              {
-                step: "2",
-                title: "Upload Your Knowledge",
-                description:
-                  "Add PDFs, documents, and text files to train your AI agent on your product.",
-              },
-              {
-                step: "3",
-                title: "Embed the Widget",
-                description:
-                  "Copy a single <script> tag into your website and your AI agent is live.",
-              },
-            ].map((item) => (
-              <div key={item.step} className="text-center">
-                <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold text-lg">
-                  {item.step}
-                </div>
-                <h3 className="mb-2 text-lg font-semibold">{item.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {item.description}
+
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+            {plans.map((plan) => (
+              <div
+                key={plan.name}
+                className={`relative flex flex-col rounded-xl border bg-white p-8 transition-shadow hover:shadow-lg ${plan.highlight
+                    ? "border-blue-500 shadow-md"
+                    : "border-gray-200 shadow-sm"
+                  }`}
+              >
+                <h3 className="text-lg font-semibold text-gray-900">
+                  {plan.name}
+                </h3>
+                <p className="mt-3">
+                  {plan.price ? (
+                    <>
+                      <span className="text-4xl font-bold tracking-tight text-gray-900">
+                        {plan.price}
+                      </span>
+                      <span className="text-sm text-gray-400">/month</span>
+                    </>
+                  ) : (
+                    <span className="text-4xl font-bold tracking-tight text-gray-900">
+                      Custom
+                    </span>
+                  )}
                 </p>
+                <p className="mt-3 text-sm text-gray-500">
+                  {plan.description}
+                </p>
+
+                <ul className="mt-8 flex-1 space-y-3 text-sm text-gray-600">
+                  {plan.features.map((f) => (
+                    <li key={f} className="flex items-start gap-2">
+                      <CheckIcon className="mt-0.5 size-4 shrink-0 text-blue-500" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+
+                <Link
+                  href="/sign-up"
+                  className={`mt-8 flex h-12 items-center justify-center rounded-sm text-sm font-medium transition-all ${plan.highlight
+                      ? "bg-gradient-to-b from-blue-400 to-blue-600 text-white shadow-[0_4px_14px_rgba(37,99,235,0.4)] hover:scale-[1.02] hover:shadow-[0_6px_20px_rgba(37,99,235,0.6)]"
+                      : "border border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                >
+                  {plan.cta}
+                </Link>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Pricing Teaser */}
-      <section id="pricing" className="border-t bg-muted/40 px-4 py-24 md:py-32">
-        <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            Simple, Transparent Pricing
-          </h2>
-          <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-            Start for free and upgrade when you need advanced features.
-          </p>
-          <div className="mt-12 grid gap-8 md:grid-cols-2 max-w-3xl mx-auto">
-            {/* Free */}
-            <div className="rounded-xl border bg-background p-8 text-left shadow-sm">
-              <h3 className="text-lg font-semibold">Free</h3>
-              <p className="mt-1 text-3xl font-bold">$0<span className="text-sm font-normal text-muted-foreground">/mo</span></p>
-              <ul className="mt-6 space-y-3 text-sm text-muted-foreground">
-                <li className="flex items-center gap-2">
-                  <ZapIcon className="size-4 text-primary" /> AI chat support
-                </li>
-                <li className="flex items-center gap-2">
-                  <ZapIcon className="size-4 text-primary" /> 1 team member
-                </li>
-                <li className="flex items-center gap-2">
-                  <ZapIcon className="size-4 text-primary" /> Basic knowledge base
-                </li>
-              </ul>
-              <Button className="mt-8 w-full" variant="outline" asChild>
-                <Link href="/sign-up">Get Started</Link>
-              </Button>
-            </div>
-            {/* Pro */}
-            <div className="rounded-xl border-2 border-primary bg-background p-8 text-left shadow-sm relative">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-0.5 text-xs font-medium text-primary-foreground">
-                Popular
-              </div>
-              <h3 className="text-lg font-semibold">Pro</h3>
-              <p className="mt-1 text-3xl font-bold">$29<span className="text-sm font-normal text-muted-foreground">/mo</span></p>
-              <ul className="mt-6 space-y-3 text-sm text-muted-foreground">
-                <li className="flex items-center gap-2">
-                  <ZapIcon className="size-4 text-primary" /> Everything in Free
-                </li>
-                <li className="flex items-center gap-2">
-                  <ZapIcon className="size-4 text-primary" /> Up to 5 team members
-                </li>
-                <li className="flex items-center gap-2">
-                  <ZapIcon className="size-4 text-primary" /> Widget customization
-                </li>
-                <li className="flex items-center gap-2">
-                  <ZapIcon className="size-4 text-primary" /> Voice support (Vapi)
-                </li>
-              </ul>
-              <Button className="mt-8 w-full" asChild>
-                <Link href="/sign-up">Start Pro Trial</Link>
-              </Button>
-            </div>
+      {/* ── FAQ ── */}
+      <section className="relative px-6 py-20 md:py-28">
+        <div className="mx-auto max-w-3xl">
+          <div className="mb-14 text-center">
+            <h2 className="text-3xl font-normal tracking-tight text-gray-900 sm:text-4xl md:text-5xl">
+              Frequently
+              <br className="hidden sm:block" />
+              Asked Questions
+            </h2>
+            <p className="mt-4 text-base text-gray-500">
+              Everything you need to know about AI support agents,
+              <br className="hidden sm:block" />
+              integrations, and deployment.
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            {faqs.map((faq, i) => {
+              const isOpen = openFaq === i;
+              return (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setOpenFaq(isOpen ? null : i)}
+                  className="w-full rounded-xl border border-gray-200 bg-white px-6 py-5 text-left transition-shadow hover:shadow-sm"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-900">
+                      {faq.q}
+                    </span>
+                    <ChevronDownIcon
+                      className={`size-4 shrink-0 text-gray-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+                    />
+                  </div>
+                  <div
+                    className={`grid transition-all duration-200 ${isOpen ? "mt-3 grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
+                  >
+                    <div className="overflow-hidden text-sm leading-relaxed text-gray-500">
+                      {faq.a}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="px-4 py-24 md:py-32">
-        <div className="container mx-auto max-w-3xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            Ready to Transform Your Support?
+      {/* ── Bottom CTA ── */}
+      <section className="relative px-6 py-20 md:py-32">
+        {/* Soft gradient background — peach-left, blue-right */}
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(ellipse 80% 100% at 0% 80%, rgba(253,200,180,0.45) 0%, transparent 60%), radial-gradient(ellipse 80% 100% at 100% 80%, rgba(186,210,255,0.5) 0%, transparent 60%), linear-gradient(180deg, #ffffff 0%, #f8f8f8 100%)",
+          }}
+        />
+
+        <div className="relative mx-auto max-w-3xl text-center">
+          <h2 className="text-3xl font-normal tracking-tight text-gray-900 sm:text-4xl md:text-5xl">
+            AI support agents that
+            <br className="hidden sm:block" />
+            work for you
           </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Join teams using Omnix to deliver instant, intelligent customer support 24/7.
+          <p className="mt-6 text-base text-gray-500 md:text-lg">
+            Automate conversations, resolve queries, and manage support
+            efficiently, giving your team more time to focus on what matters
+            most.
           </p>
-          <Button size="lg" className="mt-8" asChild>
-            <Link href="/sign-up">
-              Get Started Free <ArrowRightIcon className="ml-2 size-4" />
-            </Link>
-          </Button>
+          <Link
+            href="/sign-up"
+            className="mt-10 inline-flex h-12 items-center rounded-lg bg-gradient-to-b from-blue-400 to-blue-600 px-8 text-sm font-medium text-white shadow-[0_4px_14px_rgba(37,99,235,0.35)] transition-all hover:scale-[1.02] hover:shadow-[0_6px_20px_rgba(37,99,235,0.5)]"
+          >
+            Try For Free
+          </Link>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="border-t py-8">
-        <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-4 px-4 md:px-8 text-sm text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <BotIcon className="size-4" />
-            <span>Omnix &copy; {new Date().getFullYear()}</span>
-          </div>
-          <nav className="flex gap-6">
-            <a href="#features" className="hover:text-foreground transition-colors">Features</a>
-            <a href="#how-it-works" className="hover:text-foreground transition-colors">How it Works</a>
-            <a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a>
-          </nav>
-        </div>
-      </footer>
     </div>
   );
 }
