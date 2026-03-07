@@ -29,12 +29,18 @@ export const InviteView = ({ id }: InviteViewProps) => {
         setIsAccepting(true);
         setError(null);
         try {
+            // First fetch the invitation to get its organizationId safely BEFORE it gets consumed
+            const invQuery = await fetch(`/api/auth/organization/get-invitation?query={"id":"${id}"}`);
+            const invData = await invQuery.json();
+            const fetchedOrgId = invData?.organizationId || invData?.invitation?.organizationId || (invData?.data as any)?.organizationId;
+
             const result = await organization.acceptInvitation({
                 invitationId: id,
             });
 
-            // Auto switch to the new org
-            const orgId = (result?.data as any)?.invitation?.organizationId;
+            // Auto switch to the new org using either our pre-fetch or the direct result payload
+            const orgId = fetchedOrgId || (result?.data as any)?.invitation?.organizationId || (result?.data as any)?.organizationId || (result?.data as any)?.member?.organizationId;
+
             if (orgId) {
                 document.cookie = `active_organization_id=${orgId};path=/;max-age=${60 * 60 * 24 * 365}`;
                 await organization.setActive({ organizationId: orgId });
