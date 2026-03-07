@@ -75,7 +75,7 @@ export const WidgetSelectionScreen = () => {
           disabled={isPending}
         >
           <div className="flex items-center gap-x-2">
-            <MessageSquareTextIcon className="size-4" />
+            <img src="/images/icons/message.png" alt="Message" className="size-5 brightness-0 dark:invert" />
             <span>Start chat</span>
           </div>
           <ChevronRightIcon />
@@ -88,7 +88,7 @@ export const WidgetSelectionScreen = () => {
             disabled={isPending}
           >
             <div className="flex items-center gap-x-2">
-              <MicIcon className="size-4" />
+              <img src="/images/icons/mic.png" alt="Mic" className="size-5 brightness-0 dark:invert" />
               <span>Start voice call</span>
             </div>
             <ChevronRightIcon />
@@ -102,7 +102,7 @@ export const WidgetSelectionScreen = () => {
             disabled={isPending}
           >
             <div className="flex items-center gap-x-2">
-              <PhoneIcon className="size-4" />
+              <img src="/images/icons/call.png" alt="Call" className="size-5 brightness-0 dark:invert" />
               <div className="flex flex-col items-start">
                 <span>Call us</span>
                 <span className="text-xs text-muted-foreground font-normal">

@@ -8,7 +8,7 @@ import { useThreadMessages, toUIMessages } from "@convex-dev/agent/react";
 import { WidgetHeader } from "@/modules/widget/ui/components/widget-header";
 import { Button } from "@workspace/ui/components/button";
 import { useAtomValue, useSetAtom } from "jotai";
-import { ArrowLeftIcon, UserIcon, CheckCircleIcon, SendIcon } from "lucide-react";
+import { ArrowLeftIcon, UserIcon, CheckCircleIcon } from "lucide-react";
 import { useInfiniteScroll } from "@workspace/ui/hooks/use-infinite-scroll";
 import { InfiniteScrollTrigger } from "@workspace/ui/components/infinite-scroll-trigger";
 import { contactSessionIdAtomFamily, conversationIdAtom, organizationIdAtom, screenAtom, widgetSettingsAtom } from "../../atoms/widget-atoms";
@@ -345,7 +345,7 @@ export const WidgetChatScreen = () => {
           })}
 
           {/* Typing indicator — shown while AI is generating (meaning an empty assistant message exists or we are waiting for one) */}
-          {(isAgentTyping || (uiMessages.length > 0 && uiMessages[uiMessages.length - 1].role === "assistant" && (!uiMessages[uiMessages.length - 1].content || (uiMessages[uiMessages.length - 1].content as string).trim().length === 0))) && messages.status !== "LoadingFirstPage" && (
+          {(isAgentTyping || (uiMessages.length > 0 && uiMessages[uiMessages.length - 1]!.role === "assistant" && (!uiMessages[uiMessages.length - 1]!.content || (uiMessages[uiMessages.length - 1]!.content as string).trim().length === 0))) && messages.status !== "LoadingFirstPage" && (
             <AIMessage from="assistant">
               <AIMessageContent>
                 <div className="flex items-center gap-1.5 px-1 py-1">
@@ -432,7 +432,7 @@ export const WidgetChatScreen = () => {
               size="icon"
               type="submit"
             >
-              <SendIcon className="size-4" />
+              <img src="/images/icons/send.png" alt="Send" className="size-4 brightness-0 invert" />
             </Button>
           </div>
         </div>

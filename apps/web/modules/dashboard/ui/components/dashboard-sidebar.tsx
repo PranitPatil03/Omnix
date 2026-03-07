@@ -1,19 +1,11 @@
 "use client";
 
 import {
-  CreditCardIcon,
-  InboxIcon,
-  LayoutDashboardIcon,
-  LibraryBigIcon,
-  Mic,
-  PaletteIcon,
   BuildingIcon,
   ChevronsUpDownIcon,
   LogOutIcon,
-  Loader2Icon,
   UserIcon,
   SettingsIcon,
-  BriefcaseBusinessIcon,
   PlusIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -45,6 +37,8 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
 } from "@workspace/ui/components/dropdown-menu";
 import { Avatar, AvatarFallback } from "@workspace/ui/components/avatar";
 
@@ -52,12 +46,12 @@ const customerSupportItems = [
   {
     title: "Conversations",
     url: "/conversations",
-    icon: InboxIcon,
+    icon: "/images/icons/messages.png",
   },
   {
     title: "Knowledge Base",
     url: "/files",
-    icon: LibraryBigIcon,
+    icon: "/images/icons/knowledge-base.png",
   },
 ];
 
@@ -65,22 +59,22 @@ const configurationItems = [
   {
     title: "Business Info",
     url: "/business-info",
-    icon: BriefcaseBusinessIcon,
-  },
-  {
-    title: "Widget Customization",
-    url: "/customization",
-    icon: PaletteIcon,
+    icon: "/images/icons/business-info.png",
   },
   {
     title: "Integrations",
     url: "/integrations",
-    icon: LayoutDashboardIcon,
+    icon: "/images/icons/menu.png",
   },
   {
     title: "Voice Assistant",
     url: "/plugins/vapi",
-    icon: Mic,
+    icon: "/images/icons/voice.png",
+  },
+  {
+    title: "Widget Customization",
+    url: "/customization",
+    icon: "/images/icons/paint.png",
   },
 ];
 
@@ -88,12 +82,12 @@ const accountItems = [
   {
     title: "Settings",
     url: "/settings",
-    icon: SettingsIcon,
+    icon: "/images/icons/settings.png",
   },
   {
     title: "Plans & Billing",
     url: "/billing",
-    icon: CreditCardIcon,
+    icon: "/images/icons/bill.png",
   },
 ];
 
@@ -131,13 +125,8 @@ export const DashboardSidebar = () => {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" className="w-full cursor-default hover:bg-transparent">
-              <div className="flex size-6 items-center justify-center rounded-lg bg-gradient-to-b from-primary to-[#0b63f3]">
-                <span className="text-xs font-bold text-white">O</span>
-              </div>
-              <span className="text-sm font-semibold group-data-[collapsible=icon]:hidden">
-                Omnixx
-              </span>
+            <SidebarMenuButton size="lg" className="w-full cursor-default hover:bg-transparent pl-1">
+              <img src="/logo.svg" alt="Omnix Logo" className="h-6 object-contain" />
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -160,7 +149,7 @@ export const DashboardSidebar = () => {
                     tooltip={item.title}
                   >
                     <Link href={item.url}>
-                      <item.icon className="size-4" />
+                      <img src={item.icon} alt={item.title} className="size-4 object-contain brightness-0 dark:invert group-data-[active=true]/menu-button:brightness-0 group-data-[active=true]/menu-button:invert" />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
@@ -186,7 +175,7 @@ export const DashboardSidebar = () => {
                     tooltip={item.title}
                   >
                     <Link href={item.url}>
-                      <item.icon className="size-4" />
+                      <img src={item.icon} alt={item.title} className="size-4 object-contain brightness-0 dark:invert group-data-[active=true]/menu-button:brightness-0 group-data-[active=true]/menu-button:invert" />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
@@ -212,7 +201,7 @@ export const DashboardSidebar = () => {
                     tooltip={item.title}
                   >
                     <Link href={item.url}>
-                      <item.icon className="size-4" />
+                      <img src={item.icon} alt={item.title} className="size-4 object-contain brightness-0 dark:invert group-data-[active=true]/menu-button:brightness-0 group-data-[active=true]/menu-button:invert" />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
@@ -224,71 +213,75 @@ export const DashboardSidebar = () => {
       </SidebarContent>
 
       <SidebarFooter>
-        {/* Organization Switcher */}
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuButton className="w-full group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:p-2">
-                  <div className="flex size-4 items-center justify-center rounded-sm bg-primary/10">
-                    <BuildingIcon className="size-3 text-primary" />
+                <SidebarMenuButton className="w-full bg-[#0b63f3] text-white hover:bg-[#0b63f3]/90 active:bg-[#0b63f3]/90 hover:text-white h-auto py-2 group-data-[collapsible=icon]:p-2 group-data-[collapsible=icon]:justify-center">
+                  <div className="flex flex-col items-start min-w-0 group-data-[collapsible=icon]:hidden">
+                    <span className="truncate text-xs font-semibold">
+                      {session?.user?.name ?? session?.user?.email ?? "User"}
+                    </span>
+                    <span className="truncate text-[10px] text-white/80 font-medium flex items-center gap-1">
+                      <BuildingIcon className="size-3" />
+                      {activeOrg?.name ?? "Select Org"}
+                    </span>
                   </div>
-                  <span className="truncate text-xs font-medium group-data-[collapsible=icon]:hidden">
-                    {activeOrg?.name ?? "Select Org"}
-                  </span>
-                  <ChevronsUpDownIcon className="ml-auto size-3 group-data-[collapsible=icon]:hidden" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-56">
-                {orgs?.map((org) => (
-                  <DropdownMenuItem
-                    key={org.id}
-                    onClick={() => handleSwitchOrg(org.id)}
-                    className={cn(activeOrg?.id === org.id && "bg-accent")}
-                  >
-                    <BuildingIcon className="mr-2 size-4" />
-                    <span className="truncate">{org.name}</span>
-                  </DropdownMenuItem>
-                ))}
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => router.push("/onboarding")}>
-                  <PlusIcon className="mr-2 size-4" />
-                  New Organization
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => router.push("/org-selection")}>
-                  <BuildingIcon className="mr-2 size-4" />
-                  Manage Organizations
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
 
-        {/* User Profile */}
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton className="w-full group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:p-2">
-                  <Avatar className="size-4">
-                    <AvatarFallback className="text-[10px]">
-                      {session?.user?.name?.charAt(0)?.toUpperCase() ?? <UserIcon className="size-3" />}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="truncate text-xs group-data-[collapsible=icon]:hidden">
-                    {session?.user?.name ?? session?.user?.email ?? "User"}
-                  </span>
+                  {/* Avatar shown when collapsed */}
+                  <div className="hidden group-data-[collapsible=icon]:flex">
+                    <Avatar className="size-6 border border-white/20">
+                      <AvatarFallback className="text-[10px] bg-transparent text-white">
+                        {session?.user?.name?.charAt(0)?.toUpperCase() ?? <UserIcon className="size-3" />}
+                      </AvatarFallback>
+                    </Avatar>
+                  </div>
+
+                  <ChevronsUpDownIcon className="ml-auto size-4 group-data-[collapsible=icon]:hidden" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-56">
-                <div className="px-2 py-1.5">
-                  <p className="text-sm font-medium">{session?.user?.name}</p>
+              <DropdownMenuContent align="end" className="w-64" side="top" sideOffset={8}>
+                <div className="px-2 py-2">
+                  <p className="text-sm font-semibold">{session?.user?.name}</p>
                   <p className="text-xs text-muted-foreground">{session?.user?.email}</p>
                 </div>
+
                 <DropdownMenuSeparator />
+
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel className="text-xs text-muted-foreground uppercase tracking-wider">
+                    Organizations
+                  </DropdownMenuLabel>
+                  {orgs?.map((org) => (
+                    <DropdownMenuItem
+                      key={org.id}
+                      onClick={() => handleSwitchOrg(org.id)}
+                      className={cn(activeOrg?.id === org.id && "bg-accent")}
+                    >
+                      <BuildingIcon className="mr-2 size-4" />
+                      <span className="truncate">{org.name}</span>
+                    </DropdownMenuItem>
+                  ))}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => router.push("/onboarding")}>
+                    <PlusIcon className="mr-2 size-4" />
+                    New Organization
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => router.push("/org-selection")}>
+                    <BuildingIcon className="mr-2 size-4" />
+                    Manage Organizations
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+
+                <DropdownMenuSeparator />
+
+                <DropdownMenuItem onClick={() => router.push("/settings")}>
+                  <SettingsIcon className="mr-2 size-4" />
+                  Account Settings
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleSignOut}>
-                  <LogOutIcon className="mr-2 size-4" />
-                  Sign Out
+                  <LogOutIcon className="mr-2 size-4 text-destructive" />
+                  <span className="text-destructive">Sign Out</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

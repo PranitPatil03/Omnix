@@ -47,7 +47,7 @@ import { chatBubbleIcon, closeIcon } from './icons';
     // Create floating action button
     button = document.createElement('button');
     button.id = 'omnix-widget-button';
-    button.innerHTML = chatBubbleIcon;
+    button.innerHTML = chatBubbleIcon(EMBED_CONFIG.WIDGET_URL);
     button.style.cssText = `
       position: fixed;
       ${position === 'bottom-right' ? 'right: 20px;' : 'left: 20px;'}
@@ -173,7 +173,7 @@ import { chatBubbleIcon, closeIcon } from './icons';
         if (container) container.style.display = 'none';
       }, 300);
       // Change button icon back to chat
-      button.innerHTML = chatBubbleIcon;
+      button.innerHTML = chatBubbleIcon(EMBED_CONFIG.WIDGET_URL);
       button.style.background = '#3b82f6';
     }
   }

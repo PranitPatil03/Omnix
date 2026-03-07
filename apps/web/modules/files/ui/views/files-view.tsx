@@ -74,24 +74,23 @@ export const FilesView = () => {
       />
       <div className="flex min-h-screen flex-col bg-muted p-8">
         <div className="mx-auto w-full max-w-screen-md">
-          <div className="space-y-2">
-            <h1 className="text-2xl md:text-4xl">
-              Knowledge Base
-            </h1>
-            <p className="text-muted-foreground">
-              Upload and manage documents for your AI assistant
-            </p>
+          <div className="flex items-center justify-between">
+            <div className="space-y-2">
+              <h1 className="text-2xl md:text-4xl font-bold tracking-tight">
+                Knowledge Base
+              </h1>
+              <p className="text-muted-foreground">
+                Upload and manage documents for your AI assistant
+              </p>
+            </div>
+            <Button onClick={() => setUploadDialogOpen(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
+              <PlusIcon className="mr-2 size-4" />
+              Add Document
+            </Button>
           </div>
 
-          <div className="mt-8 rounded-lg border bg-background">
-            <div className="flex items-center justify-end border-b px-6 py-4">
-              <Button
-                onClick={() => setUploadDialogOpen(true)}
-              >
-                <PlusIcon />
-                Add New
-              </Button>
-            </div>
+          <div className="mt-8 rounded-lg border bg-card shadow-sm overflow-hidden">
+
             <Table>
               <TableHeader>
                 <TableRow>
@@ -166,13 +165,14 @@ export const FilesView = () => {
                 })()}
               </TableBody>
             </Table>
-            {!isLoadingFirstPage && files.results.length > 0 && (
+            {(!isLoadingFirstPage && files.results.length > 0 && canLoadMore) && (
               <div className="border-t">
                 <InfiniteScrollTrigger
                   canLoadMore={canLoadMore}
                   isLoadingMore={isLoadingMore}
                   onLoadMore={handleLoadMore}
                   ref={topElementRef}
+                  noMoreText=""
                 />
               </div>
             )}

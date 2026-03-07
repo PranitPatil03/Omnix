@@ -56,8 +56,8 @@ export const WidgetVoiceScreen = () => {
         </AIConversation>
       ) : (
         <div className="flex flex-1 h-full flex-col items-center justify-center gap-y-4">
-          <div className="flex items-center justify-center rounded-full border bg-white p-3">
-            <MicIcon className="size-6 text-muted-foreground" />
+          <div className="flex items-center justify-center rounded-full border bg-muted/50 p-4">
+            <img src="/images/icons/voice.png" alt="Voice" className="size-6 opacity-50 brightness-0 dark:invert" />
           </div>
           <p className="text-muted-foreground">Transcript will appear here</p>
         </div>
@@ -83,7 +83,7 @@ export const WidgetVoiceScreen = () => {
                 variant="destructive"
                 onClick={() => endCall()}
               >
-                <MicOffIcon />
+                <img src="/images/icons/call.png" alt="End Call" className="mr-2 size-4 brightness-0 invert" />
                 End call
               </Button>
             ) : (
@@ -93,7 +93,7 @@ export const WidgetVoiceScreen = () => {
                 size="lg"
                 onClick={() => startCall()}
               >
-                <MicIcon />
+                <img src="/images/icons/call.png" alt="Start Call" className="mr-2 size-4 brightness-0 invert" />
                 Start call
               </Button>
             )}
