@@ -239,7 +239,7 @@ export const DashboardSidebar = () => {
                   <ChevronsUpDownIcon className="ml-auto size-4 group-data-[collapsible=icon]:hidden" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-64" side="top" sideOffset={8}>
+              <DropdownMenuContent align="start" className="w-56" side="top" sideOffset={8}>
                 <div className="px-2 py-2">
                   <p className="text-sm font-semibold">{session?.user?.name}</p>
                   <p className="text-xs text-muted-foreground">{session?.user?.email}</p>
