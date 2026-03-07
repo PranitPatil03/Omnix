@@ -32,18 +32,22 @@ export const StreamingText = ({
     setIsStreaming(true);
 
     let i = 0;
+    // Lower frequency to 30ms to prevent React/Markdown render freezing
+    const actualSpeed = Math.max(30, speed);
+    // Dynamically calculate chunk size so the whole message finishes in about 600ms max
+    const totalSteps = Math.min(20, Math.ceil(content.length / 5));
+    const dynamicChunkSize = Math.max(1, Math.ceil(content.length / totalSteps));
+
     const interval = setInterval(() => {
-      // Stream in chunks for natural feel
-      const chunkSize = Math.min(3, content.length - i);
-      i += chunkSize;
-      setDisplayedLength(i);
+      i += dynamicChunkSize;
+      setDisplayedLength(Math.min(content.length, i));
 
       if (i >= content.length) {
         clearInterval(interval);
         setIsStreaming(false);
         onComplete?.();
       }
-    }, speed);
+    }, actualSpeed);
 
     return () => clearInterval(interval);
   }, [content, speed, onComplete]);

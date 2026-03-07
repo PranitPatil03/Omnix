@@ -5,7 +5,7 @@ import { components, internal } from "../_generated/api";
 import { supportAgent } from "../system/ai/agents/supportAgent";
 import { paginationOptsValidator } from "convex/server";
 import { saveMessage } from "@convex-dev/agent";
-import { openai } from "@ai-sdk/openai";
+import { anthropic } from "@ai-sdk/anthropic";
 import { OPERATOR_MESSAGE_ENHANCEMENT_PROMPT } from "../system/ai/constants";
 
 export const enhanceResponse = action({
@@ -46,7 +46,7 @@ export const enhanceResponse = action({
     }
 
     const response = await generateText({
-      model: openai("gpt-4o-mini"),
+      model: anthropic("claude-3-5-haiku-20241022"),
       messages: [
         {
           role: "system",
