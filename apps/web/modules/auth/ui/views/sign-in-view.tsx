@@ -99,7 +99,7 @@ export const SignInView = () => {
               id="password"
               type={showPassword ? "text" : "password"}
               placeholder="••••••••"
-              value={password} m
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               className="h-12 w-full rounded-xl border border-gray-200 bg-white px-4 pr-11 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400/40"
