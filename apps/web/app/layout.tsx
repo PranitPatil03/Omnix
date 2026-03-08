@@ -19,6 +19,9 @@ const fontMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Omnix",
   description: "AI-powered support agent for your business",
+  icons: {
+    icon: "/logo.svg",
+  },
 }
 
 export default async function RootLayout({

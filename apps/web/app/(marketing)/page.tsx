@@ -141,9 +141,9 @@ export default function LandingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-white">
+    <div className="relative min-h-screen overflow-hidden bg-[#f8fafc]">
       {/* ── Navigation ── */}
-      <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md">
+      <header className="sticky top-0 z-50 w-full bg-[#f8fafc]/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
           <Link href="/" className="flex items-center gap-2.5">
             <Image src="/logo.svg" alt="Omnixx" width={24} height={20} />
@@ -169,34 +169,14 @@ export default function LandingPage() {
       </header>
 
       {/* ── Hero ── */}
-      <section className="relative flex flex-col items-center px-6 pt-28 pb-20 text-center md:pt-40 md:pb-32">
-        {/* TrueVox-style gradient background with dot pattern */}
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(ellipse 70% 50% at 50% 60%, rgba(255,255,255,0.95) 0%, transparent 60%), radial-gradient(ellipse 100% 60% at 0% 10%, #ffffff 0%, transparent 50%), radial-gradient(ellipse 80% 80% at 100% 0%, #e8f0ff 0%, transparent 55%), linear-gradient(180deg, #f0f4ff 0%, #c8d8ff 35%, #5b8ef5 65%, #4a7ee8 100%)",
-          }}
-        />
-        {/* Random dot pattern overlay */}
-        <div
-          className="pointer-events-none absolute inset-0 opacity-40"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle, rgba(255,255,255,0.5) 1px, transparent 1px), radial-gradient(circle, rgba(255,255,255,0.35) 0.8px, transparent 0.8px), radial-gradient(circle, rgba(255,255,255,0.45) 1px, transparent 1px), radial-gradient(circle, rgba(255,255,255,0.3) 0.7px, transparent 0.7px)",
-            backgroundSize:
-              "47px 53px, 71px 37px, 31px 67px, 59px 43px",
-            backgroundPosition:
-              "0px 0px, 13px 29px, 37px 11px, 7px 41px",
-          }}
-        />
+      <section className="relative flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-6 text-center">
 
         <h1 className="relative max-w-3xl text-4xl font-normal tracking-tight text-gray-900 sm:text-5xl md:text-6xl lg:text-7xl">
           AI support agents{" "}
           <br className="hidden sm:block" />
           that never sleep
         </h1>
-        <p className="relative mt-6 max-w-lg text-base font-normal leading-relaxed text-gray-500 md:text-lg">
+        <p className="relative mt-6 max-w-2xl text-base font-normal leading-relaxed text-gray-500 md:text-lg">
           Deploy an intelligent AI chatbot that resolves customer queries
           instantly, escalates when needed, and learns from your knowledge base.
         </p>
@@ -218,8 +198,8 @@ export default function LandingPage() {
       </section>
 
       {/* ── Features – Bento Grid (3 × 2) ── */}
-      <section id="features" className="relative px-6 py-20 md:py-28">
-        <div className="mx-auto max-w-6xl">
+      <section id="features" className="relative px-6 py-24 md:py-32">
+        <div className="mx-auto max-w-5xl">
           <div className="mb-14 text-center">
             <h2 className="text-3xl font-normal tracking-tight text-gray-900 sm:text-4xl md:text-5xl">
               Everything You Need
@@ -263,8 +243,8 @@ export default function LandingPage() {
       </section>
 
       {/* ── Pricing ── */}
-      <section id="pricing" className="relative px-6 py-20 md:py-28">
-        <div className="mx-auto max-w-6xl">
+      <section id="pricing" className="relative px-6 py-24 md:py-32">
+        <div className="mx-auto max-w-5xl">
           <div className="mb-14 text-center">
             <h2 className="text-3xl font-normal tracking-tight text-gray-900 sm:text-4xl md:text-5xl">
               Simple,
@@ -278,13 +258,13 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+          <div className="mx-auto grid max-w-4xl grid-cols-1 gap-6 md:grid-cols-3">
             {plans.map((plan) => (
               <div
                 key={plan.name}
                 className={`relative flex flex-col rounded-xl border bg-white p-8 transition-shadow hover:shadow-lg ${plan.highlight
-                    ? "border-blue-500 shadow-md"
-                    : "border-gray-200 shadow-sm"
+                  ? "border-blue-500 shadow-md"
+                  : "border-gray-200 shadow-sm"
                   }`}
               >
                 <h3 className="text-lg font-semibold text-gray-900">
@@ -320,8 +300,8 @@ export default function LandingPage() {
                 <Link
                   href="/sign-up"
                   className={`mt-8 flex h-12 items-center justify-center rounded-sm text-sm font-medium transition-all ${plan.highlight
-                      ? "bg-gradient-to-b from-blue-400 to-blue-600 text-white shadow-[0_4px_14px_rgba(37,99,235,0.4)] hover:scale-[1.02] hover:shadow-[0_6px_20px_rgba(37,99,235,0.6)]"
-                      : "border border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                    ? "bg-gradient-to-b from-blue-400 to-blue-600 text-white shadow-[0_4px_14px_rgba(37,99,235,0.4)] hover:scale-[1.02] hover:shadow-[0_6px_20px_rgba(37,99,235,0.6)]"
+                    : "border border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
                     }`}
                 >
                   {plan.cta}
@@ -333,8 +313,8 @@ export default function LandingPage() {
       </section>
 
       {/* ── FAQ ── */}
-      <section className="relative px-6 py-20 md:py-28">
-        <div className="mx-auto max-w-3xl">
+      <section className="relative px-6 py-24 md:py-32">
+        <div className="mx-auto max-w-2xl">
           <div className="mb-14 text-center">
             <h2 className="text-3xl font-normal tracking-tight text-gray-900 sm:text-4xl md:text-5xl">
               Frequently
@@ -381,7 +361,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── Bottom CTA ── */}
-      <section className="relative px-6 py-20 md:py-32">
+      <section className="relative px-6 py-28 md:py-36">
         {/* Soft gradient background — peach-left, blue-right */}
         <div
           className="pointer-events-none absolute inset-0"
