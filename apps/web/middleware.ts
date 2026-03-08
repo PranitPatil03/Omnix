@@ -29,11 +29,8 @@ export default async function middleware(req: NextRequest) {
 
   const sessionToken = getSessionToken(req);
 
-  // 2. Auth pages — redirect away if already logged in
+  // 2. Auth pages — always allow (session validity is checked client-side)
   if (matchesAny(pathname, authRoutes)) {
-    if (sessionToken) {
-      return NextResponse.redirect(new URL("/conversations", req.url));
-    }
     return NextResponse.next();
   }
 

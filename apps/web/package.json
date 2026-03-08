@@ -25,6 +25,7 @@
     "convex-helpers": "^0.1.100",
     "countries-and-timezones": "^3.8.0",
     "date-fns": "^4.1.0",
+    "framer-motion": "^12.35.1",
     "jotai": "^2.12.5",
     "lucide-react": "^0.475.0",
     "next": "15.5.12",

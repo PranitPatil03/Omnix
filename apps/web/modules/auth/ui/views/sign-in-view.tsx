@@ -1,18 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { signIn } from "@/lib/auth-client";
-import { Loader2Icon, BotIcon, EyeIcon, EyeOffIcon } from "lucide-react";
+import { signIn, useSession } from "@/lib/auth-client";
+import { Loader2Icon, EyeIcon, EyeOffIcon } from "lucide-react";
+import Image from "next/image";
 
 export const SignInView = () => {
   const router = useRouter();
+  const { data: session, isPending } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!isPending && session) {
+      router.replace("/conversations");
+    }
+  }, [isPending, session, router]);
+
+  if (isPending || session) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,27 +49,27 @@ export const SignInView = () => {
   };
 
   return (
-    <div className="w-full max-w-sm">
-      <div className="flex items-center gap-2 mb-6">
-        <BotIcon className="size-5 text-gray-900" />
-        <span className="text-xl font-light tracking-tight text-gray-900">
+    <div className="w-full">
+      <Link href="/" className="flex items-center gap-2.5 mb-6">
+        <Image src="/logo.svg" alt="Omnixx" width={24} height={20} />
+        <span className="text-xl font-normal tracking-tight text-gray-900">
           Omnixx
         </span>
-      </div>
+      </Link>
 
       <h1 className="text-2xl font-medium text-gray-900 mb-1">Welcome back</h1>
-      <p className="text-sm text-gray-400 mb-8">
+      <p className="text-sm text-gray-400 mb-6">
         Sign in to your account to continue.
       </p>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-3.5 w-full">
         {error && (
           <div className="rounded-xl bg-red-50 border border-red-200 p-3 text-sm text-red-600">
             {error}
           </div>
         )}
 
-        <div className="space-y-1.5">
+        <div className="space-y-1.5 w-full">
           <label
             htmlFor="email"
             className="block text-sm font-medium text-gray-700"
@@ -77,7 +87,7 @@ export const SignInView = () => {
           />
         </div>
 
-        <div className="space-y-1.5">
+        <div className="space-y-1.5 w-full">
           <label
             htmlFor="password"
             className="block text-sm font-medium text-gray-700"
@@ -89,7 +99,7 @@ export const SignInView = () => {
               id="password"
               type={showPassword ? "text" : "password"}
               placeholder="••••••••"
-              value={password}
+              value={password} m
               onChange={(e) => setPassword(e.target.value)}
               required
               className="h-12 w-full rounded-xl border border-gray-200 bg-white px-4 pr-11 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400/40"
