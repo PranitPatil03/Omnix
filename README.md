@@ -7,7 +7,7 @@ An open-source, multi-tenant AI customer support platform — deploy an intellig
 ## Features
 
 - **AI Chat Agent** — Claude-powered chatbot that answers customer questions using your business context
-- **RAG Knowledge Base** — Upload docs (PDF, images, text); AI extracts, embeds, and searches them at query time
+- **RAG Knowledge Base** — Upload docs (PDF, images, text); AI extracts, embeds, & searches them at query time
 - **Embeddable Widget** — Drop a `<script>` tag on any website to add a chat widget
 - **Voice AI** — In-browser voice calls and phone support powered by Vapi
 - **Real-time Dashboard** — Manage conversations, escalations, and operator handoffs live
